@@ -1,0 +1,30 @@
+<template>
+  <button
+    class="block float-right bg-blue-400 lg:hidden dark:text-gray-400 -mt-7"
+    @click="toggleSidebar"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      role="img"
+      width="25px"
+      height="25px"
+      preserveAspectRatio="xMidYMid meet"
+      viewBox="0 0 32 32"
+    >
+      <path
+        fill="currentColor"
+        d="M7.219 5.781L5.78 7.22L14.563 16L5.78 24.781l1.44 1.439L16 17.437l8.781 8.782l1.438-1.438L17.437 16l8.782-8.781L24.78 5.78L16 14.563z"
+      />
+    </svg>
+  </button>
+</template>
+
+<script setup>
+const emits = defineEmits(['toggle']);
+const toggleSidebar = () => {
+  emits('toggle');
+};
+</script>
+
+<style scoped></style>
