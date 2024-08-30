@@ -1,188 +1,138 @@
-<script lang="ts" setup>
-import {
-  createColumnHelper,
-  FlexRender,
-  getCoreRowModel,
-  useVueTable,
-} from '@tanstack/vue-table';
-import { ref } from 'vue';
-
-// Define the default data
-const defaultData = [
-  {
-    firstName: 'tanner',
-    lastName: 'linsley',
-    age: 24,
-    visits: 100,
-    status: 'In Relationship',
-    progress: 50,
-  },
-  {
-    firstName: 'tandy',
-    lastName: 'miller',
-    age: 40,
-    visits: 40,
-    status: 'Single',
-    progress: 80,
-  },
-  {
-    firstName: 'joe',
-    lastName: 'dirte',
-    age: 45,
-    visits: 20,
-    status: 'Complicated',
-    progress: 10,
-  },
-];
-
-// Create column helper
-const columnHelper = createColumnHelper();
-
-// Define columns
-const columns = [
-  columnHelper.group({
-    header: 'Name',
-    footer: props => props.column.id,
-    columns: [
-      columnHelper.accessor('firstName', {
-        cell: info => info.getValue(),
-        footer: props => props.column.id,
-      }),
-      columnHelper.accessor(row => row.lastName, {
-        id: 'lastName',
-        cell: info => info.getValue(),
-        header: () => 'Last Name',
-        footer: props => props.column.id,
-      }),
-    ],
-  }),
-  columnHelper.group({
-    header: 'Info',
-    footer: props => props.column.id,
-    columns: [
-      columnHelper.accessor('age', {
-        header: () => 'Age',
-        footer: props => props.column.id,
-      }),
-      columnHelper.group({
-        header: 'More Info',
-        columns: [
-          columnHelper.accessor('visits', {
-            header: () => 'Visits',
-            footer: props => props.column.id,
-          }),
-          columnHelper.accessor('status', {
-            header: 'Status',
-            footer: props => props.column.id,
-          }),
-          columnHelper.accessor('progress', {
-            header: 'Profile Progress',
-            footer: props => props.column.id,
-          }),
-        ],
-      }),
-    ],
-  }),
-];
-
-// Set up the data ref
-const data = ref(defaultData);
-
-// Rerender function to reset data
-const rerender = () => {
-  data.value = defaultData;
-};
-
-// Initialize the table
-const table = useVueTable({
-  get data() {
-    return data.value;
-  },
-  columns,
-  getCoreRowModel: getCoreRowModel(),
-});
-</script>
-
 <template>
-  <div class="p-2">
-    <table>
+  <div class="container p-4 mx-auto">
+    <!-- Transaction Table -->
+    <table class="w-full border-collapse table-auto">
       <thead>
-        <tr
-          v-for="headerGroup in table.getHeaderGroups()"
-          :key="headerGroup.id"
-        >
-          <th
-            v-for="header in headerGroup.headers"
-            :key="header.id"
-            :colSpan="header.colSpan"
-          >
-            <FlexRender
-              v-if="!header.isPlaceholder"
-              :render="header.column.columnDef.header"
-              :props="header.getContext()"
-            />
-          </th>
+        <tr class="bg-gray-200">
+          <th class="px-4 py-2">Date</th>
+          <th class="px-4 py-2">Description</th>
+          <th class="px-4 py-2">Amount</th>
+          <th class="px-4 py-2">Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in table.getRowModel().rows" :key="row.id">
-          <td v-for="cell in row.getVisibleCells()" :key="cell.id">
-            <FlexRender
-              :render="cell.column.columnDef.cell"
-              :props="cell.getContext()"
-            />
+        <tr v-for="transaction in transactions" :key="transaction.id">
+          <td class="px-4 py-2 border">{{ transaction.date }}</td>
+          <td class="px-4 py-2 border">{{ transaction.description }}</td>
+          <td class="px-4 py-2 border">{{ transaction.amount }}</td>
+          <td class="px-4 py-2 border">
+            <button
+              class="text-blue-600 hover:text-blue-800"
+              @click="openModal(transaction)"
+            >
+              Edit
+            </button>
           </td>
         </tr>
       </tbody>
-      <tfoot>
-        <tr
-          v-for="footerGroup in table.getFooterGroups()"
-          :key="footerGroup.id"
-        >
-          <th
-            v-for="header in footerGroup.headers"
-            :key="header.id"
-            :colSpan="header.colSpan"
-          >
-            <FlexRender
-              v-if="!header.isPlaceholder"
-              :render="header.column.columnDef.footer"
-              :props="header.getContext()"
-            />
-          </th>
-        </tr>
-      </tfoot>
     </table>
-    <div class="h-4" />
-    <button @click="rerender" class="p-2 border">Rerender</button>
+
+    <!-- Add New Transaction Button -->
+    <button
+      class="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-700"
+      @click="openModal()"
+    >
+      Add New Transaction
+    </button>
+
+    <!-- Modal Form -->
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+    >
+      <div class="w-1/3 p-8 bg-white rounded-lg">
+        <h2 class="mb-4 text-2xl">
+          {{ selectedTransaction ? 'Edit Transaction' : 'Add New Transaction' }}
+        </h2>
+
+        <!-- FormKit Form -->
+        <formkit type="form" :actions="false" @submit="submitForm">
+          <formkit
+            type="text"
+            label="Description"
+            v-model="form.description"
+            :validation="'required'"
+          />
+          <formkit
+            type="number"
+            label="Amount"
+            v-model="form.amount"
+            :validation="'required|number'"
+          />
+          <formkit
+            type="date"
+            label="Date"
+            v-model="form.date"
+            :validation="'required|date'"
+          />
+          <div class="flex justify-end mt-4">
+            <button
+              type="button"
+              class="px-4 py-2 mr-2 text-white bg-gray-500 rounded hover:bg-gray-700"
+              @click="closeModal"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700"
+            >
+              Save
+            </button>
+          </div>
+        </formkit>
+      </div>
+    </div>
   </div>
 </template>
 
+<script setup>
+import { ref } from 'vue';
+
+const transactions = ref([
+  { id: 1, date: '2024-08-10', description: 'Groceries', amount: 50 },
+  { id: 2, date: '2024-08-11', description: 'Electricity Bill', amount: 100 },
+  // Add more transactions as needed
+]);
+
+const isModalOpen = ref(false);
+const selectedTransaction = ref(null);
+
+const form = ref({
+  description: '',
+  amount: 0,
+  date: '',
+});
+
+const openModal = (transaction = null) => {
+  selectedTransaction.value = transaction;
+  if (transaction) {
+    form.value = { ...transaction };
+  } else {
+    form.value = { description: '', amount: 0, date: '' };
+  }
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
+const submitForm = () => {
+  if (selectedTransaction.value) {
+    // Update the existing transaction
+    const index = transactions.value.findIndex(
+      t => t.id === selectedTransaction.value.id
+    );
+    transactions.value[index] = { ...form.value };
+  } else {
+    // Add a new transaction
+    transactions.value.push({ ...form.value, id: Date.now() });
+  }
+  closeModal();
+};
+</script>
+
 <style>
-html {
-  font-family: sans-serif;
-  font-size: 14px;
-}
-
-table {
-  border: 1px solid lightgray;
-}
-
-tbody {
-  border-bottom: 1px solid lightgray;
-}
-
-th {
-  border-bottom: 1px solid lightgray;
-  border-right: 1px solid lightgray;
-  padding: 2px 4px;
-}
-
-tfoot {
-  color: gray;
-}
-
-tfoot th {
-  font-weight: normal;
-}
+/* Add any additional styling here */
 </style>

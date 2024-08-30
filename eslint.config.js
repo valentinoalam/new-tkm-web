@@ -1,5 +1,6 @@
 import { fixupPluginRules } from '@eslint/compat';
 import pluginJs from '@eslint/js';
+import prettier from 'eslint-config-prettier';
 // import eslintPluginImport from 'eslint-plugin-import';
 import importPlugin from 'eslint-plugin-import';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
@@ -13,6 +14,7 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   ...eslintPluginVue.configs['flat/essential'],
+  prettier,
   {
     files: ['**/*.{js,mjs,cjs,ts,vue}'],
     languageOptions: {

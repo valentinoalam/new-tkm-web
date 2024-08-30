@@ -1,6 +1,32 @@
-13. Vendor API
-POST /vendors: Create a new vendor.
-GET /vendors: Retrieve a list of vendors.
-GET /vendors/{id}: Retrieve a specific vendor by ID.
-PUT /vendors/{id}: Update a specific vendor by ID.
-DELETE /vendors/{id}: Delete a specific vendor by ID.
+import apiClient from './apiClient';
+
+const endpoint = '/vendors';
+
+export const getAll = async () => {
+  const response = await apiClient.get(endpoint);
+  return response?.data;
+};
+
+export const getById = async (id: string) => {
+  const response = await apiClient.get(`${endpoint}/${id}`);
+  return response?.data;
+};
+
+export const create = async (data: unknown) => {
+  const response = await apiClient.post(endpoint, data, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response?.data;
+};
+
+export const update = async (data: { id: string }) => {
+  const response = await apiClient.patch(`${endpoint}/${data.id}`, data);
+  return response?.data;
+};
+
+export const deleteById = async (id: string) => {
+  const response = await apiClient.delete(`${endpoint}/${id}`);
+  return response?.data;
+};

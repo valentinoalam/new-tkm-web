@@ -1,11 +1,10 @@
 import axios from 'axios';
-import process from 'process';
 
 import router from '@/router'; // Import router instance
 
-const { VITE_BACKEND_URL, VITE_BACKEND_DEV_URL, NODE_ENV } = process.env;
+const { VITE_BACKEND_URL } = import.meta.env;
 const apiClient = axios.create({
-  baseURL: NODE_ENV === 'development' ? VITE_BACKEND_DEV_URL : VITE_BACKEND_URL,
+  baseURL: VITE_BACKEND_URL,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -1,5 +1,8 @@
+import { HSStaticMethods } from 'preline';
 import { defineAsyncComponent } from 'vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+
+import ImageEditor from '@/views/ImageEditor.vue';
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -7,6 +10,12 @@ export const routes: Array<RouteRecordRaw> = [
     name: 'home',
     component: defineAsyncComponent(() => import('@/views/Home.vue')), // Lazy load Home component
     meta: { title: 'Beranda' },
+  },
+  {
+    path: '/image-editor',
+    name: 'Editor',
+    component: ImageEditor,
+    meta: { title: 'Image Editor', layout: 'empty' },
   },
   {
     path: '/kas',
@@ -17,19 +26,19 @@ export const routes: Array<RouteRecordRaw> = [
         path: '',
         name: 'Transaksi',
         component: defineAsyncComponent(
-          () => import('@/views/kas/jurnal/TransactionList.vue')
+          () => import('@/views/kas/jurnal/List.vue')
         ), // Lazy load TransactionList
         meta: { requiresAuth: false, title: 'Beranda_Inventory' },
       },
       {
-        path: '/cash/laporan',
+        path: 'cash/laporan',
         name: 'FinancialReport',
         component: defineAsyncComponent(
           () => import('@/views/kas/laporan/FinancialReport.vue')
         ), // Lazy load FinancialReport
       },
       {
-        path: '/cash/budget',
+        path: 'cash/budget',
         name: 'Budget',
         component: defineAsyncComponent(
           () => import('@/views/kas/anggaran/Budget.vue')
@@ -40,12 +49,12 @@ export const routes: Array<RouteRecordRaw> = [
   // {
   //   path: '/aset',
   //   name: 'aset',
-  //   component: defineAsyncComponent(() => import('@/views/aset/Inventory.vue')),
+  //   component: () => import('@/views/aset/Inventory.vue')),
   // },
   // {
   //   path: '/agenda',
   //   name: 'kajian',
-  //   component: defineAsyncComponent(
+  //   component:
   //     () => import('@/views/kegiatan/Activities.vue')
   //   ),
   // },
@@ -54,6 +63,24 @@ export const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(_to, _from, savedPosition) {
+    return savedPosition || { left: 0, top: 0 };
+  },
+});
+
+router.beforeEach((to, _from, next) => {
+  console.log('Navigating to:', to.fullPath);
+  document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`;
+  next();
+});
+
+router.afterEach((to, from, failure) => {
+  console.log('Navigation completed to:', to.fullPath, 'from:', from.fullPath);
+  if (!failure) {
+    setTimeout(() => {
+      HSStaticMethods.autoInit();
+    }, 100);
+  }
 });
 
 export default router;

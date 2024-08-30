@@ -31,13 +31,40 @@ export const deleteById = async (id: string) => {
   return response?.data;
 };
 
-// 4. Profile API
+export const getUserNotifications = async (id: string) => {
+  return apiClient.get(`/users/${id}/notifications`);
+};
+
+export const getUserProfile = async (id: string) => {
+  return apiClient.get(`/users/${id}/profile`);
+};
+
+export const getUserPositions = async (id: string) => {
+  return apiClient.get(`/users/${id}/positions`);
+};
+// Profile API
 // POST /profiles: Create a new profile.
 // GET /profiles: Retrieve a list of profiles.
 // GET /profiles/{id}: Retrieve a specific profile by ID.
 // PUT /profiles/{id}: Update a specific profile by ID.
 // DELETE /profiles/{id}: Delete a specific profile by ID.
-
+export const profileService = {
+  createProfile(data: string) {
+    return apiClient.post('/profiles', data);
+  },
+  getProfiles() {
+    return apiClient.get('/profiles');
+  },
+  getProfileById(id: string) {
+    return apiClient.get(`/profiles/${id}`);
+  },
+  updateProfile(id: string, data: object) {
+    return apiClient.put(`/profiles/${id}`, data);
+  },
+  deleteProfile(id: string) {
+    return apiClient.delete(`/profiles/${id}`);
+  },
+};
 // 1. User API
 // POST /users: Create a new user.
 // GET /users: Retrieve a list of users.

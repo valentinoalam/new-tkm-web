@@ -19,9 +19,9 @@
   </footer>
 </template>
 <script setup>
-import BaseLevel from '@/components/BaseLevel.vue';
+import BaseLevel from '@/components/atoms/BaseLevel.vue';
 import Logo from '@/components/molecules/layouts/Logo.vue';
-import { containerMaxW } from '@/configs/config.js';
+import { containerMaxW } from '@/configs/config';
 
 const year = new Date().getFullYear();
 </script>
