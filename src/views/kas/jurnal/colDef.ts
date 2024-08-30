@@ -21,7 +21,7 @@ type RowData = {
   activity: string;
   value: bigint;
   in_out: string;
-  thumbnailLink: string;
+  photo: string;
 };
 
 const columnHelper = createColumnHelper<RowData>();
@@ -41,20 +41,20 @@ const columns = [
   columnHelper.accessor('activity', {
     header: 'Perihal',
     cell: info => info.getValue(),
-    enableSorting: true, // Sorting enabled for this column
+    enableSorting: false,
     enableColumnFilter: true, // Filtering enabled for this column
   }),
   columnHelper.accessor('category', {
     header: 'Kategori',
+    enableSorting: false,
     cell: info => {
       const color = (info.row.original as RowData).color;
       return h(
         'span',
         {
-          class: `inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-bold border border-gray-500 text-gray-50 dark:border-neutral-200 dark:text-white`,
+          class: `inline-flex min-h-9 min-w-28 items-center leading-tight py-1 px-1 rounded-3xl justify-center font-bold text-white dark:border-neutral-200 dark:text-white`,
           style: {
             backgroundColor: color,
-            backgroundOpacity: 50,
           },
         },
         info.getValue()
@@ -79,15 +79,16 @@ const columns = [
   }),
   columnHelper.accessor('in_out', {
     header: 'Keluar/Masuk',
+    enableSorting: false,
     enableGrouping: true, // Grouping enabled for this column
     cell: info => info.getValue(), // Simply returns the value
   }),
-  columnHelper.accessor('thumbnailLink', {
+  columnHelper.accessor('photo', {
     header: 'Photo',
     cell: info =>
       info.getValue()
         ? h('img', {
-            src: `${appUrl}/${info.getValue()}`, // Replace with the actual image path
+            src: `${appUrl}img/small/${info.getValue()}`, // Replace with the actual image path
             alt: 'Image description',
             width: 200,
             height: 150,

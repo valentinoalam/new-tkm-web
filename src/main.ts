@@ -4,10 +4,12 @@ import 'vue3-perfect-scrollbar/style.css';
 import 'cropperjs/dist/cropper.css';
 import 'preline/preline';
 import '@formkit/themes/genesis';
+import 'tippy.js/dist/tippy.css';
 
 import { defaultConfig, plugin } from '@formkit/vue';
 import vClickOutside from 'click-outside-vue3';
 import { createApp } from 'vue';
+import VueTippy from 'vue-tippy';
 import VueApexCharts from 'vue3-apexcharts';
 import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar';
 
@@ -23,6 +25,19 @@ app.component('empty-layout', EmptyLayout);
 app.use(router);
 
 // Use the plugins
+app.use(
+  VueTippy,
+  // optional
+  {
+    directive: 'tippy', // => v-tippy
+    component: 'tippy', // => <tippy/>
+    componentSingleton: 'tippy-singleton', // => <tippy-singleton/>,
+    defaultProps: {
+      placement: 'auto-end',
+      allowHTML: true,
+    }, // => Global default options * see all props
+  }
+);
 app.use(plugin, defaultConfig);
 app.use(PerfectScrollbarPlugin);
 app.use(VueApexCharts);

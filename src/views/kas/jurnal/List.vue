@@ -1,53 +1,6 @@
 <template>
   <div class="container mx-auto">
     <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
-
-    <div class="flex items-center justify-between mt-4">
-      <div class="inline-flex gap-2">
-        <input
-          v-model="dateStart"
-          type="date"
-          placeholder="Start Date"
-          class="w-full py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
-        />
-        <input
-          v-model="dateEnd"
-          type="date"
-          placeholder="End Date"
-          class="w-full py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
-        />
-        <button
-          @click="fetchTransactions"
-          type="button"
-          class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
-        >
-          Filter Transactions
-        </button>
-      </div>
-      <button
-        type="button"
-        class="inline-flex items-center px-4 py-3 text-sm font-medium text-blue-800 bg-blue-300 border border-transparent rounded-lg mx-7 gap-x-2 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:bg-blue-900"
-        @click="openModal()"
-      >
-        <svg
-          class="shrink-0 size-4"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M5 12h14" />
-          <path d="M12 5v14" />
-        </svg>
-        New Entry
-      </button>
-    </div>
-
     <!-- Modal Form -->
     <div
       v-if="isModalOpen"
@@ -102,6 +55,8 @@
       :data="transactions"
       :columns="columns"
       :getRowClass="getRowClass"
+      :buttonName="'New Entry'"
+      @handleClick="openModal()"
     />
   </div>
 </template>

@@ -1,4 +1,3 @@
-import { HSStaticMethods } from 'preline';
 import { defineAsyncComponent } from 'vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
@@ -74,13 +73,8 @@ router.beforeEach((to, _from, next) => {
   next();
 });
 
-router.afterEach((to, from, failure) => {
+router.afterEach((to, from) => {
   console.log('Navigation completed to:', to.fullPath, 'from:', from.fullPath);
-  if (!failure) {
-    setTimeout(() => {
-      HSStaticMethods.autoInit();
-    }, 100);
-  }
 });
 
 export default router;

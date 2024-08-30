@@ -1,11 +1,34 @@
 <template>
   <div class="-m-1.5">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div
+        class="-mx-4 -my-2 overflow-x-auto border border-blue-300 sm:-mx-6 lg:-mx-8"
+      >
         <div
-          class="inline-block min-w-full overflow-hidden align-middle sm:px-6 lg:px-8"
+          class="inline-block min-w-full space-y-2 overflow-hidden align-middle"
         >
-          <div class="px-4 py-3">
+          <div class="flex items-center justify-start gap-2 mt-4">
+            <input
+              v-model="dateStart"
+              type="date"
+              placeholder="Start Date"
+              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+            />
+            <input
+              v-model="dateEnd"
+              type="date"
+              placeholder="End Date"
+              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+            />
+            <button
+              @click="fetchTransactions"
+              type="button"
+              class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+            >
+              Filter Transactions
+            </button>
+          </div>
+          <div class="flex justify-between">
             <div class="relative max-w-xs">
               <label for="hs-table-search" class="sr-only">Search</label>
               <input
@@ -35,10 +58,32 @@
                 </svg>
               </div>
             </div>
+            <button
+              type="button"
+              @click="handleClick"
+              class="inline-flex items-center px-4 py-3 text-sm font-medium text-blue-800 bg-blue-300 border border-transparent rounded-lg gap-x-2 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:bg-blue-900"
+            >
+              <svg
+                class="shrink-0 size-4"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+              {{ buttonName }}
+            </button>
           </div>
 
           <table
-            class="w-full min-w-full mt-5 border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
+            class="w-full min-w-full mt-2 border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
           >
             <thead>
               <tr
@@ -77,71 +122,100 @@
                 <td
                   v-for="cell in row.getVisibleCells()"
                   :key="cell.id"
-                  class="px-3 py-4 text-sm text-gray-500"
+                  class="px-2 py-2 text-sm text-center text-gray-500"
                 >
-                  <FlexRender
-                    :render="cell.column.columnDef.cell"
-                    :props="cell.getContext()"
-                  />
+                  <tippy :content="getCellTooltip(cell.column, row)">
+                    <FlexRender
+                      :render="cell.column.columnDef.cell"
+                      :props="cell.getContext()"
+                    />
+                  </tippy>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <div class="mt-8">
-        Page {{ table.getState().pagination.pageIndex + 1 }} of
-        {{ table.getPageCount() }} -
-        {{ table.getFilteredRowModel().rows.length }} results
+      <!-- Pagination Wrapper -->
+      <div class="grid items-center justify-between gap-2 mt-8 sm:flex">
+        <div class="inline-flex flex-wrap gap-2">
+          Page {{ table.getState().pagination.pageIndex + 1 }} of
+          {{ table.getPageCount() }} -
+          {{ table.getFilteredRowModel().rows.length }} results
+        </div>
+        <div
+          class="flex flex-col flex-wrap border rounded-lg shadow-sm sm:inline-flex sm:flex-row"
+        >
+          <button
+            class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+            @click="table.setPageIndex(0)"
+          >
+            First page
+          </button>
+          <button
+            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="!table.getCanPreviousPage()"
+            @click="table.previousPage()"
+          >
+            <svg
+              class="self-end shrink-0 size-4"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            Prev
+          </button>
+          <button
+            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="!table.getCanNextPage()"
+            @click="table.nextPage()"
+          >
+            Next
+            <svg
+              class="self-end shrink-0 size-4"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
+          <button
+            class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="table.setPageIndex(table.getPageCount() - 1)"
+          >
+            Last page
+          </button>
+        </div>
+        <div class="inline-flex flex-wrap gap-2">
+          <label for="pageSize">Rows per page:</label>
+          <select
+            id="pageSize"
+            v-model="pagination.pageSize"
+            @change="handlePageSizeChange"
+          >
+            <option v-for="size in [5, 10, 20, 50]" :key="size" :value="size">
+              {{ size }}
+            </option>
+          </select>
+        </div>
       </div>
-      <div class="mt-8 space-x-4">
-        <button
-          class="px-2 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="table.setPageSize(5)"
-        >
-          Page Size 5
-        </button>
-        <button
-          class="px-2 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="table.setPageSize(10)"
-        >
-          Page Size 10
-        </button>
-        <button
-          class="px-2 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="table.setPageSize(20)"
-        >
-          Page Size 20
-        </button>
-      </div>
-      <div class="mt-8 space-x-4">
-        <button
-          class="px-2 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="table.setPageIndex(0)"
-        >
-          First page
-        </button>
-        <button
-          class="px-2 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="table.setPageIndex(table.getPageCount() - 1)"
-        >
-          Last page
-        </button>
-        <button
-          class="px-2 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="!table.getCanPreviousPage()"
-          @click="table.previousPage()"
-        >
-          Prev page
-        </button>
-        <button
-          class="px-2 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="!table.getCanNextPage()"
-          @click="table.nextPage()"
-        >
-          Next page
-        </button>
-      </div>
+
+      <!-- End Pagination Wrapper -->
     </div>
   </div>
 </template>
@@ -156,8 +230,13 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table';
-import { computed, ref } from 'vue';
+import { computed, defineEmits, ref, watch } from 'vue';
+import { Tippy } from 'vue-tippy';
 
+const emit = defineEmits(['handleClick']);
+const handleClick = event => {
+  emit('handleClick', event);
+};
 const props = defineProps({
   data: {
     type: Array,
@@ -171,6 +250,10 @@ const props = defineProps({
     type: Function,
     required: false,
   },
+  buttonName: {
+    type: String,
+    required: true,
+  },
 });
 
 const rowClass = row => {
@@ -180,13 +263,32 @@ const rowClass = row => {
     : 'lg:odd:bg-gray-100/50 lg:dark:odd:bg-slate-800/50';
 };
 
+// Helper function to get cell tooltip content
+const getCellTooltip = (column, row) => {
+  // You can customize this logic to return dynamic content based on column and row
+  if (column.columnDef.header === 'Tanggal')
+    return new Intl.DateTimeFormat('id-ID', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date(row.original.dtTransaction));
+};
 const data = computed(() => props.data);
 // State variables
 const sorting = ref([]);
 const grouping = ref([]);
 const filter = ref('');
-// data: computed(() => props.data), // Ensures reactivity if `data` prop changes
-//   columns: computed(() => props.columns), // Ensures reactivity if `columns` prop changes
+const pagination = ref({
+  pageIndex: 0, // Current page index (0-based)
+  pageSize: 10, // Number of rows per page
+});
+
+watch(
+  () => pagination.value.pageSize,
+  newSize => {
+    table.setPageSize(newSize);
+  }
+);
 const table = useVueTable({
   get data() {
     return data.value;
@@ -197,6 +299,7 @@ const table = useVueTable({
   getSortedRowModel: getSortedRowModel(),
   getGroupedRowModel: getGroupedRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
+  // pageCount: -1, // Allows client-side pagination
   state: {
     get sorting() {
       return sorting.value;
@@ -207,8 +310,15 @@ const table = useVueTable({
     get grouping() {
       return grouping.value;
     },
+    // pagination: pagination.value,
   },
+  // onPaginationChange: newPagination => {
+  //   pagination.value = newPagination;
+  // },
   // onColumnFiltersChange: columnFilters.value,
+  onGroupingChange: newGrouping => {
+    grouping.value = newGrouping; // Handle grouping changes
+  },
   onSortingChange: updaterOrValue => {
     sorting.value =
       typeof updaterOrValue === 'function'
@@ -225,133 +335,6 @@ const table = useVueTable({
 // watchEffect(() => {
 //   console.log(table.getState().sorting);
 // });
-
-// const sort = useVModel(props, "sort", emits, {
-//   passive: true,
-//   defaultValue: defu({}, props.sort, { column: null, direction: "asc" } as {
-//     column: string | null
-//     direction: "asc" | "desc"
-//   }),
-// })
-
-// const savedSort = { column: sort.value.column, direction: null }
-
-// const rows = computed(() => {
-//   if (!sort.value?.column || props.sortMode === "manual") {
-//     return props.rows
-//   }
-
-//   const { column, direction } = sort.value
-
-//   return props.rows.slice().sort((a, b) => {
-//     const aValue = get(a, column)
-//     const bValue = get(b, column)
-
-//     const sort =
-//       columns.value.find((col) => col.key === column)?.sort ?? defaultSort
-
-//     return sort(aValue, bValue, direction)
-//   })
-// })
-
-// const selected = computed({
-//   get() {
-//     return props.modelValue
-//   },
-//   set(value) {
-//     emits("update:modelValue", value)
-//   },
-// })
-// const indeterminate = computed(
-//   () =>
-//     selected.value &&
-//     selected.value.length > 0 &&
-//     selected.value.length < props.rows.length
-// )
-
-// const emptyState = computed(() => {
-//   if (props.emptyState === null) return null
-//   return { ...ui.value.default.emptyState, ...props.emptyState }
-// })
-
-// const loadingState = computed(() => {
-//   if (props.loadingState === null) return null
-//   return { ...ui.value.default.loadingState, ...props.loadingState }
-// })
-
-// function compare(a: any, z: any) {
-//   if (typeof props.by === "string") {
-//     const property = props.by as unknown as any
-//     return a?.[property] === z?.[property]
-//   }
-//   return a === z
-// }
-
-// function isSelected(row: Object) {
-//   if (!props.modelValue) {
-//     return false
-//   }
-
-//   return selected.value.some((item) => compare(toRaw(item), toRaw(row)))
-// }
-
-// function onSort(column: { key: string; direction?: "asc" | "desc" }) {
-//   if (sort.value.column === column.key) {
-//     const direction =
-//       !column.direction || column.direction === "asc" ? "desc" : "asc"
-
-//     if (sort.value.direction === direction) {
-//       sort.value = defu({}, savedSort, {
-//         column: null,
-//         direction: "asc" as "asc" | "desc",
-//       })
-//     } else {
-//       sort.value = {
-//         column: sort.value.column,
-//         direction: sort.value.direction === "asc" ? "desc" : "asc",
-//       }
-//     }
-//   } else {
-//     sort.value = { column: column.key, direction: column.direction || "asc" }
-//   }
-// }
-
-// function onSelect(row: Object) {
-//   if (!$attrs.onSelect) {
-//     return
-//   }
-
-//   // @ts-ignore
-//   $attrs.onSelect(row)
-// }
-
-// function selectAllRows() {
-//   props.rows.forEach((row) => {
-//     // If the row is already selected, don't select it again
-//     if (isSelected(row)) {
-//       return
-//     }
-
-//     // @ts-ignore
-//     selected.value.push(row)
-//   })
-// }
-
-// function onChange(event: any) {
-//   if (event.target.checked) {
-//     selectAllRows()
-//   } else {
-//     selected.value = []
-//   }
-// }
-
-// function getRowData(
-//   row: Object,
-//   rowKey: string | string[],
-//   defaultValue: any = ""
-// ) {
-//   return get(row, rowKey, defaultValue)
-// }
 </script>
 
 <style scoped>
