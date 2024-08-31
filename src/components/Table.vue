@@ -1,70 +1,43 @@
 <template>
-  <div class="-m-1.5">
+  <div class="-m-1.5 gap-y-2">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
-      <div
-        class="-mx-4 -my-2 overflow-x-auto border border-blue-300 sm:-mx-6 lg:-mx-8"
-      >
-        <div
-          class="inline-block min-w-full space-y-2 overflow-hidden align-middle"
-        >
-          <div class="flex items-center justify-start gap-2 mt-4">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="flex items-center justify-start gap-2 mt-4">
+          <input
+            v-model="dateStart"
+            type="date"
+            placeholder="Start Date"
+            class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+          />
+          <input
+            v-model="dateEnd"
+            type="date"
+            placeholder="End Date"
+            class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+          />
+          <button
+            @click="fetchTransactions"
+            type="button"
+            class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+          >
+            Filter Transactions
+          </button>
+        </div>
+        <div class="flex justify-between">
+          <div class="relative max-w-xs">
+            <label for="hs-table-search" class="sr-only">Search</label>
             <input
-              v-model="dateStart"
-              type="date"
-              placeholder="Start Date"
-              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+              type="text"
+              class="block w-full px-3 py-2 text-sm border border-gray-200 rounded-lg shadow-sm ps-9 focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+              placeholder="Search"
+              v-model="filter"
             />
-            <input
-              v-model="dateEnd"
-              type="date"
-              placeholder="End Date"
-              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
-            />
-            <button
-              @click="fetchTransactions"
-              type="button"
-              class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
-            >
-              Filter Transactions
-            </button>
-          </div>
-          <div class="flex justify-between">
-            <div class="relative max-w-xs">
-              <label for="hs-table-search" class="sr-only">Search</label>
-              <input
-                type="text"
-                class="block w-full px-3 py-2 text-sm border border-gray-200 rounded-lg shadow-sm ps-9 focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                placeholder="Search"
-                v-model="filter"
-              />
 
-              <div
-                class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3"
-              >
-                <svg
-                  class="text-gray-400 size-4 dark:text-neutral-500"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.3-4.3"></path>
-                </svg>
-              </div>
-            </div>
-            <button
-              type="button"
-              @click="handleClick"
-              class="inline-flex items-center px-4 py-3 text-sm font-medium text-blue-800 bg-blue-300 border border-transparent rounded-lg gap-x-2 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:bg-blue-900"
+            <div
+              class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3"
             >
               <svg
-                class="shrink-0 size-4"
+                class="text-gray-400 size-4 dark:text-neutral-500"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -75,27 +48,50 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
               </svg>
-              {{ buttonName }}
-            </button>
+            </div>
           </div>
-
+          <button
+            type="button"
+            @click="handleClick"
+            class="inline-flex items-center px-4 py-3 text-sm font-medium text-blue-800 bg-blue-300 border border-transparent rounded-lg gap-x-2 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:bg-blue-900"
+          >
+            <svg
+              class="shrink-0 size-4"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="M12 5v14" />
+            </svg>
+            {{ buttonName }}
+          </button>
+        </div>
+        <div
+          class="inline-block min-w-full space-y-2 overflow-hidden align-middle rounded-lg shadow"
+        >
           <table
-            class="w-full min-w-full mt-2 border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
+            class="w-full min-w-full mt-2 leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
           >
             <thead>
               <tr
                 v-for="headerGroup in table.getHeaderGroups()"
                 :key="headerGroup.id"
-                class="text-left bg-gray-50 dark:bg-meta-4"
               >
                 <th
                   v-for="header in headerGroup.headers"
                   :key="header.id"
                   scope="col"
-                  class="px-4 py-2 cursor-pointer"
+                  class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer"
                   :class="{
                     'cursor-pointer select-none': header.column.getCanSort(),
                   }"
@@ -109,7 +105,7 @@
                     "
                     :props="header.getContext()"
                   />
-                  {{ { asc: ' ↑', desc: '↓' }[header.column.getIsSorted()] }}
+                  {{ getSortingIndicator(header.column) }}
                 </th>
               </tr>
             </thead>
@@ -124,12 +120,20 @@
                   :key="cell.id"
                   class="px-2 py-2 text-sm text-center text-gray-500"
                 >
-                  <tippy :content="getCellTooltip(cell.column, row)">
+                  <tippy
+                    v-if="cell.column.columnDef.header === 'Tanggal'"
+                    :content="getCellTooltip(cell.column, row)"
+                  >
                     <FlexRender
                       :render="cell.column.columnDef.cell"
                       :props="cell.getContext()"
                     />
                   </tippy>
+                  <FlexRender
+                    v-else
+                    :render="cell.column.columnDef.cell"
+                    :props="cell.getContext()"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -137,84 +141,86 @@
         </div>
       </div>
       <!-- Pagination Wrapper -->
-      <div class="grid items-center justify-between gap-2 mt-8 sm:flex">
-        <div class="inline-flex flex-wrap gap-2">
-          Page {{ table.getState().pagination.pageIndex + 1 }} of
+      <div class="mt-4">
+        <div class="flex self-center justify-center mx-auto text-sm gap-x-auto">
+          Show Page {{ table.getState().pagination.pageIndex + 1 }} of
           {{ table.getPageCount() }} -
           {{ table.getFilteredRowModel().rows.length }} results
         </div>
-        <div
-          class="flex flex-col flex-wrap border rounded-lg shadow-sm sm:inline-flex sm:flex-row"
-        >
-          <button
-            class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-            @click="table.setPageIndex(0)"
+        <div class="flex items-center justify-between w-full sm:flex">
+          <div class="flex-1"></div>
+          <div
+            class="flex flex-col border rounded-lg shadow-sm grow-0 sm:inline-flex sm:flex-row"
           >
-            First page
-          </button>
-          <button
-            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="!table.getCanPreviousPage()"
-            @click="table.previousPage()"
-          >
-            <svg
-              class="self-end shrink-0 size-4"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+            <button
+              class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              @click="table.setPageIndex(0)"
             >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-            Prev
-          </button>
-          <button
-            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="!table.getCanNextPage()"
-            @click="table.nextPage()"
-          >
-            Next
-            <svg
-              class="self-end shrink-0 size-4"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              First page
+            </button>
+            <button
+              class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="!table.getCanPreviousPage()"
+              @click="table.previousPage()"
             >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-          </button>
-          <button
-            class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            @click="table.setPageIndex(table.getPageCount() - 1)"
-          >
-            Last page
-          </button>
-        </div>
-        <div class="inline-flex flex-wrap gap-2">
-          <label for="pageSize">Rows per page:</label>
-          <select
-            id="pageSize"
-            v-model="pagination.pageSize"
-            @change="handlePageSizeChange"
-          >
-            <option v-for="size in [5, 10, 20, 50]" :key="size" :value="size">
-              {{ size }}
-            </option>
-          </select>
+              <svg
+                class="self-end shrink-0 size-4"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+              Prev
+            </button>
+            <button
+              class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="!table.getCanNextPage()"
+              @click="table.nextPage()"
+            >
+              Next
+              <svg
+                class="self-end shrink-0 size-4"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
+            <button
+              class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              @click="table.setPageIndex(table.getPageCount() - 1)"
+            >
+              Last page
+            </button>
+          </div>
+          <div class="flex justify-end flex-1 gap-2">
+            <label for="pageSize">Rows per page:</label>
+            <select
+              id="pageSize"
+              v-model="pagination.pageSize"
+              @change="handlePageSizeChange"
+            >
+              <option v-for="size in [5, 10, 20, 50]" :key="size" :value="size">
+                {{ size }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
-
       <!-- End Pagination Wrapper -->
     </div>
   </div>
@@ -230,13 +236,9 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table';
-import { computed, defineEmits, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Tippy } from 'vue-tippy';
 
-const emit = defineEmits(['handleClick']);
-const handleClick = event => {
-  emit('handleClick', event);
-};
 const props = defineProps({
   data: {
     type: Array,
@@ -325,12 +327,22 @@ const table = useVueTable({
         ? updaterOrValue(sorting.value)
         : updaterOrValue;
   },
-  // initialState: {
-  //   pagination: {
-  //     pageSize: 10,
-  //   },
-  // },
+  enableMultiSort: true,
+  initialState: {
+    pagination: {
+      pageSize: pagination.value.pageSize,
+    },
+    sorting: [{ id: 'dtTransaction', desc: true }],
+  },
 });
+
+function getSortingIndicator(column) {
+  const indicators = {
+    asc: ' ↑',
+    desc: ' ↓',
+  };
+  return indicators[column.getIsSorted()];
+}
 
 // watchEffect(() => {
 //   console.log(table.getState().sorting);
@@ -338,23 +350,20 @@ const table = useVueTable({
 </script>
 
 <style scoped>
-table {
+/* table {
   border: 1px solid lightgray;
-}
+} */
 
 tbody {
   border-bottom: 1px solid lightgray;
 }
 
-/* tbody tr:nth-child(odd) {
-  @apply lg:bg-gray-100/50 lg:dark:bg-slate-800/50;
-} */
-
+/* 
 th {
   border-bottom: 1px solid lightgray;
   border-right: 1px solid lightgray;
   padding: 2px 4px;
-}
+} */
 
 tfoot {
   color: gray;

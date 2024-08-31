@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       port: Number(env.VITE_PORT),
     },
     plugins: [vue()],
-    base: process.env.VITE_BASE_URL || '/',
+    base: env.VITE_BASE_URL || '/',
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

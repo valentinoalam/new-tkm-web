@@ -25,7 +25,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: '',
         name: 'Transaksi',
         component: defineAsyncComponent(
-          () => import('@/views/kas/jurnal/List.vue')
+          () => import('@/views/kas/jurnal/index.vue')
         ), // Lazy load TransactionList
         meta: { requiresAuth: false, title: 'Beranda_Inventory' },
       },
@@ -33,7 +33,7 @@ export const routes: Array<RouteRecordRaw> = [
         path: 'cash/laporan',
         name: 'FinancialReport',
         component: defineAsyncComponent(
-          () => import('@/views/kas/laporan/FinancialReport.vue')
+          () => import('@/views/kas/jurnal/laporan/FinancialReport.vue')
         ), // Lazy load FinancialReport
       },
       {

@@ -1,18 +1,10 @@
 import { createColumnHelper } from '@tanstack/vue-table';
-import { h } from 'vue';
+import { defineEmits, h } from 'vue';
 
 import { formatRupiah } from '@/utils/formatRupiah';
 
 const appUrl = 'https://dkm.assalamjs.online/';
-function handleEdit(rowData: unknown) {
-  console.log('Edit action triggered for:', rowData);
-  // Implement your edit logic here
-}
 
-function handleDelete(rowData: unknown) {
-  console.log('Delete action triggered for:', rowData);
-  // Implement your delete logic here, possibly with a confirmation dialog
-}
 type RowData = {
   id: string;
   dtTransaction: Date;
@@ -24,6 +16,16 @@ type RowData = {
   photo: string;
 };
 
+// In your setup function or script block
+const emit = defineEmits(['edit', 'delete']);
+
+const handleEdit = (row: RowData) => {
+  emit('edit', row);
+};
+
+const handleDelete = (row: RowData) => {
+  emit('delete', row);
+};
 const columnHelper = createColumnHelper<RowData>();
 
 const columns = [
@@ -52,7 +54,7 @@ const columns = [
       return h(
         'span',
         {
-          class: `inline-flex min-h-9 min-w-28 items-center leading-tight py-1 px-1 rounded-3xl justify-center font-bold text-white dark:border-neutral-200 dark:text-white`,
+          class: `inline-flex min-h-6 min-w-28 items-center leading-none py-1 px-1 rounded-3xl justify-center font-extralight text-white dark:border-neutral-200 dark:text-white`,
           style: {
             backgroundColor: color,
           },
@@ -99,7 +101,7 @@ const columns = [
   columnHelper.accessor('id', {
     id: 'actions', // Unique identifier for this column
     header: 'Actions',
-    cell: info => {
+    cell: ({ row }) => {
       return h(
         'div',
         {
@@ -111,8 +113,8 @@ const columns = [
             {
               type: 'button',
               class:
-                'w-12 text-white justify-center bg-blue-500 rounded hover:bg-blue-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
-              onClick: () => handleEdit(info.getValue),
+                'w-12 text-white justify-center bg-blue-500 hover:bg-blue-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
+              onClick: () => handleEdit(row.original),
             },
             'Edit'
           ),
@@ -121,8 +123,8 @@ const columns = [
             {
               type: 'button',
               class:
-                'w-12 text-white justify-center bg-red-500 rounded hover:bg-red-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
-              onClick: () => handleDelete(info.getValue),
+                'w-12 text-white justify-center bg-red-500 hover:bg-red-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
+              onClick: () => handleDelete(row.original),
             },
             'Delete'
           ),

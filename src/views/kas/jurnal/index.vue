@@ -1,6 +1,7 @@
 <template>
   <div class="container mx-auto">
     <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
+    <Tables />
     <!-- Modal Form -->
     <div
       v-if="isModalOpen"
@@ -10,43 +11,11 @@
         <h2 class="mb-4 text-2xl">
           {{ selectedTransaction ? 'Edit Transaction' : 'Add New Transaction' }}
         </h2>
-
-        <!-- FormKit Form -->
-        <FormKit type="form" :actions="false" @submit="submitForm">
-          <FormKit
-            type="text"
-            label="Description"
-            v-model="form.description"
-            :validation="'required'"
-          />
-          <FormKit
-            type="number"
-            label="Amount"
-            v-model="form.amount"
-            :validation="'required|number'"
-          />
-          <FormKit
-            type="date"
-            label="Date"
-            v-model="form.date"
-            :validation="'required|date'"
-          />
-          <div class="flex justify-end mt-4">
-            <button
-              type="button"
-              class="px-4 py-2 mr-2 text-white bg-gray-500 rounded hover:bg-gray-700"
-              @click="closeModal"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700"
-            >
-              Save
-            </button>
-          </div>
-        </FormKit>
+        <AddOrEditTransaction
+          :selectedTransaction="selectedTransaction"
+          @closeModal="closeModal"
+          @updateTransaction="handleUpdateTransaction"
+        />
       </div>
     </div>
     <!-- Transaction Table -->
@@ -57,15 +26,17 @@
       :getRowClass="getRowClass"
       :buttonName="'New Entry'"
       @handleClick="openModal()"
+      @edit="onEdit"
+      @delete="onDelete"
     />
   </div>
 </template>
 
 <script setup>
-import { FormKit } from '@formkit/vue';
 import { computed, onMounted, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
+import Tables from '@/components/organisms/Tables.vue';
 // import BarChart from '@/components/charts/BarChart.vue';
 import Table from '@/components/Table.vue';
 import { MONTHS } from '@/constant';
@@ -73,6 +44,7 @@ import { getAllTransactions } from '@/service/appsheetService';
 import { formatRupiah } from '@/utils/formatRupiah';
 
 import columns, { getRowClass } from './colDef';
+import AddOrEditTransaction from './transaksi/AddOrEdit.vue';
 
 const dtStart = ref();
 const dtEnd = ref();
@@ -81,7 +53,7 @@ const chartData = ref([]);
 const transactions = ref([]); // Transactions data from API
 const isModalOpen = ref(false); // Controls modal visibility
 const selectedTransaction = ref(null); // Selected transaction for editing
-const form = ref({ description: '', amount: 0, date: '' }); // Form data
+
 // Fetch transactions from API
 const fetchTransactions = async () => {
   try {
@@ -98,6 +70,15 @@ const fetchTransactions = async () => {
     console.error('Failed to fetch transactions:', error);
   }
 };
+
+function onEdit(row) {
+  // Handle the edit action
+  console.log('Edit:', row);
+}
+function onDelete(row) {
+  // Handle the delete action
+  console.log('Delete:', row);
+}
 
 // Initialize an object to store totals by month
 const monthlyTotals = {};
@@ -188,31 +169,6 @@ onMounted(async () => {
 });
 console.log(chartData.value);
 // Modal Handling
-const openModal = (transaction = null) => {
-  selectedTransaction.value = transaction;
-  form.value = transaction
-    ? { ...transaction }
-    : { description: '', amount: 0, date: '' };
-  isModalOpen.value = true;
-};
-
-const closeModal = () => {
-  isModalOpen.value = false;
-};
-
-const submitForm = () => {
-  if (selectedTransaction.value) {
-    // Update the existing transaction
-    const index = transactions.value.findIndex(
-      t => t.id === selectedTransaction.value.id
-    );
-    transactions.value[index] = { ...form.value };
-  } else {
-    // Add a new transaction
-    transactions.value.push({ ...form.value, id: Date.now() });
-  }
-  closeModal();
-};
 </script>
 
 <style></style>
