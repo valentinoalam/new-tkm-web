@@ -29,13 +29,13 @@ export const routes: Array<RouteRecordRaw> = [
         ), // Lazy load TransactionList
         meta: { requiresAuth: false, title: 'Beranda_Inventory' },
       },
-      {
-        path: 'cash/laporan',
-        name: 'FinancialReport',
-        component: defineAsyncComponent(
-          () => import('@/views/kas/jurnal/laporan/FinancialReport.vue')
-        ), // Lazy load FinancialReport
-      },
+      // {
+      //   path: 'cash/laporan',
+      //   name: 'FinancialReport',
+      //   component: defineAsyncComponent(
+      //     () => import('@/views/kas/jurnal/laporan/FinancialReport.vue')
+      //   ), // Lazy load FinancialReport
+      // },
       {
         path: 'cash/budget',
         name: 'Budget',

@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <h1>Financial Report</h1>
     <form @submit.prevent="fetchReport">
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { fetchFinancialReport } from '../../../service/transactionService';
+import { fetchFinancialReport } from '@/service/transactionService';
 import ReportSummary from './ReportSummary.vue';
 
 export default {
@@ -41,4 +41,4 @@ export default {
     },
   },
 };
-</script>
+</script> -->
