@@ -27,7 +27,10 @@ export default [
     },
     rules: {
       'no-unused-vars': 'off', // Disabled in favor of @typescript-eslint/no-unused-vars
-      '@typescript-eslint/no-unused-vars': ['error'],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
       'vue/multi-word-component-names': 'off',
       'simple-import-sort/imports': 'error',
