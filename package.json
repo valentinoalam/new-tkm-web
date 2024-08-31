@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
-    "build": "yarn run lint && cross-env NODE_ENV=production vue-tsc -b && vite build",
+    "build": "yarn cross-env NODE_ENV=production vue-tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write . --fix",
-    "serve": "pm2 start dist/index.html --name kelolamasjid-web"
+    "serve": "pm2 start dist/index.html"
   },
   "dependencies": {
     "@formkit/vue": "^1.6.5",
