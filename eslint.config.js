@@ -29,12 +29,25 @@ export default [
       'no-unused-vars': 'off', // Disabled in favor of @typescript-eslint/no-unused-vars
       '@typescript-eslint/no-unused-vars': [
         'warn',
-        { argsIgnorePattern: '^_' },
+        { argsIgnorePattern: '^_ignoredArg' }, // Replace with a more specific pattern
       ],
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
       'vue/multi-word-component-names': 'off',
-      'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+          ],
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+      'import/no-extraneous-dependencies': 'error',
       'import/first': 'error',
       'import/newline-after-import': ['error', { count: 1 }],
       'import/no-duplicates': 'error',
@@ -48,6 +61,7 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
+      'vue/no-unused-components': 'error',
     },
     plugins: {
       vue: eslintPluginVue,
@@ -56,5 +70,6 @@ export default [
       import: fixupPluginRules(importPlugin),
       'unused-imports': eslintPluginUnusedImports,
     },
+    ignores: ['dist'],
   },
 ];

@@ -4,13 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development vite",
-    "build": "yarn cross-env NODE_ENV=production vue-tsc -b && vite build",
+    "dev": "cross-env NODE_ENV=development vite --open",
+    "build": "cross-env NODE_ENV=production vue-tsc -b && yarn run lint && vite build",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "format": "prettier --write . --fix",
-    "serve": "pm2 start dist/index.html"
+    "serve": "pm2 start ecosystem.config.js"
   },
   "dependencies": {
     "@formkit/vue": "^1.6.5",

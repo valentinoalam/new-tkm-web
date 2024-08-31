@@ -13,11 +13,10 @@ import VueTippy from 'vue-tippy';
 import VueApexCharts from 'vue3-apexcharts';
 import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar';
 
-import DashboardLayout from '@/layouts/DashboardLayout.vue';
-import EmptyLayout from '@/layouts/EmptyLayout.vue';
-
 import App from './App.vue';
 import router from './router';
+import DashboardLayout from '@/layouts/DashboardLayout.vue';
+import EmptyLayout from '@/layouts/EmptyLayout.vue';
 
 const app = createApp(App);
 app.component('default-layout', DashboardLayout);
