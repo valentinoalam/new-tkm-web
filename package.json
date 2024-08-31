@@ -2,6 +2,7 @@
   "name": "my-vue-app",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite --open",
     "build": "cross-env NODE_ENV=production vue-tsc -b && yarn run lint && vite build",
@@ -9,7 +10,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write . --fix",
-    "serve": "pm2 start ecosystem.config.js"
+    "serve": "pm2 start server.js --name dkmmasjid-web"
   },
   "dependencies": {
     "@formkit/vue": "^1.6.5",
