@@ -258,6 +258,14 @@ const props = defineProps({
   },
 });
 
+// Emit function for closing the modal
+const emit = defineEmits(['openModal']);
+
+// Emit openModal event
+const handleClick = () => {
+  emit('openModal');
+};
+
 const rowClass = row => {
   // Use the getRowClass function if it exists, otherwise use a default class
   return props.getRowClass

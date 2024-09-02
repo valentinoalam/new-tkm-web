@@ -24,7 +24,7 @@
       :columns="columns"
       :getRowClass="getRowClass"
       :buttonName="'New Entry'"
-      @handleClick="openModal()"
+      @openModal="openModal"
       @edit="onEdit"
       @delete="onDelete"
     />
@@ -50,6 +50,15 @@ const chartData = ref([]);
 const transactions = ref([]); // Transactions data from API
 const isModalOpen = ref(false); // Controls modal visibility
 const selectedTransaction = ref(null); // Selected transaction for editing
+
+const openModal = () => {
+  console.log('trite');
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
 // Fetch transactions from API
 const fetchTransactions = async () => {
