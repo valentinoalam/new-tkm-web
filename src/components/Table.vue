@@ -1,7 +1,9 @@
 <template>
   <div class="-m-1.5 gap-y-2">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div
+        class="-mx-4 -my-2 overflow-visible sm:-mx-6 lg:-mx-8"
+      >
         <div class="flex items-center justify-start gap-2 mt-4">
           <input
             v-model="dateStart"
@@ -77,10 +79,10 @@
           </button>
         </div>
         <div
-          class="inline-block min-w-full space-y-2 overflow-hidden align-middle rounded-lg shadow"
+          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-hidden align-middle rounded-lg shadow-lg"
         >
           <table
-            class="w-full min-w-full mt-2 leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
+            class="w-full min-w-full leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
           >
             <thead>
               <tr
@@ -91,7 +93,7 @@
                   v-for="header in headerGroup.headers"
                   :key="header.id"
                   scope="col"
-                  class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer"
+                  class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer w-"
                   :class="{
                     'cursor-pointer select-none': header.column.getCanSort(),
                   }"

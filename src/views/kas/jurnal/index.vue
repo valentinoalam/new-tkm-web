@@ -1,7 +1,6 @@
 <template>
   <div class="container mx-auto">
     <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
-    <Tables />
     <!-- Modal Form -->
     <div
       v-if="isModalOpen"
@@ -38,7 +37,6 @@ import VueApexCharts from 'vue3-apexcharts';
 
 import columns, { getRowClass } from './colDef';
 import AddOrEditTransaction from './transaksi/AddOrEdit.vue';
-import Tables from '@/components/organisms/Tables.vue';
 // import BarChart from '@/components/charts/BarChart.vue';
 import Table from '@/components/Table.vue';
 import { MONTHS } from '@/constant';
