@@ -1,9 +1,7 @@
 <template>
   <div class="-m-1.5 gap-y-2">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
-      <div
-        class="-mx-4 -my-2 overflow-visible sm:-mx-6 lg:-mx-8"
-      >
+      <div class="-mx-4 -my-2 overflow-visible sm:-mx-6 lg:-mx-8">
         <div class="flex items-center justify-start gap-2 mt-4">
           <input
             v-model="dateStart"
