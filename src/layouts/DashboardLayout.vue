@@ -25,7 +25,7 @@
           class="fixed inset-0 z-10 w-full h-full transition-opacity bg-gray-900 opacity-50 modal-overlay"
         >
           <div
-            class="absolute right-0 z-50 flex flex-col items-center mt-4 mr-4 text-sm text-white cursor-pointer top-10 modal-close"
+            class="absolute right-0 z-50 flex flex-col items-center h-full mt-4 mr-4 text-sm text-white cursor-pointer top-10 modal-close"
           >
             <svg
               class="text-white fill-current"
@@ -41,7 +41,7 @@
             <span class="text-sm">(Esc)</span>
           </div>
         </div>
-        <div id="body-scroll" class="container px-6 py-8 mx-auto">
+        <div id="body-scroll" class="container h-full py-8 mx-auto">
           <slot />
         </div>
       </main>

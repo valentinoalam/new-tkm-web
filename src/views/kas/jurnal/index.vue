@@ -1,5 +1,13 @@
 <template>
-  <div class="container mx-auto">
+  <div v-show="isLoading">
+    <looping-rhombuses-spinner
+      class="absolute top-[32dvh] left-[32vw]"
+      :animation-duration="2500"
+      :rhombus-size="15"
+      color="#CAFFBF"
+    />
+  </div>
+  <div class="space-y-7">
     <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
     <!-- Modal Form -->
     <div
@@ -24,6 +32,7 @@
       :columns="columns"
       :getRowClass="getRowClass"
       :buttonName="'New Entry'"
+      @fetchData="handleDateRange"
       @openModal="openModal"
       @edit="onEdit"
       @delete="onDelete"
@@ -34,6 +43,8 @@
 <script setup>
 // import/no-extraneous-dependencies
 import chroma from 'chroma-js';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { LoopingRhombusesSpinner } from 'epic-spinners';
 import { computed, onMounted, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
@@ -46,9 +57,8 @@ import { getAllTransactions } from '@/service/appsheetService';
 import { formatRupiah } from '@/utils/formatRupiah';
 
 let maxValue;
-const dtStart = ref();
-const dtEnd = ref();
 
+const isLoading = ref(true);
 const chartData = ref([]);
 const transactions = ref([]); // Transactions data from API
 const isModalOpen = ref(false); // Controls modal visibility
@@ -62,20 +72,25 @@ const closeModal = () => {
   isModalOpen.value = false;
 };
 
+async function handleDateRange(dtStart, dtEnd) {
+  await fetchTransactions(dtStart, dtEnd);
+}
+
 // Fetch transactions from API
-const fetchTransactions = async () => {
+const fetchTransactions = async (dtStart = null, dtEnd = null) => {
   try {
     let response;
-    if (dtStart.value || dtEnd.value)
+    if (dtStart || dtEnd)
       response = await getAllTransactions({
-        startDate: dtStart.value.start,
-        endDate: dtEnd.value.end,
+        startDate: dtStart,
+        endDate: dtEnd,
       });
     else response = await getAllTransactions(); //axios.get('/dari-appsheet/transactions');
     transactions.value = response;
   } catch (error) {
     console.error('Failed to fetch transactions:', error);
   }
+  isLoading.value = false;
 };
 
 function onEdit(row) {
@@ -258,7 +273,6 @@ const colorScale = chroma.scale([
 ]); // Adjust colors as needed
 const colors = colorScale.colors(11); // Generate 10 hex colors
 
-console.log(colors);
 // Initialize data on component mount
 onMounted(async () => {
   await fetchTransactions();

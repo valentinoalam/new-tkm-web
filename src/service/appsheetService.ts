@@ -5,6 +5,7 @@ const dataEndpoint = 'dari-appsheet';
 export const getAllTransactions = async (
   params: { startDate: Date; endDate: Date } | undefined
 ) => {
+  console.log(params);
   const response = await apiClient.get(`${dataEndpoint}/transactions`, {
     params,
   });

@@ -1,4 +1,7 @@
-import { createColumnHelper } from '@tanstack/vue-table';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { compareItems, RankingInfo } from '@tanstack/match-sorter-utils';
+import { createColumnHelper, SortingFn, sortingFns } from '@tanstack/vue-table';
+import { LucideEdit, LucideDelete } from 'lucide-vue-next';
 import { defineEmits, h } from 'vue';
 
 import { formatRupiah } from '@/utils/formatRupiah';
@@ -27,6 +30,23 @@ const handleDelete = (row: RowData) => {
   emit('delete', row);
 };
 const columnHelper = createColumnHelper<RowData>();
+
+const fuzzySort: SortingFn<unknown> = (rowA, rowB, columnId) => {
+  let dir = 0;
+
+  // Only sort by rank if the column has ranking information
+  // Check if the column has ranking information
+  const metaA = rowA.columnFiltersMeta[columnId] as RankingInfo | undefined;
+  const metaB = rowB.columnFiltersMeta[columnId] as RankingInfo | undefined;
+
+  if (metaA && metaB) {
+    // Compare the ranks if both rows have ranking information
+    dir = compareItems(metaA, metaB);
+  }
+
+  // Provide an alphanumeric fallback for when the item ranks are equal
+  return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
+};
 
 const columns = [
   columnHelper.accessor('dtTransaction', {
@@ -78,6 +98,7 @@ const columns = [
         formatRupiah(value) // Formats the value using `formatRupiah`
       );
     },
+    sortingFn: fuzzySort,
   }),
   columnHelper.accessor('in_out', {
     header: 'Keluar/Masuk',
@@ -94,7 +115,7 @@ const columns = [
             alt: 'Image description',
             width: 200,
             height: 150,
-            // Add more attributes as needed
+            onClick: () => displayImage(info.row.id),
           })
         : '', // Simply returns the value
   }),
@@ -116,7 +137,7 @@ const columns = [
                 'w-12 text-white justify-center bg-blue-500 hover:bg-blue-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
               onClick: () => handleEdit(row.original),
             },
-            'Edit'
+            h(LucideEdit)
           ),
           h(
             'button',
@@ -126,7 +147,7 @@ const columns = [
                 'w-12 text-white justify-center bg-red-500 hover:bg-red-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
               onClick: () => handleDelete(row.original),
             },
-            'Delete'
+            h(LucideDelete)
           ),
           // Add more buttons or actions as needed
         ]
@@ -142,76 +163,6 @@ export const getRowClass = (row: RowData) => {
 };
 
 export default columns;
-
-// const chartCategories = computed(() => {
-//   // Group transactions by month and year using Lodash
-//   const groupedByMonth = _.groupBy(transactions.value, tx => {
-//     return dayjs(tx.dtTransaction).format('MMMM YYYY'); // e.g., "August 2024"
-//   });
-
-//   // Get the list of month-year combinations as categories
-//   return Object.keys(groupedByMonth);
-// });
-// const chartCategories = computed(() =>
-//   transactions.value.map(tx => tx.dtTransaction)
-// );
-// const monthlyIncomeExpense = computed(() => {
-//   const groupedByMonth = _.groupBy(transactions.value, tx =>
-//     dayjs(tx.dtTransaction).format('MMMM YYYY')
-//   );
-
-//   return _.map(groupedByMonth, (monthData, monthYear) => {
-//     const income = _.sumBy(monthData, tx =>
-//       tx.in_out === 'Penerimaan' ? parseFloat(tx.value) : 0
-//     );
-//     const expense = _.sumBy(monthData, tx =>
-//       tx.in_out === 'Pengeluaran' ? parseFloat(tx.value) : 0
-//     );
-
-//     return {
-//       month: monthYear,
-//       income,
-//       expense,
-//     };
-//   });
-// });
-// const chartSeries = computed(() => [
-//   {
-//     name: 'Income',
-//     data: monthlyIncomeExpense.value.map(data => data.income),
-//     color: '#42b883',
-//   },
-//   {
-//     name: 'Expense',
-//     data: monthlyIncomeExpense.value.map(data => data.expense),
-//     color: '#ff6384',
-//   },
-// ]);
-
-// const chartOptions = computed(() => ({
-//   chart: {
-//     id: 'income-expense-chart',
-//     stacked: false,
-//   },
-//   xaxis: {
-//     categories: monthlyIncomeExpense.value.map(data => data.month),
-//   },
-//   yaxis: {
-//     labels: {
-//       formatter: value => `Rp ${value}`,
-//     },
-//   },
-//   plotOptions: {
-//     bar: {
-//       horizontal: false,
-//     },
-//   },
-//   dataLabels: {
-//     enabled: false,
-//   },
-//   tooltip: {
-//     y: {
-//       formatter: value => `Rp ${value}`,
-//     },
-//   },
-// }));
+function displayImage(id: string): unknown {
+  throw new Error('Function not implemented.');
+}

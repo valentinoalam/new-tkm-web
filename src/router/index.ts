@@ -5,21 +5,19 @@ import ImageEditor from '@/views/ImageEditor.vue';
 
 export const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    name: 'home',
-    component: defineAsyncComponent(() => import('@/views/Home.vue')), // Lazy load Home component
-    meta: { title: 'Beranda' },
-  },
-  {
     path: '/image-editor',
     name: 'Editor',
     component: ImageEditor,
     meta: { title: 'Image Editor', layout: 'empty' },
   },
   {
-    path: '/kas',
+    path: '/',
     name: 'kas kecil',
-    component: () => import('@/views/kas/jurnal/index.vue'), // Create a parent component for better organization
+    component: defineAsyncComponent(
+      () => import('@/views/kas/jurnal/index.vue')
+    ),
+    meta: { title: 'Beranda' },
+    // Create a parent component for better organization
     // children: [
     //   {
     //     path: '',

@@ -2,39 +2,10 @@
   <div class="-m-1.5 gap-y-2">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
       <div class="-mx-4 -my-2 overflow-visible sm:-mx-6 lg:-mx-8">
-        <div class="flex items-center justify-start gap-2 mt-4">
-          <input
-            v-model="dateStart"
-            type="date"
-            placeholder="Start Date"
-            class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
-          />
-          <input
-            v-model="dateEnd"
-            type="date"
-            placeholder="End Date"
-            class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
-          />
-          <button
-            @click="fetchTransactions"
-            type="button"
-            class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
-          >
-            Filter Transactions
-          </button>
-        </div>
         <div class="flex justify-between">
-          <div class="relative max-w-xs">
-            <label for="hs-table-search" class="sr-only">Search</label>
-            <input
-              type="text"
-              class="block w-full px-3 py-2 text-sm border border-gray-200 rounded-lg shadow-sm ps-9 focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-              placeholder="Search"
-              v-model="filter"
-            />
-
+          <div class="relative flex max-w-xs">
             <div
-              class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3"
+              class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
             >
               <svg
                 class="text-gray-400 size-4 dark:text-neutral-500"
@@ -52,11 +23,39 @@
                 <path d="m21 21-4.3-4.3"></path>
               </svg>
             </div>
+            <input
+              type="text"
+              class="block w-full px-3 text-sm border border-gray-200 rounded-lg shadow-sm ps-9 focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+              placeholder="Search"
+              v-model="filter"
+            />
+          </div>
+          <div class="flex items-center justify-start gap-2">
+            <!-- <DateSelector :dateStart="internalDateStart" :dateEnd="internalDateEnd" /> -->
+            <input
+              v-model="internalDateStart"
+              type="date"
+              placeholder="Start Date"
+              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+            />
+            <input
+              v-model="internalDateEnd"
+              type="date"
+              placeholder="End Date"
+              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+            />
+            <button
+              @click="handleDateRange"
+              type="button"
+              class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+            >
+              Filter Transactions
+            </button>
           </div>
           <button
             type="button"
             @click="handleClick"
-            class="inline-flex items-center px-4 py-3 text-sm font-medium text-blue-800 bg-blue-300 border border-transparent rounded-lg gap-x-2 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:bg-blue-900"
+            class="inline-flex items-center px-4 text-sm font-medium text-blue-800 bg-blue-300 border border-transparent rounded-lg gap-x-2 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:bg-blue-900"
           >
             <svg
               class="shrink-0 size-4"
@@ -227,6 +226,8 @@
 </template>
 
 <script setup>
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { rankItem } from '@tanstack/match-sorter-utils';
 import {
   FlexRender,
   getCoreRowModel,
@@ -238,6 +239,7 @@ import {
 } from '@tanstack/vue-table';
 import { computed, ref, watch } from 'vue';
 import { Tippy } from 'vue-tippy';
+// import DateSelector from './dateSelector.vue';
 
 const props = defineProps({
   data: {
@@ -258,12 +260,20 @@ const props = defineProps({
   },
 });
 
+// Internal state
+const internalDateStart = ref(props.dateStart);
+const internalDateEnd = ref(props.dateEnd);
+
 // Emit function for closing the modal
-const emit = defineEmits(['openModal']);
+const emit = defineEmits(['openModal', 'fetchData']);
 
 // Emit openModal event
 const handleClick = () => {
   emit('openModal');
+};
+
+const handleDateRange = () => {
+  emit('fetchData', internalDateStart.value, internalDateEnd.value);
 };
 
 const rowClass = row => {
@@ -322,6 +332,7 @@ const table = useVueTable({
     },
     // pagination: pagination.value,
   },
+  globalFilterFn: fuzzyFilter,
   // onPaginationChange: newPagination => {
   //   pagination.value = newPagination;
   // },
@@ -352,6 +363,15 @@ function getSortingIndicator(column) {
   return indicators[column.getIsSorted()];
 }
 
+function fuzzyFilter(row, columnId, value, addMeta) {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value);
+
+  // Store the ranking info
+  addMeta(itemRank);
+  // Return if the item should be filtered in/out
+  return itemRank.passed;
+}
 // watchEffect(() => {
 //   console.log(table.getState().sorting);
 // });

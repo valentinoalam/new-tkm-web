@@ -7,6 +7,7 @@ import '@formkit/themes/genesis';
 import 'tippy.js/dist/tippy.css';
 
 import { defaultConfig, plugin } from '@formkit/vue';
+import { createFormKitInputsPlugin } from '@kgierke/formkit-inputs';
 import vClickOutside from 'click-outside-vue3';
 import { createApp } from 'vue';
 import VueTippy from 'vue-tippy';
@@ -18,6 +19,7 @@ import router from './router';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 import EmptyLayout from '@/layouts/EmptyLayout.vue';
 
+const formKitInputPlugin = createFormKitInputsPlugin();
 const app = createApp(App);
 app.component('default-layout', DashboardLayout);
 app.component('empty-layout', EmptyLayout);
@@ -36,6 +38,12 @@ app.use(
       allowHTML: true,
     }, // => Global default options * see all props
   }
+);
+app.use(
+  plugin,
+  defaultConfig({
+    plugins: [formKitInputPlugin],
+  })
 );
 app.use(plugin, defaultConfig);
 app.use(PerfectScrollbarPlugin);
