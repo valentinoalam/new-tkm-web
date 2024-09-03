@@ -19,6 +19,13 @@
       v-model="form.date"
       :validation="'required|date'"
     />
+    <FormKit
+      type="image"
+      name="image"
+      label="Image"
+      multiple
+      uploadHandler="uploadHandler"
+    />
     <div class="flex justify-end mt-4">
       <button
         type="button"

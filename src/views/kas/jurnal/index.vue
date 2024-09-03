@@ -32,6 +32,8 @@
 </template>
 
 <script setup>
+// import/no-extraneous-dependencies
+import chroma from 'chroma-js';
 import { computed, onMounted, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
@@ -43,6 +45,7 @@ import { MONTHS } from '@/constant';
 import { getAllTransactions } from '@/service/appsheetService';
 import { formatRupiah } from '@/utils/formatRupiah';
 
+let maxValue;
 const dtStart = ref();
 const dtEnd = ref();
 
@@ -52,7 +55,6 @@ const isModalOpen = ref(false); // Controls modal visibility
 const selectedTransaction = ref(null); // Selected transaction for editing
 
 const openModal = () => {
-  console.log('trite');
   isModalOpen.value = true;
 };
 
@@ -71,7 +73,6 @@ const fetchTransactions = async () => {
       });
     else response = await getAllTransactions(); //axios.get('/dari-appsheet/transactions');
     transactions.value = response;
-    console.log(transactions.value);
   } catch (error) {
     console.error('Failed to fetch transactions:', error);
   }
@@ -86,84 +87,213 @@ function onDelete(row) {
   console.log('Delete:', row);
 }
 
-// Initialize an object to store totals by month
-const monthlyTotals = {};
+function addPrefixToDuplicateNames(series) {
+  const nameTracker = {};
 
-const chartSeries = computed(() => [
-  {
-    name: 'Income',
-    data: chartData.value.map(item => parseFloat(item.income)),
-    color: '#42b883',
-  },
-  {
-    name: 'Expense',
-    data: chartData.value.map(item => parseFloat(item.expense)),
-    color: '#ff6384',
-  },
-]);
+  series.forEach(item => {
+    const { name, group } = item;
+
+    // Check if the name already exists in the tracker
+    if (!nameTracker[name]) {
+      nameTracker[name] = group;
+    } else {
+      // If it exists and belongs to a different group, prefix both
+      if (nameTracker[name] !== group) {
+        const prefix = group === 'Penerimaan' ? 'in_' : 'out_';
+        item.name = prefix + name;
+
+        // Also update the original entry with the appropriate prefix
+        const originalPrefix =
+          nameTracker[name] === 'Penerimaan' ? 'in_' : 'out_';
+        const originalItem = series.find(
+          s => s.name === name && s.group === nameTracker[name]
+        );
+        if (originalItem) {
+          originalItem.name = originalPrefix + name;
+        }
+      }
+    }
+  });
+}
+
+// Function to aggregate monthly totals by group
+function calculateGroupTotals(series) {
+  const monthlyTotals = {};
+
+  series.forEach(item => {
+    const { group, data } = item;
+
+    data.forEach((value, index) => {
+      const month = MONTHS[index]; // Assumes MONTHS is an array of month names or identifiers
+
+      if (!monthlyTotals[month]) {
+        monthlyTotals[month] = { Penerimaan: 0, Pengeluaran: 0 };
+      }
+
+      if (group === 'Penerimaan') {
+        monthlyTotals[month]['Penerimaan'] += value;
+      } else if (group === 'Pengeluaran') {
+        monthlyTotals[month]['Pengeluaran'] += value;
+      }
+    });
+  });
+
+  return monthlyTotals;
+}
+
+function sortStacks(series) {
+  // Sort series based on the sum of data values for each stack
+  return series.sort((a, b) => {
+    // Compare sums of data for each series to sort the series itself
+    const sumA = a.data.reduce((acc, val) => acc + val, 0);
+    const sumB = b.data.reduce((acc, val) => acc + val, 0);
+    return sumA - sumB;
+  });
+}
 
 const chartOptions = computed(() => ({
   chart: {
     type: 'bar',
-    height: 350,
+    stacked: true,
+    height: 450,
   },
   plotOptions: {
     bar: {
       horizontal: false,
-      columnWidth: '55%',
-      endingShape: 'rounded',
+      borderRadius: 12,
+      borderRadiusApplication: 'end',
+      borderRadiusWhenStacked: 'end',
+      columnWidth: '70%',
+      barHeight: '70%',
     },
   },
   dataLabels: {
-    enabled: false,
+    enabled: true,
+    formatter: val => {
+      return val / 1000000 + 'M';
+    },
+    color: '#EEEE',
+    offsetX: 0, // Adjust X offset as needed
+    offsetY: 0, // Adjust Y offset as needed
   },
   stroke: {
     show: true,
-    width: 2,
+    width: 0.1,
     colors: ['transparent'],
   },
   xaxis: {
+    type: 'category',
     categories: chartData.value.map(item => item.month),
   },
   yaxis: {
     title: {
-      text: 'Amount',
+      text: 'Amount perMillion (IDR)',
     },
+    labels: {
+      formatter: function (val) {
+        // Format the label with appropriate units
+        return val / 1000000; // Converts to millions
+      },
+    },
+    tickAmount: 14, // Adjust the number of ticks if needed
+    min: 0, // Minimum value of the y-axis
+    max: Math.ceil(maxValue / 5000000) * 5000000,
   },
   fill: {
     opacity: 1,
   },
   tooltip: {
-    y: {
-      formatter: val => formatRupiah(val),
+    custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+      const category = w.globals.seriesNames[seriesIndex];
+      const value = series[seriesIndex][dataPointIndex];
+      const group = w.config.series[seriesIndex].group;
+      // Calculate total value for the stacked categories in the same group
+      let totalValue = 0;
+      w.config.series.forEach((s, i) => {
+        if (s.group === group) {
+          totalValue += series[i][dataPointIndex];
+        }
+      });
+      return `<div class="apexcharts-tooltip-title">${group} (${formatRupiah(totalValue)})</div>
+                <div>${category}: ${formatRupiah(value)} </div>`;
     },
   },
+  legend: {
+    position: 'bottom',
+    horizontalAlign: 'center',
+    labels: {
+      useSeriesColors: true, // Use colors defined for each series
+    },
+    items: Array.from(legendItems).map(category => ({
+      name: category,
+      color: colors[cats.indexOf(category)],
+    })),
+  },
 }));
+
+// Initialize an object to store totals by month
+const monthlyTotals = {};
+let chartSeries = [];
+const legendItems = new Set();
+let cats = [];
+// const colors = [
+//   '#FFADAD',
+//   '#FFD6A5',
+//   '#FDFFB6',
+//   '#CAFFBF',
+//   '#9BF6FF',
+//   '#A0C4FF',
+//   '#BDB2FF',
+//   '#C9E4DE',
+//   '#C6DEF1',
+//   '#DBCDF0',
+//   '#F2C6DE',
+// ];
+const colorScale = chroma.scale([
+  'yellow',
+  'lightgreen',
+  '008ae5',
+  '9BF6FF',
+  'FFADAD',
+]); // Adjust colors as needed
+const colors = colorScale.colors(11); // Generate 10 hex colors
+
+console.log(colors);
 // Initialize data on component mount
 onMounted(async () => {
   await fetchTransactions();
+  cats = Array.from(new Set(transactions.value.map(i => i.category)));
+
   transactions.value.forEach(transaction => {
     const [monthIndex] = new Date(transaction.dtTransaction)
       .toLocaleDateString()
       .split('/');
-    // const month = months[parseInt(monthIndex) - 1];
     const month = MONTHS[parseInt(monthIndex) - 1];
+    const category = transaction.category;
     if (!monthlyTotals[month]) {
-      monthlyTotals[month] = { IN: 0, OUT: 0 };
+      monthlyTotals[month] = {};
+    }
+
+    if (!monthlyTotals[month][category]) {
+      monthlyTotals[month][category] = { IN: 0, OUT: 0 };
     }
 
     if (transaction.in_out === 'Penerimaan') {
-      monthlyTotals[month].IN += parseFloat(transaction.value);
+      monthlyTotals[month][category].IN += parseFloat(transaction.value);
     } else if (transaction.in_out === 'Pengeluaran') {
-      monthlyTotals[month].OUT += parseFloat(transaction.value);
+      monthlyTotals[month][category].OUT += parseFloat(transaction.value);
     }
   });
   // Convert the object into an array for charting
   chartData.value = Object.entries(monthlyTotals)
     .map(([month, totals]) => ({
       month,
-      income: totals.IN,
-      expense: totals.OUT,
+      income: Object.entries(totals).map(([kategori, val]) => ({
+        [kategori]: val.IN,
+      })), //.reduce((acc, val) => acc + val.IN, 0),
+      expense: Object.entries(totals).map(([kategori, val]) => ({
+        [kategori]: val.OUT,
+      })), //.reduce((acc, val) => acc + val.OUT, 0),
     }))
     .sort((a, b) => {
       // Parse the 'month' strings to Date objects for comparison
@@ -171,10 +301,65 @@ onMounted(async () => {
       const dateB = MONTHS.indexOf(b.month);
       return dateA < dateB ? -1 : 1;
     });
-  console.log(chartData.value);
+  chartData.value.forEach(({ month, income, expense }) => {
+    income.forEach(item => {
+      const [category, value] = Object.entries(item)[0];
+      if (value) {
+        legendItems.add(category);
+        chartSeries.push({
+          name: category,
+          group: 'Penerimaan',
+          color: colors[cats.indexOf(category)],
+          data: chartData.value.map(d => (d.month === month ? value : 0)),
+        });
+      }
+    });
+
+    expense.forEach(item => {
+      const [category, value] = Object.entries(item)[0];
+      if (value) {
+        legendItems.add(category);
+        chartSeries.push({
+          name: category,
+          group: 'Pengeluaran',
+          color: colors[cats.indexOf(category)],
+          data: chartData.value.map(d => (d.month === month ? value : 0)),
+        });
+      }
+    });
+  });
+
+  const mergedData = chartSeries.reduce((acc, curr) => {
+    const existingEntry = acc.find(
+      entry =>
+        entry.name === curr.name &&
+        entry.group === curr.group &&
+        entry.color === curr.color
+    );
+
+    if (existingEntry) {
+      existingEntry.data = existingEntry.data.map(
+        (value, index) => value + curr.data[index]
+      );
+    } else {
+      acc.push(curr);
+    }
+
+    return acc;
+  }, []);
+
+  chartSeries = mergedData;
+  addPrefixToDuplicateNames(chartSeries);
+  // Calculate totals
+  const groupTotals = calculateGroupTotals(chartSeries);
+
+  // Find the maximum value across all groups
+  maxValue = Math.max(
+    ...Object.values(groupTotals).flatMap(totals => Object.values(totals))
+  );
+  const sortedSeries = sortStacks(chartSeries);
+  chartSeries = sortedSeries;
 });
-console.log(chartData.value);
-// Modal Handling
 </script>
 
 <style></style>

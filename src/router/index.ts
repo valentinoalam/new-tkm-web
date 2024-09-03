@@ -18,45 +18,33 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/kas',
-    name: 'kas',
-    // component: () => import('@/views/kas/Kas.vue'), // Create a parent component for better organization
-    children: [
-      {
-        path: '',
-        name: 'Transaksi',
-        component: defineAsyncComponent(
-          () => import('@/views/kas/jurnal/index.vue')
-        ), // Lazy load TransactionList
-        meta: { requiresAuth: false, title: 'Beranda_Inventory' },
-      },
-      // {
-      //   path: 'cash/laporan',
-      //   name: 'FinancialReport',
-      //   component: defineAsyncComponent(
-      //     () => import('@/views/kas/jurnal/laporan/FinancialReport.vue')
-      //   ), // Lazy load FinancialReport
-      // },
-      {
-        path: 'cash/budget',
-        name: 'Budget',
-        component: defineAsyncComponent(
-          () => import('@/views/kas/anggaran/Budget.vue')
-        ), // Lazy load Budget
-      },
-    ],
+    name: 'kas kecil',
+    component: () => import('@/views/kas/jurnal/index.vue'), // Create a parent component for better organization
+    // children: [
+    //   {
+    //     path: '',
+    //     name: 'Transaksi',
+    //     component: defineAsyncComponent(
+    //       () => import('@/views/kas/jurnal/index.vue')
+    //     ), // Lazy load TransactionList
+    //     meta: { requiresAuth: false, title: 'Jurnal' },
+    //   },
+    //   // {
+    //   //   path: 'cash/laporan',
+    //   //   name: 'FinancialReport',
+    //   //   component: defineAsyncComponent(
+    //   //     () => import('@/views/kas/jurnal/laporan/FinancialReport.vue')
+    //   //   ), // Lazy load FinancialReport
+    //   // },
+    //   {
+    //     path: 'cash/budget',
+    //     name: 'Budget',
+    //     component: defineAsyncComponent(
+    //       () => import('@/views/kas/anggaran/Budget.vue')
+    //     ), // Lazy load Budget
+    //   },
+    // ],
   },
-  // {
-  //   path: '/aset',
-  //   name: 'aset',
-  //   component: () => import('@/views/aset/Inventory.vue')),
-  // },
-  // {
-  //   path: '/agenda',
-  //   name: 'kajian',
-  //   component:
-  //     () => import('@/views/kegiatan/Activities.vue')
-  //   ),
-  // },
 ];
 
 const router = createRouter({
@@ -69,7 +57,7 @@ const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   console.log('Navigating to:', to.fullPath);
-  document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`;
+  document.title = `Masjidku ${to.meta.title} | Kelola Masjid`;
   next();
 });
 
