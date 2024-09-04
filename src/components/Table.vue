@@ -263,8 +263,16 @@ const props = defineProps({
 const internalDateStart = ref(props.dateStart);
 const internalDateEnd = ref(props.dateEnd);
 
+// const handleEditEvent = data => {
+//   console.log('tuang');
+//   emit('transmitEdit', data);
+// };
+// const handleDeleteEvent = data => {
+//   console.log('tuang');
+//   emit('transmitDelete', data);
+// };
 // Emit function for closing the modal
-const emit = defineEmits(['openModal', 'fetchData']);
+const emit = defineEmits(['openModal', 'fetchData', 'edit', 'delete']);
 
 // Emit openModal event
 const handleClick = () => {
@@ -312,7 +320,13 @@ const table = useVueTable({
   get data() {
     return data.value;
   },
-  columns: props.columns,
+  columns: props.columns.map(col => ({
+    ...col,
+    cell: cellProps => {
+      // Pass the emit function down to the column definition
+      return col.cell({ ...cellProps, emit });
+    },
+  })),
   getCoreRowModel: getCoreRowModel(),
   getPaginationRowModel: getPaginationRowModel(),
   getSortedRowModel: getSortedRowModel(),

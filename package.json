@@ -43,6 +43,7 @@
     "preline": "^2.4.1",
     "radix-vue": "^1.9.5",
     "smooth-scrollbar": "^8.8.4",
+    "sweetalert2": "^11.13.1",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "tippy.js": "^6.3.7",

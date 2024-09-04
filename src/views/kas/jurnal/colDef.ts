@@ -1,7 +1,7 @@
 import { compareItems, RankingInfo } from '@tanstack/match-sorter-utils';
 import { createColumnHelper, SortingFn, sortingFns } from '@tanstack/vue-table';
 import { LucideEdit, LucideDelete } from 'lucide-vue-next';
-import { defineEmits, h } from 'vue';
+import { h } from 'vue';
 import {
   Dialog,
   DialogClose,
@@ -28,16 +28,13 @@ type RowData = {
   photo: string;
 };
 
-// In your setup function or script block
-const emit = defineEmits(['edit', 'delete']);
+function shortDate(date: Date) {
+  return new Intl.DateTimeFormat('id-ID', {
+    month: 'short',
+    day: 'numeric',
+  }).format(new Date(date));
+}
 
-const handleEdit = (row: RowData) => {
-  emit('edit', row);
-};
-
-const handleDelete = (row: RowData) => {
-  emit('delete', row);
-};
 const columnHelper = createColumnHelper<RowData>();
 
 const fuzzySort: SortingFn<RowData> = (rowA, rowB, columnId) => {
@@ -111,7 +108,7 @@ const columns = [
   }),
   columnHelper.accessor('in_out', {
     header: 'Keluar/Masuk',
-    enableSorting: false,
+    enableSorting: true,
     enableGrouping: true, // Grouping enabled for this column
     cell: info => info.getValue(), // Simply returns the value
   }),
@@ -140,15 +137,22 @@ const columns = [
                 class: 'overflow-auto p-0 h-dvh w-dvh',
               },
               [
-                h(DialogHeader, { class: 'pb-0' }, [
-                  h(DialogTitle, 'View Nota'),
-                  h(DialogDescription, 'Fitur edit akan segera disediakan.'),
+                h(DialogHeader, { class: 'pt-3 pb-0 mb-0 px-5' }, [
+                  h(
+                    DialogTitle,
+                    `View Nota (${info.row.original.in_out} ${shortDate(info.row.original.dtTransaction)})`
+                  ),
+                  h(
+                    DialogDescription,
+                    info.row.original.activity +
+                      ' = ' +
+                      formatRupiah(info.row.original.value)
+                  ),
                 ]),
                 h(
                   'div',
                   {
-                    class:
-                      'grid gap-4 py-4  overflow-x-auto overflow-y-auto px-6',
+                    class: 'grid gap-4 overflow-x-auto overflow-y-auto px-6',
                   },
                   [
                     h(
@@ -186,7 +190,7 @@ const columns = [
   columnHelper.accessor('id', {
     id: 'actions', // Unique identifier for this column
     header: 'Actions',
-    cell: ({ row }) => {
+    cell: ({ row, emit }) => {
       return h(
         'div',
         {
@@ -198,8 +202,8 @@ const columns = [
             {
               type: 'button',
               class:
-                'w-12 text-white justify-center bg-blue-500 hover:bg-blue-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
-              onClick: () => handleEdit(row.original),
+                'w-12 text-white justify-center bg-blue-500 hover:bg-blue-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
+              onClick: () => emit('edit', row.original),
             },
             h(LucideEdit)
           ),
@@ -209,7 +213,7 @@ const columns = [
               type: 'button',
               class:
                 'w-12 text-white justify-center bg-red-500 hover:bg-red-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
-              onClick: () => handleDelete(row.original),
+              onClick: () => emit('delete', row.original.id),
             },
             h(LucideDelete)
           ),

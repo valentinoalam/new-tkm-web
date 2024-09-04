@@ -45,6 +45,8 @@
 import chroma from 'chroma-js';
 
 import { LoopingRhombusesSpinner } from 'epic-spinners';
+
+import Swal from 'sweetalert2';
 import { computed, onMounted, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
@@ -53,7 +55,10 @@ import AddOrEditTransaction from './transaksi/AddOrEdit.vue';
 // import BarChart from '@/components/charts/BarChart.vue';
 import Table from '@/components/Table.vue';
 import { MONTHS } from '@/constant';
-import { getAllTransactions } from '@/service/appsheetService';
+import {
+  getAllTransactions,
+  deleteTransactionById,
+} from '@/service/appsheetService';
 import { formatRupiah } from '@/utils/formatRupiah';
 
 let maxValue;
@@ -93,13 +98,27 @@ const fetchTransactions = async (dtStart = null, dtEnd = null) => {
   isLoading.value = false;
 };
 
-function onEdit(row) {
-  // Handle the edit action
-  console.log('Edit:', row);
+function onEdit(id) {
+  selectedTransaction.value = id;
+  openModal();
 }
-function onDelete(row) {
-  // Handle the delete action
-  console.log('Delete:', row);
+function onDelete(id) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You will not be able to recover this transaction!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!',
+  }).then(result => {
+    if (result.isConfirmed) {
+      deleteTransactionById(id).then(() => {
+        transactions.value = transactions.value.filter(t => t.id !== id);
+        Swal.fire('Deleted!', 'Your transaction has been deleted.', 'success');
+      });
+    }
+  });
 }
 
 function addPrefixToDuplicateNames(series) {

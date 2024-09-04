@@ -48,23 +48,22 @@
 import { FormKit } from '@formkit/vue';
 import { ref, watch } from 'vue';
 
-// Props for the form data and selected transaction
 const props = defineProps({
   selectedTransaction: {
     type: Object,
     default: null,
   },
-  transactions: {
-    type: Array,
-    required: true,
-  },
 });
 
-// Emit function for closing the modal and updating transactions
-const emit = defineEmits(['closeModal', 'updateTransaction']);
+const form = ref({
+  description: '',
+  amountString: '',
+  date: '',
+  image: '',
+});
 
-// Reactive form data
-const form = ref({ description: '', amountString: '', date: '', image: null });
+// Emit setup
+const emit = defineEmits(['closeModal', 'updateTransaction']);
 
 // File upload handler
 const uploadHandler = async (file: File) => {
@@ -88,14 +87,16 @@ const uploadHandler = async (file: File) => {
 watch(
   () => props.selectedTransaction,
   newTransaction => {
+    console.log(newTransaction);
     if (newTransaction) {
       form.value = {
-        description: newTransaction.description,
-        amountString: newTransaction.amount.toString(), // Convert number to string for binding
-        date: newTransaction.date,
-        image: newTransaction.image,
+        description: newTransaction.activity || '',
+        amountString: newTransaction.value || '',
+        date: newTransaction.dtTransaction || '',
+        image: newTransaction.photo || '',
       };
     }
+    console.log(form.value);
   },
   { immediate: true }
 );
@@ -107,7 +108,7 @@ const submitForm = () => {
     amount: parseFloat(form.value.amountString), // Convert string back to number
     date: form.value.date,
     image: form.value.image,
-    id: props.selectedTransaction?.id || Date.now(),
+    id: props.selectedTransaction?.id || Date.now(), // If editing, keep the existing ID; otherwise, generate a new one
   };
 
   emit('updateTransaction', transactionData);
