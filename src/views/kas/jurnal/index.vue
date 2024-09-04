@@ -46,6 +46,7 @@ import chroma from 'chroma-js';
 
 import { LoopingRhombusesSpinner } from 'epic-spinners';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Swal from 'sweetalert2';
 import { computed, onMounted, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';

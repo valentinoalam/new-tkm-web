@@ -1,5 +1,10 @@
 import { compareItems, RankingInfo } from '@tanstack/match-sorter-utils';
-import { createColumnHelper, SortingFn, sortingFns } from '@tanstack/vue-table';
+import {
+  CellContext,
+  createColumnHelper,
+  SortingFn,
+  sortingFns,
+} from '@tanstack/vue-table';
 import { LucideEdit, LucideDelete } from 'lucide-vue-next';
 import { h } from 'vue';
 import {
@@ -17,6 +22,12 @@ import { formatRupiah } from '@/utils/formatRupiah';
 
 const appUrl = 'https://dkm.assalamjs.online/';
 
+type ExtendedCellContext<TData extends RowData, TValue> = CellContext<
+  TData,
+  TValue
+> & {
+  emit: (event: string, ...args: unknown[]) => void;
+};
 type RowData = {
   id: string;
   dtTransaction: Date;
@@ -187,10 +198,11 @@ const columns = [
           ])
         : '', // Simply returns the value
   }),
-  columnHelper.accessor('id', {
+  {
+    accessor: 'id',
     id: 'actions', // Unique identifier for this column
     header: 'Actions',
-    cell: ({ row, emit }) => {
+    cell: ({ row, emit }: ExtendedCellContext<RowData, string>) => {
       return h(
         'div',
         {
@@ -221,7 +233,7 @@ const columns = [
         ]
       );
     },
-  }),
+  },
 ];
 
 export const getRowClass = (row: RowData) => {
