@@ -1,17 +1,24 @@
 <script lang="ts" setup>
-import { type HTMLAttributes, computed } from 'vue'
-import { RangeCalendarHeading, type RangeCalendarHeadingProps, useForwardProps } from 'radix-vue'
-import { cn } from '@/utils'
+import {
+  RangeCalendarHeading,
+  type RangeCalendarHeadingProps,
+  useForwardProps,
+} from 'radix-vue';
+import { type HTMLAttributes, computed } from 'vue';
+import { cn } from '@/utils';
 
-const props = defineProps<RangeCalendarHeadingProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps<
+  RangeCalendarHeadingProps & { class?: HTMLAttributes['class'] }
+>();
 
 const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { class: _, ...delegated } = props;
 
-  return delegated
-})
+  return delegated;
+});
 
-const forwardedProps = useForwardProps(delegatedProps)
+const forwardedProps = useForwardProps(delegatedProps);
 </script>
 
 <template>

@@ -43,7 +43,7 @@
 <script setup>
 // import/no-extraneous-dependencies
 import chroma from 'chroma-js';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { LoopingRhombusesSpinner } from 'epic-spinners';
 import { computed, onMounted, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';

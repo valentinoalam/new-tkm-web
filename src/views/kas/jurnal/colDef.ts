@@ -1,8 +1,17 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { compareItems, RankingInfo } from '@tanstack/match-sorter-utils';
 import { createColumnHelper, SortingFn, sortingFns } from '@tanstack/vue-table';
 import { LucideEdit, LucideDelete } from 'lucide-vue-next';
 import { defineEmits, h } from 'vue';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 import { formatRupiah } from '@/utils/formatRupiah';
 
@@ -31,7 +40,7 @@ const handleDelete = (row: RowData) => {
 };
 const columnHelper = createColumnHelper<RowData>();
 
-const fuzzySort: SortingFn<unknown> = (rowA, rowB, columnId) => {
+const fuzzySort: SortingFn<RowData> = (rowA, rowB, columnId) => {
   let dir = 0;
 
   // Only sort by rank if the column has ranking information
@@ -110,13 +119,68 @@ const columns = [
     header: 'Photo',
     cell: info =>
       info.getValue()
-        ? h('img', {
-            src: `${appUrl}img/small/${info.getValue()}`, // Replace with the actual image path
-            alt: 'Image description',
-            width: 200,
-            height: 150,
-            onClick: () => displayImage(info.row.id),
-          })
+        ? h(Dialog, [
+            h(DialogTrigger, { asChild: true }, () =>
+              h(
+                'Button',
+                { variant: 'outline' },
+                h('img', {
+                  src: `${appUrl}img/small/${info.getValue()}`, // Replace with the actual image path
+                  alt: 'Image description',
+                  width: 200,
+                  height: 150,
+                  // onClick: () =>
+                  //   displayImage(`${appUrl}img/${info.getValue()}`),
+                })
+              )
+            ),
+            h(
+              DialogContent,
+              {
+                class: 'overflow-auto p-0 h-dvh w-dvh',
+              },
+              [
+                h(DialogHeader, { class: 'pb-0' }, [
+                  h(DialogTitle, 'View Nota'),
+                  h(DialogDescription, 'Fitur edit akan segera disediakan.'),
+                ]),
+                h(
+                  'div',
+                  {
+                    class:
+                      'grid gap-4 py-4  overflow-x-auto overflow-y-auto px-6',
+                  },
+                  [
+                    h(
+                      'div',
+                      { class: 'flex flex-col justify-between h-max w-max' },
+                      h('img', {
+                        src: `${appUrl}img/${info.getValue()}`, // Replace with the actual image path
+                        alt: 'Image description',
+                        // width: 400,
+                        // height: 450,
+                        // onClick: () => displayImage(info.row.id),
+                      })
+                    ),
+                  ]
+                ),
+                h(DialogFooter, { class: 'sm:justify-center mr-5 mb-2' }, [
+                  h(DialogClose, { asChild: true }, () =>
+                    h(
+                      'Button',
+                      {
+                        type: 'button',
+                        variant: 'secondary',
+                        class:
+                          'px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700',
+                      },
+                      'Close'
+                    )
+                  ),
+                ]),
+              ]
+            ),
+          ])
         : '', // Simply returns the value
   }),
   columnHelper.accessor('id', {
@@ -163,6 +227,6 @@ export const getRowClass = (row: RowData) => {
 };
 
 export default columns;
-function displayImage(id: string): unknown {
-  throw new Error('Function not implemented.');
-}
+// function displayImage(url: string) {
+//   return h(dialog, { url });
+// }

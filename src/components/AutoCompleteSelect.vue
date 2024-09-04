@@ -19,9 +19,9 @@
 
 <script>
 import { ref } from 'vue';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import vSelect from 'vue-select';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import 'vue-select/dist/vue-select.css';
 
 export default {

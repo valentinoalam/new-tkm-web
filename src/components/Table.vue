@@ -226,7 +226,6 @@
 </template>
 
 <script setup>
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { rankItem } from '@tanstack/match-sorter-utils';
 import {
   FlexRender,
