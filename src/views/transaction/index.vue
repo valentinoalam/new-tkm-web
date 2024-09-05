@@ -20,7 +20,6 @@
 </template>
 
 <script setup>
-// eslint-disable-next-line import/no-extraneous-dependencies
 import Swal from 'sweetalert2';
 import { ref, computed, h } from 'vue';
 import { useTransactionApi } from '@/api/transactionApi';

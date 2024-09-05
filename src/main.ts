@@ -2,9 +2,9 @@ import 'normalize.css';
 import '@/assets/css/main.css';
 import 'vue3-perfect-scrollbar/style.css';
 import 'cropperjs/dist/cropper.css';
-import 'preline/preline';
 import '@formkit/themes/genesis';
 import 'tippy.js/dist/tippy.css';
+import 'vue3-colorpicker/style.css';
 
 import { defaultConfig, plugin } from '@formkit/vue';
 import { createFormKitInputsPlugin } from '@kgierke/formkit-inputs';
@@ -12,6 +12,7 @@ import vClickOutside from 'click-outside-vue3';
 import { createApp } from 'vue';
 import VueTippy from 'vue-tippy';
 import VueApexCharts from 'vue3-apexcharts';
+import Vue3ColorPicker from 'vue3-colorpicker';
 import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar';
 
 import App from './App.vue';
@@ -46,6 +47,7 @@ app.use(
   })
 );
 app.use(plugin, defaultConfig);
+app.use(Vue3ColorPicker);
 app.use(PerfectScrollbarPlugin);
 app.use(VueApexCharts);
 app.use(vClickOutside);

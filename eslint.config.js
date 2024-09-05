@@ -47,7 +47,7 @@ export default [
           alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
-      'import/no-extraneous-dependencies': 'error',
+      'import/no-extraneous-dependencies': 'warn',
       'import/first': 'error',
       'import/newline-after-import': ['error', { count: 1 }],
       'import/no-duplicates': 'error',

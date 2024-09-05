@@ -263,25 +263,37 @@ const props = defineProps({
 const internalDateStart = ref(props.dateStart);
 const internalDateEnd = ref(props.dateEnd);
 
-// const handleEditEvent = data => {
-//   console.log('tuang');
-//   emit('transmitEdit', data);
-// };
-// const handleDeleteEvent = data => {
-//   console.log('tuang');
-//   emit('transmitDelete', data);
-// };
-// Emit function for closing the modal
-const emit = defineEmits(['openModal', 'fetchData', 'edit', 'delete']);
+const emit = defineEmits(['create', 'fetchData', 'edit', 'delete']);
 
 // Emit openModal event
 const handleClick = () => {
-  emit('openModal');
+  emit('create');
 };
 
 const handleDateRange = () => {
   emit('fetchData', internalDateStart.value, internalDateEnd.value);
 };
+
+const handlePageSizeChange = () => {
+  emit('changePageSize', pagination.value.pageSize);
+};
+
+const data = computed(() => props.data);
+// State variables
+const sorting = ref([]);
+const grouping = ref([]);
+const filter = ref('');
+const pagination = ref({
+  pageIndex: props.page || 0, // Current page index (0-based)
+  pageSize: props.page || 10, // Number of rows per page
+});
+
+watch(
+  () => pagination.value.pageSize,
+  newSize => {
+    table.setPageSize(newSize);
+  }
+);
 
 const rowClass = row => {
   // Use the getRowClass function if it exists, otherwise use a default class
@@ -300,22 +312,7 @@ const getCellTooltip = (column, row) => {
       day: 'numeric',
     }).format(new Date(row.original.dtTransaction));
 };
-const data = computed(() => props.data);
-// State variables
-const sorting = ref([]);
-const grouping = ref([]);
-const filter = ref('');
-const pagination = ref({
-  pageIndex: 0, // Current page index (0-based)
-  pageSize: 10, // Number of rows per page
-});
 
-watch(
-  () => pagination.value.pageSize,
-  newSize => {
-    table.setPageSize(newSize);
-  }
-);
 const table = useVueTable({
   get data() {
     return data.value;

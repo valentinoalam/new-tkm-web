@@ -1,5 +1,5 @@
 <template>
-  <div v-show="isLoading">
+  <div v-if="isLoading">
     <looping-rhombuses-spinner
       class="absolute top-[32dvh] left-[32vw]"
       :animation-duration="2500"
@@ -7,14 +7,18 @@
       color="#CAFFBF"
     />
   </div>
-  <div class="space-y-7">
+  <div v-else class="space-y-7">
     <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
+
     <!-- Modal Form -->
     <div
       v-if="isModalOpen"
       class="fixed inset-0 flex items-center justify-center w-full bg-black bg-opacity-50"
     >
-      <div class="w-1/3 p-8 bg-white rounded-lg">
+      <div
+        v-if="modalContent === ModalContent[1]"
+        class="w-1/3 p-8 bg-white rounded-lg"
+      >
         <h2 class="mb-4 text-2xl">
           {{ selectedTransaction ? 'Edit Transaction' : 'Add New Transaction' }}
         </h2>
@@ -24,6 +28,13 @@
           @updateTransaction="handleUpdateTransaction"
         />
       </div>
+      <EditCategory
+        v-else-if="modalContent === ModalContent[2]"
+        :id="selectedCategory"
+        :color="categoryColor"
+        :category-name="categoryName"
+        @update-category="handleUpdateCategory"
+      />
     </div>
     <!-- Transaction Table -->
     <Table
@@ -32,10 +43,13 @@
       :columns="columns"
       :getRowClass="getRowClass"
       :buttonName="'New Entry'"
+      @changePage="handlePageChange"
+      @changePageSize="handlePageSizeChange"
       @fetchData="handleDateRange"
-      @openModal="openModal"
+      @create="onCreate"
       @edit="onEdit"
       @delete="onDelete"
+      @editCategory="onEditCategory"
     />
   </div>
 </template>
@@ -43,7 +57,6 @@
 <script setup>
 // import/no-extraneous-dependencies
 import chroma from 'chroma-js';
-
 import { LoopingRhombusesSpinner } from 'epic-spinners';
 
 import Swal from 'sweetalert2';
@@ -51,13 +64,16 @@ import { computed, onMounted, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
 import columns, { getRowClass } from './colDef';
+import EditCategory from './kategori/EditCategory.vue';
 import AddOrEditTransaction from './transaksi/AddOrEdit.vue';
 // import BarChart from '@/components/charts/BarChart.vue';
 import Table from '@/components/Table.vue';
 import { MONTHS } from '@/constant';
 import {
+  // getTransactionDataChart,
   getAllTransactions,
   deleteTransactionById,
+  updateCategoryById,
 } from '@/service/appsheetService';
 import { formatRupiah } from '@/utils/formatRupiah';
 
@@ -66,15 +82,25 @@ let maxValue;
 const isLoading = ref(true);
 const chartData = ref([]);
 const transactions = ref([]); // Transactions data from API
+// const transactionsDataChart = ref([]);
 const isModalOpen = ref(false); // Controls modal visibility
+const modalContent = ref(''); // Controls modal visibility
 const selectedTransaction = ref(null); // Selected transaction for editing
+const selectedCategory = ref(null);
+const pageSize = ref(10);
+const currentPage = ref(0);
+const categoryName = ref('');
+const categoryColor = ref('');
+const ModalContent = ['none', 'transaction', 'category'];
 
 const openModal = () => {
   isModalOpen.value = true;
 };
 
 const closeModal = () => {
+  selectedTransaction.value = null;
   isModalOpen.value = false;
+  modalContent.value = ModalContent[0];
 };
 
 async function handleDateRange(dtStart, dtEnd) {
@@ -89,6 +115,8 @@ const fetchTransactions = async (dtStart = null, dtEnd = null) => {
       response = await getAllTransactions({
         startDate: dtStart,
         endDate: dtEnd,
+        page: currentPage.value,
+        limit: pageSize.value,
       });
     else response = await getAllTransactions(); //axios.get('/dari-appsheet/transactions');
     transactions.value = response;
@@ -98,10 +126,45 @@ const fetchTransactions = async (dtStart = null, dtEnd = null) => {
   isLoading.value = false;
 };
 
+// const fetchDataChart = async () => {
+//   try {
+//     const response = await getTransactionDataChart(); //axios.get('/dari-appsheet/transactions');
+//     transactionsDataChart.value = response;
+//   } catch (error) {
+//     console.error('Failed to fetch transactions:', error);
+//   }
+//   isLoading.value = false;
+// };
+
+const handlePageChange = newPage => {
+  currentPage.value = newPage;
+};
+
+const handlePageSizeChange = newPageSize => {
+  pageSize.value = newPageSize;
+};
+
+const handleUpdateCategory = async ({ id, color }) => {
+  await updateCategoryById(id, { color });
+};
+
+function onCreate() {
+  modalContent.value = ModalContent[1];
+  openModal();
+}
 function onEdit(id) {
+  modalContent.value = ModalContent[1];
   selectedTransaction.value = id;
   openModal();
 }
+function onEditCategory(id, color, name) {
+  modalContent.value = ModalContent[2];
+  selectedCategory.value = id;
+  categoryColor.value = color;
+  categoryName.value = name;
+  openModal();
+}
+
 function onDelete(id) {
   Swal.fire({
     title: 'Are you sure?',
@@ -294,6 +357,7 @@ const colors = colorScale.colors(11); // Generate 10 hex colors
 
 // Initialize data on component mount
 onMounted(async () => {
+  // await fetchDataChart();
   await fetchTransactions();
   cats = Array.from(new Set(transactions.value.map(i => i.category)));
 

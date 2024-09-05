@@ -17,7 +17,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-
 import { formatRupiah } from '@/utils/formatRupiah';
 
 const appUrl = 'https://dkm.assalamjs.online/';
@@ -31,6 +30,7 @@ type ExtendedCellContext<TData extends RowData, TValue> = CellContext<
 type RowData = {
   id: string;
   dtTransaction: Date;
+  categoryId: string;
   category: string;
   color: string;
   activity: string;
@@ -83,11 +83,12 @@ const columns = [
     enableSorting: false,
     enableColumnFilter: true, // Filtering enabled for this column
   }),
-  columnHelper.accessor('category', {
+  {
+    accessor: 'category',
     header: 'Kategori',
     enableSorting: false,
-    cell: info => {
-      const color = (info.row.original as RowData).color;
+    cell: ({ row, emit }: ExtendedCellContext<RowData, string>) => {
+      const color = (row.original as RowData).color;
       return h(
         'span',
         {
@@ -95,11 +96,18 @@ const columns = [
           style: {
             backgroundColor: color,
           },
+          onClick: () =>
+            emit(
+              'editCategory',
+              row.original.categoryId,
+              color,
+              row.original.category
+            ),
         },
-        info.getValue()
-      ); // Simply returns the value
+        row.original.category
+      );
     },
-  }),
+  },
   columnHelper.accessor('value', {
     header: 'Nominal',
     cell: info => {
@@ -137,8 +145,6 @@ const columns = [
                   alt: 'Image description',
                   width: 200,
                   height: 150,
-                  // onClick: () =>
-                  //   displayImage(`${appUrl}img/${info.getValue()}`),
                 })
               )
             ),
