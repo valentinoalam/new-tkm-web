@@ -145,6 +145,12 @@ const columns = [
                   alt: 'Image description',
                   width: 200,
                   height: 150,
+                  style: {
+                    objectFit: 'cover', // This ensures the image fills the container while preserving its aspect ratio
+                    width: '200px', // Set the width explicitly
+                    height: '150px', // Set the height explicitly
+                    overflow: 'hidden',
+                  },
                 })
               )
             ),

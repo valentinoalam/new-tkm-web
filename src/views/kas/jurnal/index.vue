@@ -43,7 +43,11 @@
       :columns="columns"
       :getRowClass="getRowClass"
       :buttonName="'New Entry'"
-      @changePage="handlePageChange"
+      :totalRecords="totalRecords"
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      :pageSize="pageSize"
+      @fetchPage="handlePageChange"
       @changePageSize="handlePageSizeChange"
       @fetchData="handleDateRange"
       @create="onCreate"
@@ -66,11 +70,10 @@ import VueApexCharts from 'vue3-apexcharts';
 import columns, { getRowClass } from './colDef';
 import EditCategory from './kategori/EditCategory.vue';
 import AddOrEditTransaction from './transaksi/AddOrEdit.vue';
-// import BarChart from '@/components/charts/BarChart.vue';
 import Table from '@/components/Table.vue';
 import { MONTHS } from '@/constant';
 import {
-  // getTransactionDataChart,
+  getTransactionDataChart,
   getAllTransactions,
   deleteTransactionById,
   updateCategoryById,
@@ -81,14 +84,16 @@ let maxValue;
 
 const isLoading = ref(true);
 const chartData = ref([]);
-const transactions = ref([]); // Transactions data from API
-// const transactionsDataChart = ref([]);
+const transactions = ref({}); // Transactions data from API
+const transactionsDataChart = ref([]);
 const isModalOpen = ref(false); // Controls modal visibility
 const modalContent = ref(''); // Controls modal visibility
 const selectedTransaction = ref(null); // Selected transaction for editing
 const selectedCategory = ref(null);
 const pageSize = ref(10);
 const currentPage = ref(0);
+const totalRecords = ref(0);
+const totalPages = ref(0);
 const categoryName = ref('');
 const categoryColor = ref('');
 const ModalContent = ['none', 'transaction', 'category'];
@@ -118,34 +123,45 @@ const fetchTransactions = async (dtStart = null, dtEnd = null) => {
         page: currentPage.value,
         limit: pageSize.value,
       });
-    else response = await getAllTransactions(); //axios.get('/dari-appsheet/transactions');
-    transactions.value = response;
+    else
+      response = await getAllTransactions({
+        page: currentPage.value,
+        limit: pageSize.value,
+      });
+    transactions.value = response.data;
+    totalRecords.value = response.totalRecords;
+    totalPages.value = response.totalPages;
+    console.log(transactions.value);
   } catch (error) {
     console.error('Failed to fetch transactions:', error);
   }
   isLoading.value = false;
 };
 
-// const fetchDataChart = async () => {
-//   try {
-//     const response = await getTransactionDataChart(); //axios.get('/dari-appsheet/transactions');
-//     transactionsDataChart.value = response;
-//   } catch (error) {
-//     console.error('Failed to fetch transactions:', error);
-//   }
-//   isLoading.value = false;
-// };
-
-const handlePageChange = newPage => {
-  currentPage.value = newPage;
+const fetchDataChart = async () => {
+  try {
+    const response = await getTransactionDataChart(); //axios.get('/dari-appsheet/transactions');
+    transactionsDataChart.value = response;
+  } catch (error) {
+    console.error('Failed to fetch transactions:', error);
+  }
+  isLoading.value = false;
 };
 
-const handlePageSizeChange = newPageSize => {
+const handlePageChange = async newPage => {
+  currentPage.value = newPage;
+  await fetchTransactions();
+};
+
+const handlePageSizeChange = async newPageSize => {
   pageSize.value = newPageSize;
+  console.log(pageSize.value);
+  await fetchTransactions();
 };
 
 const handleUpdateCategory = async ({ id, color }) => {
   await updateCategoryById(id, { color });
+  await fetchTransactions();
 };
 
 function onCreate() {
@@ -357,11 +373,11 @@ const colors = colorScale.colors(11); // Generate 10 hex colors
 
 // Initialize data on component mount
 onMounted(async () => {
-  // await fetchDataChart();
+  await fetchDataChart();
   await fetchTransactions();
-  cats = Array.from(new Set(transactions.value.map(i => i.category)));
+  cats = Array.from(new Set(transactionsDataChart.value.map(i => i.category)));
 
-  transactions.value.forEach(transaction => {
+  transactionsDataChart.value.forEach(transaction => {
     const [monthIndex] = new Date(transaction.dtTransaction)
       .toLocaleDateString()
       .split('/');

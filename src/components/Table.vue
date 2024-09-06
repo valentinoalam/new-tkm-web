@@ -142,9 +142,8 @@
       <!-- Pagination Wrapper -->
       <div class="mt-4">
         <div class="flex self-center justify-center mx-auto text-sm gap-x-auto">
-          Show Page {{ table.getState().pagination.pageIndex + 1 }} of
-          {{ table.getPageCount() }} -
-          {{ table.getFilteredRowModel().rows.length }} results
+          Show Page {{ currentPage + 1 }} of {{ totalPages }} -
+          {{ totalRecords }} results
         </div>
         <div class="flex items-center justify-between w-full sm:flex">
           <div class="flex-1"></div>
@@ -153,14 +152,15 @@
           >
             <button
               class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-              @click="table.setPageIndex(0)"
+              @click="fetchPage(0)"
+              :disabled="currentPage === 0"
             >
               First page
             </button>
             <button
               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="!table.getCanPreviousPage()"
-              @click="table.previousPage()"
+              @click="fetchPage(currentPage - 1)"
+              :disabled="currentPage === 0"
             >
               <svg
                 class="self-end shrink-0 size-4"
@@ -180,8 +180,8 @@
             </button>
             <button
               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="!table.getCanNextPage()"
-              @click="table.nextPage()"
+              @click="fetchPage(currentPage + 1)"
+              :disabled="currentPage === totalPages - 1"
             >
               Next
               <svg
@@ -201,7 +201,8 @@
             </button>
             <button
               class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              @click="table.setPageIndex(table.getPageCount() - 1)"
+              @click="fetchPage(totalPages - 1)"
+              :disabled="currentPage === totalPages - 1"
             >
               Last page
             </button>
@@ -210,7 +211,7 @@
             <label for="pageSize">Rows per page:</label>
             <select
               id="pageSize"
-              v-model="pagination.pageSize"
+              v-model="pageSize"
               @change="handlePageSizeChange"
             >
               <option v-for="size in [5, 10, 20, 50]" :key="size" :value="size">
@@ -232,11 +233,10 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getGroupedRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { Tippy } from 'vue-tippy';
 // import DateSelector from './dateSelector.vue';
 
@@ -257,13 +257,36 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  totalRecords: {
+    type: Number,
+    required: true,
+  },
+  currentPage: {
+    type: Number,
+    required: true,
+  },
+  totalPages: {
+    type: Number,
+    required: true,
+  },
+  pageSize: {
+    type: Number,
+    required: true,
+  },
 });
 
 // Internal state
 const internalDateStart = ref(props.dateStart);
 const internalDateEnd = ref(props.dateEnd);
 
-const emit = defineEmits(['create', 'fetchData', 'edit', 'delete']);
+const emit = defineEmits([
+  'create',
+  'fetchData',
+  'edit',
+  'delete',
+  'fetchPage',
+  'changePageSize',
+]);
 
 // Emit openModal event
 const handleClick = () => {
@@ -275,25 +298,21 @@ const handleDateRange = () => {
 };
 
 const handlePageSizeChange = () => {
-  emit('changePageSize', pagination.value.pageSize);
+  emit('changePageSize', pageSize.value);
+};
+const fetchPage = page => {
+  if (page >= 0 && page < props.totalPages) {
+    emit('fetchPage', page);
+  }
 };
 
 const data = computed(() => props.data);
+
 // State variables
 const sorting = ref([]);
 const grouping = ref([]);
 const filter = ref('');
-const pagination = ref({
-  pageIndex: props.page || 0, // Current page index (0-based)
-  pageSize: props.page || 10, // Number of rows per page
-});
-
-watch(
-  () => pagination.value.pageSize,
-  newSize => {
-    table.setPageSize(newSize);
-  }
-);
+const pageSize = ref(props.pageSize);
 
 const rowClass = row => {
   // Use the getRowClass function if it exists, otherwise use a default class
@@ -325,11 +344,9 @@ const table = useVueTable({
     },
   })),
   getCoreRowModel: getCoreRowModel(),
-  getPaginationRowModel: getPaginationRowModel(),
   getSortedRowModel: getSortedRowModel(),
   getGroupedRowModel: getGroupedRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
-  // pageCount: -1, // Allows client-side pagination
   state: {
     get sorting() {
       return sorting.value;
@@ -340,13 +357,8 @@ const table = useVueTable({
     get grouping() {
       return grouping.value;
     },
-    // pagination: pagination.value,
   },
   globalFilterFn: fuzzyFilter,
-  // onPaginationChange: newPagination => {
-  //   pagination.value = newPagination;
-  // },
-  // onColumnFiltersChange: columnFilters.value,
   onGroupingChange: newGrouping => {
     grouping.value = newGrouping; // Handle grouping changes
   },
@@ -357,12 +369,6 @@ const table = useVueTable({
         : updaterOrValue;
   },
   enableMultiSort: true,
-  initialState: {
-    pagination: {
-      pageSize: pagination.value.pageSize,
-    },
-    sorting: [{ id: 'dtTransaction', desc: true }],
-  },
 });
 
 function getSortingIndicator(column) {
@@ -382,9 +388,6 @@ function fuzzyFilter(row, columnId, value, addMeta) {
   // Return if the item should be filtered in/out
   return itemRank.passed;
 }
-// watchEffect(() => {
-//   console.log(table.getState().sorting);
-// });
 </script>
 
 <style scoped>
