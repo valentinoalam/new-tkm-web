@@ -1,60 +1,63 @@
 <template>
-  <div v-if="isLoading">
-    <looping-rhombuses-spinner
-      class="absolute top-[32dvh] left-[45vw]"
-      :animation-duration="2500"
-      :rhombus-size="15"
-      color="#CAFFBF"
-    />
-  </div>
-  <div v-else class="space-y-7">
-    <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
-
-    <!-- Modal Form -->
-    <div
-      v-if="isModalOpen"
-      class="fixed inset-0 flex items-center justify-center w-full bg-black bg-opacity-50"
-    >
-      <div
-        v-if="modalContent === ModalContent[1]"
-        class="w-1/3 p-8 bg-white rounded-lg"
-      >
-        <h2 class="mb-4 text-2xl">
-          {{ selectedTransaction ? 'Edit Transaction' : 'Add New Transaction' }}
-        </h2>
-        <AddOrEditTransaction
-          :selectedTransaction="selectedTransaction"
-          @closeModal="closeModal"
-          @updateTransaction="handleUpdateTransaction"
-        />
-      </div>
-      <EditCategory
-        v-else-if="modalContent === ModalContent[2]"
-        :id="selectedCategory"
-        :color="categoryColor"
-        :category-name="categoryName"
-        @update-category="handleUpdateCategory"
+  <div>
+    <div v-if="isLoading">
+      <looping-rhombuses-spinner
+        class="absolute top-[32dvh] left-[45vw]"
+        :animation-duration="2500"
+        :rhombus-size="15"
+        color="#CAFFBF"
       />
     </div>
-    <!-- Transaction Table -->
-    <Table
-      v-else
-      :data="transactions"
-      :columns="columns"
-      :getRowClass="getRowClass"
-      :buttonName="'New Entry'"
-      :totalRecords="totalRecords"
-      :currentPage="currentPage"
-      :totalPages="totalPages"
-      :pageSize="pageSize"
-      @fetchPage="handlePageChange"
-      @changePageSize="handlePageSizeChange"
-      @fetchData="handleDateRange"
-      @create="onCreate"
-      @edit="onEdit"
-      @delete="onDelete"
-      @editCategory="onEditCategory"
-    />
+    <div v-else class="space-y-7">
+      <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
+      <!-- Modal Form -->
+      <div
+        v-if="isModalOpen"
+        class="fixed inset-0 flex items-center justify-center w-full bg-black bg-opacity-50"
+      >
+        <div
+          v-if="modalContent === ModalContent[1]"
+          class="w-1/3 p-8 bg-white rounded-lg"
+        >
+          <h2 class="mb-4 text-2xl">
+            {{
+              selectedTransaction ? 'Edit Transaction' : 'Add New Transaction'
+            }}
+          </h2>
+          <AddOrEditTransaction
+            :selectedTransaction="selectedTransaction"
+            @closeModal="closeModal"
+            @updateTransaction="handleUpdateTransaction"
+          />
+        </div>
+        <EditCategory
+          v-else-if="modalContent === ModalContent[2]"
+          :id="selectedCategory"
+          :color="categoryColor"
+          :category-name="categoryName"
+          @update-category="handleUpdateCategory"
+        />
+      </div>
+      <!-- Transaction Table -->
+      <Table
+        v-else
+        :data="transactions"
+        :columns="columns"
+        :getRowClass="getRowClass"
+        :buttonName="'New Entry'"
+        :totalRecords="totalRecords"
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        :pageSize="pageSize"
+        @fetchPage="handlePageChange"
+        @changePageSize="handlePageSizeChange"
+        @fetchData="handleDateRange"
+        @create="onCreate"
+        @edit="onEdit"
+        @delete="onDelete"
+        @editCategory="onEditCategory"
+      />
+    </div>
   </div>
 </template>
 
@@ -82,7 +85,7 @@ import { formatRupiah } from '@/utils/formatRupiah';
 
 let maxValue;
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 const chartData = ref([]);
 const transactions = ref({}); // Transactions data from API
 const transactionsDataChart = ref([]);
@@ -144,7 +147,6 @@ const fetchDataChart = async () => {
   } catch (error) {
     console.error('Failed to fetch transactions:', error);
   }
-  isLoading.value = false;
 };
 
 const handlePageChange = async newPage => {
@@ -284,7 +286,12 @@ const chartOptions = computed(() => ({
     formatter: val => {
       return val / 1000000 + 'M';
     },
-    color: '#EEEE',
+    style: {
+      colors: ['#fff'],
+    },
+    dropShadow: {
+      enabled: true,
+    },
     offsetX: 0, // Adjust X offset as needed
     offsetY: 0, // Adjust Y offset as needed
   },
@@ -368,7 +375,7 @@ const colorScale = chroma.scale([
   '9BF6FF',
   'FFADAD',
 ]); // Adjust colors as needed
-const colors = colorScale.colors(11); // Generate 10 hex colors
+const colors = colorScale.colors(15); // Generate 10 hex colors
 
 // Initialize data on component mount
 onMounted(async () => {
