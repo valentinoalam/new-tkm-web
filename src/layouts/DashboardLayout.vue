@@ -1,19 +1,16 @@
 <template>
   <!-- App -->
   <div class="flex bg-gray-50 font-lexend dark:bg-gray-900">
-    <div v-if="!$route.meta.hideNav" class="lg:block">
+    <!-- <div v-if="!$route.meta.hideNav" class="lg:block">
       <div
         class="fixed z-20 overflow-auto bg-white border-r-2 lg:flex-auto w-sidebar dark:bg-gray-800 dark:border-gray-700 lg:z-0 lg:relative"
       >
         <perfect-scrollbar class="h-screen">
           <Sidebar v-if="!$route.meta.hideNav" />
-          <!-- <sidebarlist
-            v-if="!$route.meta.hideNav"
-            @sidebarToggle="close"
-          /> -->
+          <sidebarlist v-if="!$route.meta.hideNav" @sidebarToggle="close" />
         </perfect-scrollbar>
       </div>
-    </div>
+    </div> -->
     <div
       class="w-full transition-colors grid min-h-[100dvh] grid-rows-[auto_1fr_auto]"
     >
@@ -62,7 +59,7 @@ import { useRoute } from 'vue-router';
 
 import AdminFooter from '@/components/organisms/AdminFooter.vue';
 import AdminHeader from '@/components/organisms/AdminHeader.vue';
-import Sidebar from '@/components/organisms/Sidebar.vue';
+// import Sidebar from '@/components/organisms/Sidebar.vue';
 import { useBackdrop } from '@/composables/useBackdrop';
 import { useSidebar } from '@/composables/useSidebar';
 
