@@ -1,7 +1,7 @@
 <template>
   <div v-if="isLoading">
     <looping-rhombuses-spinner
-      class="absolute top-[32dvh] left-[32vw]"
+      class="absolute top-[32dvh] left-[45vw]"
       :animation-duration="2500"
       :rhombus-size="15"
       color="#CAFFBF"
@@ -135,7 +135,6 @@ const fetchTransactions = async (dtStart = null, dtEnd = null) => {
   } catch (error) {
     console.error('Failed to fetch transactions:', error);
   }
-  isLoading.value = false;
 };
 
 const fetchDataChart = async () => {
@@ -373,8 +372,10 @@ const colors = colorScale.colors(11); // Generate 10 hex colors
 
 // Initialize data on component mount
 onMounted(async () => {
+  isLoading.value = true;
   await fetchDataChart();
   await fetchTransactions();
+
   cats = Array.from(new Set(transactionsDataChart.value.map(i => i.category)));
 
   transactionsDataChart.value.forEach(transaction => {
@@ -472,6 +473,7 @@ onMounted(async () => {
   );
   const sortedSeries = sortStacks(chartSeries);
   chartSeries = sortedSeries;
+  isLoading.value = false;
 });
 </script>
 
