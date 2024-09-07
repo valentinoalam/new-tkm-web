@@ -142,7 +142,7 @@
       <!-- Pagination Wrapper -->
       <div class="mt-4">
         <div class="flex self-center justify-center mx-auto text-sm gap-x-auto">
-          Show Page {{ currentPage + 1 }} of {{ totalPages }} -
+          Show Page {{ currentPage }} of {{ totalPages }} -
           {{ totalRecords }} results
         </div>
         <div class="flex items-center justify-between w-full sm:flex">
