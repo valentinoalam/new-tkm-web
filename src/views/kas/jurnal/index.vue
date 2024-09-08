@@ -161,6 +161,16 @@ const fetchDataChart = async () => {
     const response = await getTransactionDataChart(); //axios.get('/dari-appsheet/transactions');
     transactionsDataChart.value = response.result;
     monthAvail = response.months;
+    const chartData = await transactionsDataChart.value.filter(item =>
+      item.data.some(value => value !== 0)
+    );
+    const groupTotals = await calculateGroupTotals(chartData);
+    // Find the maximum value across all groups
+    maxValue.value = await Math.max(
+      ...Object.values(groupTotals).flatMap(totals => Object.values(totals))
+    );
+    const sortedSeries = await sortStacks(chartData);
+    chartSeries.value = sortedSeries;
   } catch (error) {
     console.error('Failed to fetch transactions:', error);
   }
@@ -182,6 +192,7 @@ const handleUpdateCategory = async data => {
   await updateCategoryById(id, { color, name });
   closeModal();
   await fetchTransactions();
+  await fetchDataChart();
 };
 
 const handleSearch = async query => {
@@ -348,7 +359,7 @@ const chartOptions = computed(() => ({
   },
 }));
 
-let chartSeries = [];
+let chartSeries = ref([]);
 let monthAvail = [];
 
 onMounted(async () => {
@@ -357,18 +368,6 @@ onMounted(async () => {
   window.addEventListener('resize', debouncedUpdateChartSize);
   await fetchDataChart();
   await fetchTransactions();
-
-  chartSeries = await transactionsDataChart.value.filter(item =>
-    item.data.some(value => value !== 0)
-  );
-
-  const groupTotals = await calculateGroupTotals(chartSeries);
-  // Find the maximum value across all groups
-  maxValue.value = await Math.max(
-    ...Object.values(groupTotals).flatMap(totals => Object.values(totals))
-  );
-  const sortedSeries = await sortStacks(chartSeries);
-  chartSeries = sortedSeries;
   isLoading.value = false;
 });
 
