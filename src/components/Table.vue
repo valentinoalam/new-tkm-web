@@ -301,7 +301,7 @@ const handleSearch = event => {
   debounce(() => {
     // Your logic here
     emit('search', event.target.value);
-  }, 500)();
+  }, 600)();
 };
 
 const handleDateRange = () => {
@@ -322,7 +322,7 @@ const data = computed(() => props.data);
 // State variables
 const sorting = ref([]);
 const grouping = ref([]);
-const filter = ref('');
+// const filter = ref('');
 const pageSize = ref(props.pageSize);
 
 const rowClass = row => {
@@ -362,9 +362,9 @@ const table = useVueTable({
     get sorting() {
       return sorting.value;
     },
-    get globalFilter() {
-      return filter.value;
-    },
+    // get globalFilter() {
+    //   return filter.value;
+    // },
     get grouping() {
       return grouping.value;
     },

@@ -128,19 +128,13 @@ async function handleDateRange(dtStart, dtEnd) {
 const fetchTransactions = async (dtStart = null, dtEnd = null) => {
   try {
     let response;
-    if (dtStart || dtEnd)
-      response = await getAllTransactions({
-        startDate: dtStart,
-        endDate: dtEnd,
-        page: currentPage.value,
-        limit: pageSize.value,
-        search: search.value,
-      });
-    else
-      response = await getAllTransactions({
-        page: currentPage.value,
-        limit: pageSize.value,
-      });
+    response = await getAllTransactions({
+      startDate: dtStart,
+      endDate: dtEnd,
+      page: currentPage.value,
+      limit: pageSize.value,
+      search: search.value,
+    });
     transactions.value = response.data;
     totalRecords.value = response.totalRecords;
     totalPages.value = response.totalPages;
@@ -176,6 +170,7 @@ const handleUpdateCategory = async ({ id, color }) => {
 
 const handleSearch = async query => {
   search.value = query;
+  console.log(query);
   await fetchTransactions();
 };
 

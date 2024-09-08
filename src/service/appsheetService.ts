@@ -9,7 +9,13 @@ export const getTransactionDataChart = async () => {
 
 export const getAllTransactions = async (
   params:
-    | { startDate: Date; endDate: Date; page: number; limit: number }
+    | {
+        startDate: Date;
+        endDate: Date;
+        page: number;
+        limit: number;
+        search: string;
+      }
     | undefined
 ) => {
   const response = await apiClient.get(`${dataEndpoint}/transactions`, {
