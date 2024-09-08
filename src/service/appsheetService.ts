@@ -47,10 +47,13 @@ export const updateCategoryById = async (
   id: string,
   data: {
     color: string;
-    name: string;
   }
 ) => {
-  const response = await apiClient.put(`${dataEndpoint}/kategori/${id}`, data);
+  const response = await apiClient
+    .patch(`${dataEndpoint}/kategori/${id}`, data)
+    .catch(error => {
+      console.error('Error:', error);
+    });
   return response?.data;
 };
 

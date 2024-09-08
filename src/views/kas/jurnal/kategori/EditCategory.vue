@@ -91,7 +91,6 @@ const handleSave = async () => {
     const updatedData = {
       id: props.id,
       color: selectedColor.value,
-      name: textInput.value || props.categoryName,
     };
     emit('updateCategory', updatedData); // Emit the updated data to parent
   } catch (error) {
