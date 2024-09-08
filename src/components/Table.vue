@@ -27,6 +27,7 @@
               type="text"
               class="block w-full px-3 text-sm border border-gray-200 rounded-lg shadow-sm ps-9 focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
               placeholder="Search"
+              @input="handleSearch"
               v-model="filter"
             />
           </div>
@@ -236,6 +237,7 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table';
+import { debounce } from 'lodash';
 import { computed, ref } from 'vue';
 import { Tippy } from 'vue-tippy';
 // import DateSelector from './dateSelector.vue';
@@ -280,6 +282,7 @@ const internalDateStart = ref(props.dateStart);
 const internalDateEnd = ref(props.dateEnd);
 
 const emit = defineEmits([
+  'search',
   'create',
   'fetchData',
   'edit',
@@ -291,6 +294,14 @@ const emit = defineEmits([
 // Emit openModal event
 const handleClick = () => {
   emit('create');
+};
+
+const handleSearch = event => {
+  // Debounce or throttle the event handler to avoid frequent updates
+  debounce(() => {
+    // Your logic here
+    emit('search', event.target.value);
+  }, 500)();
 };
 
 const handleDateRange = () => {

@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 const dataEndpoint = 'dari-appsheet';
 
 export const getTransactionDataChart = async () => {
-  const response = await apiClient.get(`${dataEndpoint}/data-chart`);
+  const response = await apiClient.get(`${dataEndpoint}/data-summary`);
   return response?.data;
 };
 
