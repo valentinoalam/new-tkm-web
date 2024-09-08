@@ -106,6 +106,8 @@ const search = ref('');
 const ModalContent = ['none', 'transaction', 'category'];
 const maxValue = ref();
 const chartHeight = ref(window.innerHeight * 0.85);
+const chartWidth = ref(window.innerWidth * 0.9);
+
 const debounce = (func, delay) => {
   let timeout;
   return (...args) => {
@@ -113,12 +115,13 @@ const debounce = (func, delay) => {
     timeout = setTimeout(() => func.apply(this, args), delay);
   };
 };
-const updateChartHeight = () => {
+const updateChartSize = () => {
   chartHeight.value = window.innerHeight * 0.85; // Update height based on window size
+  chartWidth.value = window.innerWidth * 0.9;
 };
 
 // Debounced version of the updateChartHeight function
-const debouncedUpdateChartHeight = debounce(updateChartHeight, 300); // 300ms delay
+const debouncedUpdateChartSize = debounce(updateChartSize, 300); // 300ms delay
 
 const openModal = () => {
   isModalOpen.value = true;
@@ -262,6 +265,7 @@ const chartOptions = computed(() => ({
     type: 'bar',
     stacked: true,
     height: chartHeight.value,
+    width: chartWidth.value,
   },
   plotOptions: {
     bar: {
@@ -276,7 +280,7 @@ const chartOptions = computed(() => ({
   dataLabels: {
     enabled: true,
     formatter: val => {
-      return val / 1000000 + 'M';
+      return (val / 1000000).toFixed(2) + 'M';
     },
     style: {
       colors: ['#fff'],
@@ -346,7 +350,8 @@ let monthAvail = [];
 
 onMounted(async () => {
   isLoading.value = true;
-  window.addEventListener('resize', debouncedUpdateChartHeight);
+  chartWidth.value = window.innerWidth * 0.9;
+  window.addEventListener('resize', debouncedUpdateChartSize);
   await fetchDataChart();
   await fetchTransactions();
 
@@ -365,7 +370,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', debouncedUpdateChartHeight);
+  window.removeEventListener('resize', debouncedUpdateChartSize);
 });
 </script>
 <style>

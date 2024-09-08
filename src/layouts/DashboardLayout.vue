@@ -12,10 +12,10 @@
       </div>
     </div> -->
     <div
-      class="w-full transition-colors grid min-h-[100dvh] grid-rows-[auto_1fr_auto]"
+      class="w-full transition-colors grid min-h-dvh grid-rows-[auto_1fr_auto]"
     >
       <admin-header :title="route.name" v-if="!route.meta.hideNav" />
-      <main class="relative px-4 bg-gray-200">
+      <main class="relative bg-gray-200 w-svw">
         <div
           v-if="backdrop.isVisible()"
           @click="backdrop.hide"
@@ -38,15 +38,15 @@
             <span class="text-sm">(Esc)</span>
           </div>
         </div>
-        <div id="body-scroll" class="container h-full py-8 mx-auto">
+        <div id="body-scroll" class="h-full px-2 py-8 mx-auto lg:container">
           <slot />
         </div>
       </main>
-      <admin-footer v-if="!$route.meta.hideNav">
+      <!-- <admin-footer v-if="!$route.meta.hideNav">
         <span class="text-sm dark:text-gray-400">
           TataKelolaMasjid Made by ❤️ Valentino Alam
         </span>
-      </admin-footer>
+      </admin-footer> -->
     </div>
   </div>
   <!-- End app -->
@@ -57,7 +57,7 @@ import Scrollbar from 'smooth-scrollbar';
 import { onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
-import AdminFooter from '@/components/organisms/AdminFooter.vue';
+// import AdminFooter from '@/components/organisms/AdminFooter.vue';
 import AdminHeader from '@/components/organisms/AdminHeader.vue';
 // import Sidebar from '@/components/organisms/Sidebar.vue';
 import { useBackdrop } from '@/composables/useBackdrop';

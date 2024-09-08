@@ -1,7 +1,7 @@
 <template>
   <div class="-m-1.5 gap-y-2">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
-      <div class="-mx-4 -my-2 overflow-visible sm:-mx-6 lg:-mx-8">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="flex justify-between">
           <div class="relative flex max-w-xs">
             <div
@@ -77,7 +77,7 @@
           </button>
         </div>
         <div
-          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-hidden align-middle rounded-lg shadow-lg"
+          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-x-auto align-middle rounded-lg shadow-lg"
         >
           <table
             class="w-full min-w-full leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"

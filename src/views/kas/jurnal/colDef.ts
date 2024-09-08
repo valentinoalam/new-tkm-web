@@ -34,8 +34,8 @@ type RowData = {
   category: string;
   color: string;
   activity: string;
-  value: bigint;
-  in_out: string;
+  amount: bigint;
+  type: string;
   photo: string;
 };
 
@@ -108,7 +108,7 @@ const columns = [
       );
     },
   },
-  columnHelper.accessor('value', {
+  columnHelper.accessor('amount', {
     header: 'Nominal',
     cell: info => {
       const value = info.getValue();
@@ -125,7 +125,7 @@ const columns = [
     },
     sortingFn: fuzzySort,
   }),
-  columnHelper.accessor('in_out', {
+  columnHelper.accessor('type', {
     header: 'Keluar/Masuk',
     enableSorting: true,
     enableGrouping: true, // Grouping enabled for this column
@@ -163,13 +163,13 @@ const columns = [
                 h(DialogHeader, { class: 'pt-3 pb-0 mb-0 px-5' }, [
                   h(
                     DialogTitle,
-                    `View Nota (${info.row.original.in_out} ${shortDate(info.row.original.dtTransaction)})`
+                    `View Nota (${info.row.original.type} ${shortDate(info.row.original.dtTransaction)})`
                   ),
                   h(
                     DialogDescription,
                     info.row.original.activity +
                       ' = ' +
-                      formatRupiah(info.row.original.value)
+                      formatRupiah(info.row.original.amount)
                   ),
                 ]),
                 h(
@@ -249,7 +249,7 @@ const columns = [
 ];
 
 export const getRowClass = (row: RowData) => {
-  return row.in_out === 'Penerimaan'
+  return row.type === 'Penerimaan'
     ? 'bg-green-50 border-green-600'
     : 'bg-rose-50  border-rose-600';
 };
