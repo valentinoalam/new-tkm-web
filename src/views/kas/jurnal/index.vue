@@ -9,7 +9,12 @@
       />
     </div>
     <div v-else class="space-y-7">
-      <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
+      <VueApexCharts
+        type="bar"
+        :options="chartOptions"
+        :series="chartSeries"
+        height="450"
+      />
       <!-- Modal Form -->
       <div
         v-if="isModalOpen"
@@ -110,7 +115,6 @@ const debounce = (func, delay) => {
 };
 const updateChartHeight = () => {
   chartHeight.value = window.innerHeight * 0.85; // Update height based on window size
-  console.log(chartHeight.value);
 };
 
 // Debounced version of the updateChartHeight function
@@ -254,21 +258,6 @@ function sortStacks(series) {
 }
 
 const chartOptions = computed(() => ({
-  responsive: [
-    {
-      breakpoint: 1000,
-      options: {
-        plotOptions: {
-          bar: {
-            horizontal: false,
-          },
-        },
-        legend: {
-          position: 'bottom',
-        },
-      },
-    },
-  ],
   chart: {
     type: 'bar',
     stacked: true,
