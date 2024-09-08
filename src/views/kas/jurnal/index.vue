@@ -9,12 +9,7 @@
       />
     </div>
     <div v-else class="space-y-7">
-      <VueApexCharts
-        type="bar"
-        :options="chartOptions"
-        :series="chartSeries"
-        :height="chartHeight"
-      />
+      <VueApexCharts type="bar" :options="chartOptions" :series="chartSeries" />
       <!-- Modal Form -->
       <div
         v-if="isModalOpen"
@@ -106,9 +101,20 @@ const search = ref('');
 const ModalContent = ['none', 'transaction', 'category'];
 const maxValue = ref();
 const chartHeight = ref(window.innerHeight * 0.85);
+const debounce = (func, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+};
 const updateChartHeight = () => {
   chartHeight.value = window.innerHeight * 0.85; // Update height based on window size
+  console.log(chartHeight.value);
 };
+
+// Debounced version of the updateChartHeight function
+const debouncedUpdateChartHeight = debounce(updateChartHeight, 300); // 300ms delay
 
 const openModal = () => {
   isModalOpen.value = true;
@@ -248,10 +254,25 @@ function sortStacks(series) {
 }
 
 const chartOptions = computed(() => ({
+  responsive: [
+    {
+      breakpoint: 1000,
+      options: {
+        plotOptions: {
+          bar: {
+            horizontal: false,
+          },
+        },
+        legend: {
+          position: 'bottom',
+        },
+      },
+    },
+  ],
   chart: {
     type: 'bar',
     stacked: true,
-    height: 450,
+    height: chartHeight.value,
   },
   plotOptions: {
     bar: {
@@ -336,7 +357,7 @@ let monthAvail = [];
 
 onMounted(async () => {
   isLoading.value = true;
-  window.addEventListener('resize', updateChartHeight);
+  window.addEventListener('resize', debouncedUpdateChartHeight);
   await fetchDataChart();
   await fetchTransactions();
 
@@ -355,6 +376,13 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateChartHeight);
+  window.removeEventListener('resize', debouncedUpdateChartHeight);
 });
 </script>
+<style>
+#chart {
+  max-width: 760px;
+  margin: 35px auto;
+  opacity: 0.9;
+}
+</style>
