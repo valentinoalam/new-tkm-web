@@ -35,6 +35,7 @@
             <!-- <DateSelector :dateStart="internalDateStart" :dateEnd="internalDateEnd" /> -->
             <input
               v-model="internalDateStart"
+              @change="console.log(typeof internalDateStart)"
               type="date"
               placeholder="Start Date"
               class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
@@ -48,7 +49,7 @@
             <button
               @click="handleDateRange"
               type="button"
-              class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:text-neutral-400 dark:border-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+              class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-blue-800 bg-blue-300 border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-blue-50"
             >
               Filter Transactions
             </button>
@@ -278,8 +279,11 @@ const props = defineProps({
 });
 
 // Internal state
-const internalDateStart = ref(props.dateStart);
-const internalDateEnd = ref(props.dateEnd);
+const today = new Date();
+const internalDateStart = ref(
+  new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10)
+);
+const internalDateEnd = ref(today.toISOString().slice(0, 10));
 
 const emit = defineEmits([
   'search',

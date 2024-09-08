@@ -38,16 +38,19 @@ export const createTransaction = async (data: unknown) => {
   return response?.data;
 };
 
-export const updateTransaction = async (data: { id: string }) => {
+export const updateTransactionById = async (data: { id: string }) => {
   const response = await apiClient.put(`${dataEndpoint}/${data.id}`, data);
   return response?.data;
 };
 
-export const updateCategoryById = async (data: { id: string }) => {
-  const response = await apiClient.put(
-    `${dataEndpoint}/kategori/${data.id}`,
-    data
-  );
+export const updateCategoryById = async (
+  id: string,
+  data: {
+    color: string;
+    name: string;
+  }
+) => {
+  const response = await apiClient.put(`${dataEndpoint}/kategori/${id}`, data);
   return response?.data;
 };
 

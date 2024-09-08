@@ -42,12 +42,13 @@
 
       <div class="flex items-center justify-between px-5 py-3">
         <button
-          onclick="handleClose"
+          @click="handleClose"
           class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
         >
           Cancel
         </button>
         <button
+          @click="handleSave"
           class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
         >
           Save
@@ -84,9 +85,23 @@ watch(
   newColor => console.log(newColor)
 );
 const emit = defineEmits(['updateCategory']);
-// function onSubmit() {
-//   emit('updateCategory', props.id, selectedColor);
-// }
+
+const handleSave = async () => {
+  try {
+    const updatedData = {
+      id: props.id,
+      color: selectedColor.value,
+      name: textInput.value || props.categoryName,
+    };
+    emit('updateCategory', updatedData); // Emit the updated data to parent
+  } catch (error) {
+    console.error('Error updating category:', error);
+  }
+};
+
+const handleClose = () => {
+  emit('updateCategory', null); // Emit null to indicate cancel
+};
 </script>
 
 <style></style>

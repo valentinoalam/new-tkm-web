@@ -63,7 +63,11 @@ const form = ref({
 });
 
 // Emit setup
-const emit = defineEmits(['closeModal', 'updateTransaction']);
+const emit = defineEmits([
+  'closeModal',
+  'updateTransaction',
+  'createTransaction',
+]);
 
 // File upload handler
 const uploadHandler = async (file: File) => {
@@ -87,7 +91,6 @@ const uploadHandler = async (file: File) => {
 watch(
   () => props.selectedTransaction,
   newTransaction => {
-    console.log(newTransaction);
     if (newTransaction) {
       form.value = {
         description: newTransaction.activity || '',
@@ -96,7 +99,6 @@ watch(
         image: newTransaction.photo || '',
       };
     }
-    console.log(form.value);
   },
   { immediate: true }
 );
@@ -110,8 +112,8 @@ const submitForm = () => {
     image: form.value.image,
     id: props.selectedTransaction?.id || Date.now(), // If editing, keep the existing ID; otherwise, generate a new one
   };
-
-  emit('updateTransaction', transactionData);
+  if (props.selectedTransaction) emit('updateTransaction', transactionData);
+  else emit('createTransaction', transactionData);
   emitCloseModal();
 };
 

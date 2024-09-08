@@ -176,8 +176,11 @@ const handlePageSizeChange = async newPageSize => {
   await fetchTransactions();
 };
 
-const handleUpdateCategory = async ({ id, color }) => {
-  await updateCategoryById(id, { color });
+const handleUpdateCategory = async data => {
+  if (!data) return closeModal();
+  const { id, color, name } = data;
+  await updateCategoryById(id, { color, name });
+  closeModal();
   await fetchTransactions();
 };
 
