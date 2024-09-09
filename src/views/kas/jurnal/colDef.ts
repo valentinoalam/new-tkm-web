@@ -93,7 +93,7 @@ const columns = [
       return h(
         'span',
         {
-          class: `inline-flex min-h-6 min-w-28 items-center leading-none py-1 px-1 rounded-3xl justify-center font-extralight text-white dark:border-neutral-200 dark:text-white`,
+          class: `inline-flex min-h-6 min-w-28 items-center leading-none py-1 px-1 rounded-3xl justify-center font-extralight text-white cursor-pointer dark:border-neutral-200 dark:text-white`,
           style: {
             backgroundColor: color,
           },

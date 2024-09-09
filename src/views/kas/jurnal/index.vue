@@ -197,7 +197,7 @@ const handleUpdateCategory = async data => {
 
 const handleSearch = async query => {
   search.value = query;
-  console.log(query);
+  currentPage.value = 1;
   await fetchTransactions();
 };
 

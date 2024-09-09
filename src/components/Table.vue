@@ -35,7 +35,6 @@
             <!-- <DateSelector :dateStart="internalDateStart" :dateEnd="internalDateEnd" /> -->
             <input
               v-model="internalDateStart"
-              @change="console.log(typeof internalDateStart)"
               type="date"
               placeholder="Start Date"
               class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
