@@ -7,15 +7,16 @@ import {
 } from '@tanstack/vue-table';
 import { LucideEdit, LucideDelete } from 'lucide-vue-next';
 import { h } from 'vue';
+import Editor from '@/components/Editor.vue';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  // DialogClose,
+  // DialogFooter,
 } from '@/components/ui/dialog';
 import { formatRupiah } from '@/utils/formatRupiah';
 
@@ -175,36 +176,38 @@ const columns = [
                 h(
                   'div',
                   {
-                    class: 'grid gap-4 overflow-x-auto overflow-y-auto px-6',
+                    class:
+                      'w-full h-full bg-gray-100 flex items-center justify-center',
                   },
-                  [
-                    h(
-                      'div',
-                      { class: 'flex flex-col justify-between h-max w-max' },
-                      h('img', {
-                        src: `${appUrl}img/${info.getValue()}`, // Replace with the actual image path
-                        alt: 'Image description',
-                        // width: 400,
-                        // height: 450,
-                        // onClick: () => displayImage(info.row.id),
-                      })
-                    ),
-                  ]
+                  h(Editor, {
+                    data: {
+                      cropped: false,
+                      cropping: false,
+                      loaded: true,
+                      name: info.getValue(),
+                      previousUrl: `${appUrl}img/${info.getValue()}`,
+                      type: '',
+                      url: `${appUrl}img/${info.getValue()}`,
+                    },
+                    // width: 400,
+                    // height: 450,
+                    // onClick: () => displayImage(info.row.id),
+                  })
                 ),
-                h(DialogFooter, { class: 'sm:justify-center mr-5 mb-2' }, [
-                  h(DialogClose, { asChild: true }, () =>
-                    h(
-                      'Button',
-                      {
-                        type: 'button',
-                        variant: 'secondary',
-                        class:
-                          'px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700',
-                      },
-                      'Close'
-                    )
-                  ),
-                ]),
+                // h(DialogFooter, { class: 'sm:justify-center mr-5 mb-2' }, [
+                //   h(DialogClose, { asChild: true }, () =>
+                //     h(
+                //       'Button',
+                //       {
+                //         type: 'button',
+                //         variant: 'secondary',
+                //         class:
+                //           'px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700',
+                //       },
+                //       'Close'
+                //     )
+                //   ),
+                // ]),
               ]
             ),
           ])

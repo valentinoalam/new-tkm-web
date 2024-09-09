@@ -371,12 +371,15 @@ export default {
 
 .toolbar {
   background-color: rgba(0, 0, 0, 0.5);
-  bottom: 1rem;
+  position: sticky;
+  bottom: 0; /* Sticks to the bottom */
+  left: 50%; /* Position relative to the center */
+  transform: translateX(-50%); /* Offset to center the element */
+  z-index: 100; /* Ensures it's above other elements if needed */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
   color: #fff;
   height: 2rem;
-  left: 50%;
   margin-left: -8rem;
-  position: absolute;
   width: 16rem;
   z-index: 2015;
 }
