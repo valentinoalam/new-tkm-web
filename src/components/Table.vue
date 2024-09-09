@@ -28,7 +28,6 @@
               class="block w-full px-3 text-sm border border-gray-200 rounded-lg shadow-sm ps-9 focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
               placeholder="Search"
               @input="handleSearch"
-              v-model="filter"
             />
           </div>
           <div class="flex items-center justify-start gap-2">
@@ -143,7 +142,7 @@
       <!-- Pagination Wrapper -->
       <div class="mt-4">
         <div class="flex self-center justify-center mx-auto text-sm gap-x-auto">
-          Show Page {{ currentPage }} of {{ totalPages - 1 }} -
+          Show Page {{ currentPage }} of {{ totalPages }} -
           {{ totalRecords }} results
         </div>
         <div class="flex items-center justify-between w-full sm:flex">
@@ -182,7 +181,7 @@
             <button
               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
               @click="fetchPage(currentPage + 1)"
-              :disabled="currentPage === totalPages - 1"
+              :disabled="currentPage === totalPages"
             >
               Next
               <svg
@@ -202,8 +201,8 @@
             </button>
             <button
               class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              @click="fetchPage(totalPages - 1)"
-              :disabled="currentPage === totalPages - 1"
+              @click="fetchPage(totalPages)"
+              :disabled="currentPage === totalPages"
             >
               Last page
             </button>
@@ -228,11 +227,11 @@
 </template>
 
 <script setup>
-import { rankItem } from '@tanstack/match-sorter-utils';
+// import { rankItem } from '@tanstack/match-sorter-utils';
 import {
   FlexRender,
   getCoreRowModel,
-  getFilteredRowModel,
+  // getFilteredRowModel,
   getGroupedRowModel,
   getSortedRowModel,
   useVueTable,
@@ -315,7 +314,7 @@ const handlePageSizeChange = () => {
   emit('changePageSize', pageSize.value);
 };
 const fetchPage = page => {
-  if (page >= 0 && page < props.totalPages) {
+  if (page > 0 && page <= props.totalPages) {
     emit('fetchPage', page);
   }
 };
@@ -360,7 +359,7 @@ const table = useVueTable({
   getCoreRowModel: getCoreRowModel(),
   getSortedRowModel: getSortedRowModel(),
   getGroupedRowModel: getGroupedRowModel(),
-  getFilteredRowModel: getFilteredRowModel(),
+  // getFilteredRowModel: getFilteredRowModel(),
   state: {
     get sorting() {
       return sorting.value;
@@ -372,7 +371,7 @@ const table = useVueTable({
       return grouping.value;
     },
   },
-  globalFilterFn: fuzzyFilter,
+  // globalFilterFn: fuzzyFilter,
   onGroupingChange: newGrouping => {
     grouping.value = newGrouping; // Handle grouping changes
   },
@@ -393,15 +392,15 @@ function getSortingIndicator(column) {
   return indicators[column.getIsSorted()];
 }
 
-function fuzzyFilter(row, columnId, value, addMeta) {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value);
+// function fuzzyFilter(row, columnId, value, addMeta) {
+//   // Rank the item
+//   const itemRank = rankItem(row.getValue(columnId), value);
 
-  // Store the ranking info
-  addMeta(itemRank);
-  // Return if the item should be filtered in/out
-  return itemRank.passed;
-}
+//   // Store the ranking info
+//   addMeta(itemRank);
+//   // Return if the item should be filtered in/out
+//   return itemRank.passed;
+// }
 </script>
 
 <style scoped>
