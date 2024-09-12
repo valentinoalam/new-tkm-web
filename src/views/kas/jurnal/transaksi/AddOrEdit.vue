@@ -86,7 +86,7 @@ const form = ref({
 
 const selectedCategoryId = ref('');
 const categories = ref([]);
-const categoriesSelectItems = ref([]);
+const categoriesSelectItems = ref([{ label: '', value: '' }]);
 const isIncome = ref(false);
 // Emit setup
 const emit = defineEmits([
@@ -98,12 +98,13 @@ const emit = defineEmits([
 const toggleHandle = (selected: boolean) => {
   isIncome.value = selected;
   form.value.transactionType = isIncome.value ? 'Penerimaan' : 'Pengeluaran';
-  categoriesSelectItems.value = categories.value
-    .filter(item => item.type === form.value.transactionType)
-    .map(category => ({
-      label: category.category, // Category name
-      value: category.id, // Category ID
-    }));
+  if (categories.value)
+    categoriesSelectItems.value = categories.value
+      .filter(({ type }) => type === form.value.transactionType)
+      .map(({ category, id }) => ({
+        label: category, // Category name
+        value: id, // Category ID
+      }));
 };
 
 async function getCategories() {
@@ -111,7 +112,6 @@ async function getCategories() {
     const response = await getAllCategories(); // get categories by type
 
     categories.value = response.data;
-    console.log(categories.value);
     categoriesSelectItems.value = categories.value
       .filter(
         (item: { type: string }) => item.type === form.value.transactionType
