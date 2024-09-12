@@ -10,7 +10,9 @@ interface User {
 }
 
 interface LoginResponse {
-  token: string;
+  tokens: string;
+  user: object;
+
   // Add other fields that the response might include
 }
 
@@ -37,16 +39,16 @@ interface ErrorResponse {
 }
 
 const authService = {
-  async login(email: string, password: string): Promise<LoginResponse> {
+  async login(username: string, password: string): Promise<LoginResponse> {
     try {
-      const response = await apiClient.post<LoginResponse>('/auth/login', {
-        email,
+      const response = await apiClient.post<LoginResponse>('/auth/signin', {
+        username,
         password,
       });
-      const { token } = response.data;
+      const { tokens } = response.data;
 
       // Store the token in local storage
-      localStorage.setItem('authToken', token);
+      localStorage.setItem('authToken', tokens);
 
       return response.data;
     } catch (error: unknown) {

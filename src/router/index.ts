@@ -12,37 +12,57 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    name: 'kas kecil',
+    name: 'Kas Kecil',
     component: defineAsyncComponent(
       () => import('@/views/kas/jurnal/index.vue')
     ),
     meta: { title: 'Beranda' },
-    // Create a parent component for better organization
-    // children: [
-    //   {
-    //     path: '',
-    //     name: 'Transaksi',
-    //     component: defineAsyncComponent(
-    //       () => import('@/views/kas/jurnal/index.vue')
-    //     ), // Lazy load TransactionList
-    //     meta: { requiresAuth: false, title: 'Jurnal' },
-    //   },
-    //   // {
-    //   //   path: 'cash/laporan',
-    //   //   name: 'FinancialReport',
-    //   //   component: defineAsyncComponent(
-    //   //     () => import('@/views/kas/jurnal/laporan/FinancialReport.vue')
-    //   //   ), // Lazy load FinancialReport
-    //   // },
-    //   {
-    //     path: 'cash/budget',
-    //     name: 'Budget',
-    //     component: defineAsyncComponent(
-    //       () => import('@/views/kas/anggaran/Budget.vue')
-    //     ), // Lazy load Budget
-    //   },
-    // ],
   },
+  {
+    path: '/users',
+    name: 'User Management',
+    component: defineAsyncComponent(
+      () => import('@/views/user/UserManagement.vue')
+    ),
+    meta: { title: 'users' },
+  },
+  // {
+  //   path: '/account',
+  //   name: 'Account',
+  //   component: defineAsyncComponent(() => import('@/views/account/index.vue')),
+  //   meta: { title: 'users' },
+  // },
+  {
+    path: '/login',
+    name: 'Log in',
+    component: defineAsyncComponent(() => import('@/views/auth/signin.vue')),
+    meta: { title: 'Login', layout: 'empty' },
+  },
+  // Create a parent component for better organization
+  // children: [
+  //   {
+  //     path: '',
+  //     name: 'Transaksi',
+  //     component: defineAsyncComponent(
+  //       () => import('@/views/kas/jurnal/index.vue')
+  //     ), // Lazy load TransactionList
+  //     meta: { requiresAuth: false, title: 'Jurnal' },
+  //   },
+  //   // {
+  //   //   path: 'cash/laporan',
+  //   //   name: 'FinancialReport',
+  //   //   component: defineAsyncComponent(
+  //   //     () => import('@/views/kas/jurnal/laporan/FinancialReport.vue')
+  //   //   ), // Lazy load FinancialReport
+  //   // },
+  //   {
+  //     path: 'cash/budget',
+  //     name: 'Budget',
+  //     component: defineAsyncComponent(
+  //       () => import('@/views/kas/anggaran/Budget.vue')
+  //     ), // Lazy load Budget
+  //   },
+  // ],
 ];
 
 const router = createRouter({

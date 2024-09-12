@@ -24,6 +24,11 @@ export const getAllTransactions = async (
   return response?.data;
 };
 
+export const getAllCategories = async () => {
+  const response = await apiClient.get(`${dataEndpoint}/categories`);
+  return response;
+};
+
 export const getTransactionById = async (id: string) => {
   const response = await apiClient.get(`${dataEndpoint}/${id}`);
   return response?.data;

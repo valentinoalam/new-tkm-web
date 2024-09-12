@@ -1,12 +1,30 @@
 <template>
   <!-- FormKit Form -->
   <FormKit type="form" :actions="false" @submit.prevent="submitForm">
+    <div class="flex gap-5">
+      <!-- Toggle for Transaction Type (Penerimaan / Pengeluaran) -->
+      <toggle :modelValue="isIncome" @update:modelValue="toggleHandle" />
+      <!-- Conditional text based on the toggle state -->
+      <h1 class="text-xl font-bold toggle-text">
+        {{ form.transactionType }}
+      </h1>
+    </div>
+
+    <!-- Select for Category Fetched from API -->
+    <FormKit
+      type="select"
+      label="Category"
+      :v-model="selectedCategoryId"
+      :options="categoriesSelectItems"
+      :validation="'required'"
+    />
     <FormKit
       type="text"
       label="Description"
       v-model="form.description"
       :validation="'required'"
     />
+
     <FormKit
       type="number"
       label="Amount"
@@ -46,7 +64,9 @@
 
 <script lang="ts" setup>
 import { FormKit } from '@formkit/vue';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import toggle from '@/components/atoms/toggle.vue';
+import { getAllCategories } from '@/service/appsheetService';
 
 const props = defineProps({
   selectedTransaction: {
@@ -58,10 +78,16 @@ const props = defineProps({
 const form = ref({
   description: '',
   amountString: '',
-  date: '',
+  date: new Date().toISOString().split('T')[0],
+  transactionType: 'Pengeluaran',
+  categoryId: '',
   image: '',
 });
 
+const selectedCategoryId = ref('');
+const categories = ref([]);
+const categoriesSelectItems = ref([]);
+const isIncome = ref(false);
 // Emit setup
 const emit = defineEmits([
   'closeModal',
@@ -69,6 +95,36 @@ const emit = defineEmits([
   'createTransaction',
 ]);
 
+const toggleHandle = (selected: boolean) => {
+  isIncome.value = selected;
+  form.value.transactionType = isIncome.value ? 'Penerimaan' : 'Pengeluaran';
+  categoriesSelectItems.value = categories.value
+    .filter(item => item.type === form.value.transactionType)
+    .map(category => ({
+      label: category.category, // Category name
+      value: category.id, // Category ID
+    }));
+};
+
+async function getCategories() {
+  try {
+    const response = await getAllCategories(); // get categories by type
+
+    categories.value = response.data;
+    console.log(categories.value);
+    categoriesSelectItems.value = categories.value
+      .filter(
+        (item: { type: string }) => item.type === form.value.transactionType
+      )
+      .map((category: { category: string; id: string }) => ({
+        label: category.category, // Nama kategori
+        value: category.id, // ID kategori
+      }));
+  } catch (error) {
+    console.error('Error fetching categories', error);
+  }
+}
+console.log(form.value.transactionType);
 // File upload handler
 const uploadHandler = async (file: File) => {
   const formData = new FormData();
@@ -94,22 +150,29 @@ watch(
     if (newTransaction) {
       form.value = {
         description: newTransaction.activity || '',
+        transactionType: newTransaction.type || '',
         amountString: newTransaction.value || '',
         date: newTransaction.dtTransaction || '',
         image: newTransaction.photo || '',
+        categoryId: newTransaction.categoryId || '',
       };
     }
   },
   { immediate: true }
 );
 
+onMounted(async () => {
+  getCategories();
+  console.log(form.value.date);
+});
 // Method to submit the form
 const submitForm = () => {
   const transactionData = {
-    description: form.value.description,
-    amount: parseFloat(form.value.amountString), // Convert string back to number
-    date: form.value.date,
-    image: form.value.image,
+    activity: form.value.description,
+    value: parseFloat(form.value.amountString), // Convert string back to number
+    dtTransaction: form.value.date,
+    file: form.value.image,
+    categoryId: form.value.categoryId,
     id: props.selectedTransaction?.id || Date.now(), // If editing, keep the existing ID; otherwise, generate a new one
   };
   if (props.selectedTransaction) emit('updateTransaction', transactionData);
