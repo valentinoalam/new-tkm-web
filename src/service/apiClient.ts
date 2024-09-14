@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
       // Handle unauthorized access, redirect to login, etc.
       localStorage.clear(); //localStorage.removeItem('authToken');
       window.location.reload();
-      router.push('/signin');
+      router.push('/login');
     }
     if (
       error.response &&
@@ -47,7 +47,7 @@ apiClient.interceptors.response.use(
       const rt = getCookie('rt'); //const refreshToken = localStorage.getItem('refreshToken');
       if (!rt) {
         localStorage.clear(); // Logout or redirect to login
-        router.push('/signin');
+        router.push('/login');
         return Promise.reject(error);
       }
 
@@ -67,7 +67,7 @@ apiClient.interceptors.response.use(
       } catch (_error) {
         localStorage.clear();
         console.error('Refresh token error:', _error);
-        router.push('/signin');
+        router.push('/login');
         return Promise.reject(_error);
       }
     }

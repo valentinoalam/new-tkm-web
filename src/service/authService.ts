@@ -1,7 +1,6 @@
 import { AxiosError } from 'axios';
 
 import apiClient from './apiClient';
-import { useAuth } from '@/stores/auth';
 
 interface User {
   id: string;
@@ -50,7 +49,7 @@ interface ErrorResponse {
   message: string;
   // Add other fields if your error response contains more information
 }
-const store = useAuth();
+
 const authService = {
   async login(username: string, password: string): Promise<LoginResponse> {
     try {
@@ -58,13 +57,7 @@ const authService = {
         username,
         password,
       });
-      // const { tokens } = response.data;
-      const { tokens, user } = response.data.data;
-      console.log(response.data);
-      // Store the token in local storage
-      localStorage.setItem('tkm_at', tokens?.access_token);
-      // Save user to store
-      store.setCredentials(tokens, user);
+
       return response.data;
     } catch (error: unknown) {
       const axiosError = error as AxiosError;

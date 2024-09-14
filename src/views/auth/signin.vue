@@ -63,7 +63,7 @@
 
       <!-- Error Message -->
       <p v-if="errMsg" class="mb-4 text-center text-red-600">{{ errMsg }}</p>
-      <div class="flex items-center justify-between mt-4">
+      <!-- <div class="flex items-center justify-between mt-4">
         <div>
           <label class="inline-flex items-center">
             <input
@@ -81,7 +81,7 @@
             >Forgot your password?</a
           >
         </div>
-      </div>
+      </div> -->
       <!-- Login Button -->
       <div class="flex items-center justify-center">
         <button
@@ -100,8 +100,8 @@ import { ref, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
 import authService from '@/service/authService';
-// import { useStore } from 'vuex';
-// import { useSignin } from '@/api/auth'; // Custom hook for API call
+import { useAuth } from '@/stores/auth';
+
 const router = useRouter();
 const route = useRoute();
 const userRef = ref(null);
@@ -116,9 +116,14 @@ const togglePasswordVisibility = () => {
 };
 
 const handleSubmit = async () => {
+  const store = useAuth();
   try {
-    await authService.login(values.username, values.password); // Custom API call hook
-    // Navigate to dashboard
+    const response = await authService.login(values.username, values.password); // Custom API call hook
+    const { tokens, user } = response.data;
+    // Store the token in local storage
+    localStorage.setItem('tkm_at', tokens?.access_token);
+    // Save user to store
+    store.setCredentials(tokens, user);
     const from = route.query.from || '/';
     router.replace(from.toString());
   } catch (err) {
