@@ -126,7 +126,7 @@ export default defineComponent({
     });
     // Calculate balance difference (Debit - Credit)
     const balanceDifference = computed(() => {
-      return totalDebit.value - totalCredit.value;
+      return totalCredit.value - totalDebit.value;
     });
 
     // Determine if the balance is a plus or minus
