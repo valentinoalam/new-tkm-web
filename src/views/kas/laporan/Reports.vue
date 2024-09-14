@@ -12,8 +12,8 @@
         <tr v-for="row in table.getRowModel().rows" :key="row.id">
           <td>{{ row.original.categoryName }}</td>
           <!-- Display category name -->
-          <td>{{ row.original.debit | currency }}</td>
-          <td>{{ row.original.credit | currency }}</td>
+          <td>{{ row.original.debit }}</td>
+          <td>{{ row.original.credit }}</td>
         </tr>
       </tbody>
     </table>
@@ -23,7 +23,7 @@
 <script>
 import { useVueTable, getCoreRowModel } from '@tanstack/vue-table';
 import axios from 'axios';
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 
 export default {
   setup() {
