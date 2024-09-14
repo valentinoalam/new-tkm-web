@@ -21,7 +21,6 @@
 <script setup>
 import BaseLevel from '@/components/atoms/BaseLevel.vue';
 import Logo from '@/components/molecules/layouts/Logo.vue';
-import { containerMaxW } from '@/configs/config';
 
 const year = new Date().getFullYear();
 </script>
