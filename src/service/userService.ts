@@ -12,12 +12,20 @@ export const getById = async (id: string) => {
   return response?.data;
 };
 
-export const create = async (data: unknown) => {
-  const response = await apiClient.post(endpoint, data, {
+export const create = async (data: {
+  username: string;
+  email: string;
+  password: string;
+}) => {
+  const { username, email, password } = data;
+  const response = await apiClient.post(
+    `${endpoint}/user`,
+    { username, email, password } /*, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-  });
+  }*/
+  );
   return response?.data;
 };
 

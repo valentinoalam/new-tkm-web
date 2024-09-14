@@ -177,7 +177,9 @@ const fetchDataChart = async () => {
   try {
     const response = await getTransactionDataChart(); //axios.get('/dari-appsheet/transactions');
     transactionsDataChart.value = response.result;
+
     monthAvail = response.months;
+    console.log(monthAvail);
     const chartData = await transactionsDataChart.value.filter(item =>
       item.data.some(value => value !== 0)
     );

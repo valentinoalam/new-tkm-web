@@ -16,12 +16,12 @@
       <FormKit
         type="form"
         :actions="false"
-        @submit.prevent="handleSubmit"
+        @submit="handleSubmit"
         :validation-schema="validationSchema"
       >
         <div class="space-y-3">
           <FormKit
-            name="name"
+            name="username"
             label="Name"
             type="text"
             placeholder="Enter name"
@@ -47,7 +47,7 @@
             label="Password"
             type="password"
             placeholder="Enter password"
-            validation="required|min:6"
+            validation="required"
             input-class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
             label-class="block text-xs font-semibold text-gray-600"
             validation-label-class="text-xs text-red-500"
@@ -79,7 +79,8 @@
 <script>
 import { FormKit } from '@formkit/vue';
 import { XIcon } from 'lucide-vue-next';
-// import * as yup from 'yup';
+import * as yup from 'yup';
+import { create } from '@/service/userService';
 
 export default {
   components: {
@@ -92,14 +93,34 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      validationSchema: yup.object().shape({
+        username: yup.string().required('Name is required'),
+        email: yup
+          .string()
+          .email('Must be a valid email')
+          .required('Email is required'),
+        password: yup
+          .string()
+          .min(6, 'Password must be at least 6 characters')
+          .required('Password is required'),
+      }),
+    };
+  },
   methods: {
     closeModal() {
       this.$emit('close');
     },
-    handleSubmit(values) {
-      console.log('Form submitted:', values);
-      // Call API or perform action here
-      this.closeModal();
+    async handleSubmit(values) {
+      console.log('Form values:', values);
+      try {
+        await create(values);
+        // Perform API action or other logic
+        this.closeModal();
+      } catch (error) {
+        console.error('Error while submitting the form:', error);
+      }
     },
   },
 };
