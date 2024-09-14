@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 
 import apiClient from './apiClient';
+import { useAuth } from '@/stores/auth';
 
 interface User {
   id: string;
@@ -10,21 +11,33 @@ interface User {
 }
 
 interface LoginResponse {
-  tokens: string;
-  user: object;
-
-  // Add other fields that the response might include
+  data: {
+    tokens: {
+      access_token: string;
+      access_type: string;
+      refresh_token: string;
+    };
+    user: {
+      id: string;
+      username: string;
+      email: string;
+    };
+  };
 }
 
 // Define types for the request and response data
 interface RegisterResponse {
   // Define the structure of the response data based on your API
   // Example:
-  token: string;
+  tokens: {
+    access_token: string;
+    access_type: string;
+    refresh_token: string;
+  };
   user: {
     id: string;
+    username: string;
     email: string;
-    // Add other user properties as needed
   };
 }
 
@@ -37,7 +50,7 @@ interface ErrorResponse {
   message: string;
   // Add other fields if your error response contains more information
 }
-
+const store = useAuth();
 const authService = {
   async login(username: string, password: string): Promise<LoginResponse> {
     try {
@@ -45,11 +58,13 @@ const authService = {
         username,
         password,
       });
-      const { tokens } = response.data;
-
+      // const { tokens } = response.data;
+      const { tokens, user } = response.data.data;
+      console.log(response.data);
       // Store the token in local storage
-      localStorage.setItem('authToken', tokens);
-
+      localStorage.setItem('tkm_at', tokens?.access_token);
+      // Save user to store
+      store.setCredentials(tokens, user);
       return response.data;
     } catch (error: unknown) {
       const axiosError = error as AxiosError;

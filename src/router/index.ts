@@ -6,15 +6,8 @@ import ImageEditor from '@/views/ImageEditor.vue';
 export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    // component: Dashboard, // Parent route is Dashboard
     meta: { requiresAuth: true }, // Protect all child routes
     children: [
-      {
-        path: 'image-editor',
-        name: 'Editor',
-        component: ImageEditor,
-        meta: { title: 'Image Editor' }, // Meta info specific to Image Editor
-      },
       {
         path: '/',
         name: 'Kas Kecil',
@@ -42,6 +35,12 @@ export const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: '/image-editor',
+    name: 'Editor',
+    component: ImageEditor,
+    meta: { title: 'Image Editor' }, // Meta info specific to Image Editor
+  },
+  {
     path: '/login',
     name: 'Login',
     component: defineAsyncComponent(() => import('@/views/auth/signin.vue')),
@@ -60,7 +59,7 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   console.log('Navigating to:', to.fullPath);
   document.title = `Masjidku ${to.meta.title} | Kelola Masjid`;
-  const isAuthenticated = !!localStorage.getItem('authToken'); // Replace with actual auth check
+  const isAuthenticated = !!localStorage.getItem('tkm_at'); // Replace with actual auth check
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isAuthenticated) {

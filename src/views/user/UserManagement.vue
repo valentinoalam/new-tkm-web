@@ -75,6 +75,10 @@ const columns = [
     header: 'Email',
     cell: info => info.getValue(),
   }),
+  columnHelper.accessor('lastActive', {
+    header: 'Last Active',
+    cell: info => info.getValue(),
+  }),
   {
     accessorKey: 'id',
     id: 'actions', // Unique identifier for this column

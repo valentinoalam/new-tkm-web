@@ -100,13 +100,10 @@ import { ref, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
 import authService from '@/service/authService';
-import { useAuth } from '@/stores/auth';
 // import { useStore } from 'vuex';
 // import { useSignin } from '@/api/auth'; // Custom hook for API call
 const router = useRouter();
 const route = useRoute();
-
-const store = useAuth();
 const userRef = ref(null);
 
 const initialValues = { username: '', password: '' };
@@ -120,14 +117,7 @@ const togglePasswordVisibility = () => {
 
 const handleSubmit = async () => {
   try {
-    const response = await authService.login(values.username, values.password); // Custom API call hook
-    const { tokens, user } = response;
-
-    // Store token
-    localStorage.setItem('tkm_at', tokens);
-
-    // Save user to store
-    store.setCredentials(tokens, user);
+    await authService.login(values.username, values.password); // Custom API call hook
     // Navigate to dashboard
     const from = route.query.from || '/';
     router.replace(from.toString());
