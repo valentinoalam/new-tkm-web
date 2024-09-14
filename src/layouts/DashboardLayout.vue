@@ -1,7 +1,7 @@
 <template>
   <!-- App -->
-  <!-- <div class="flex bg-gray-50 font-lexend dark:bg-gray-900"> -->
-  <!-- <div v-if="!$route.meta.hideNav" class="lg:block">
+  <div class="flex bg-gray-50 font-lexend dark:bg-gray-900">
+    <div v-if="!$route.meta.hideNav" class="lg:block">
       <div
         class="fixed z-20 overflow-auto bg-white border-r-2 lg:flex-auto w-sidebar dark:bg-gray-800 dark:border-gray-700 lg:z-0 lg:relative"
       >
@@ -10,45 +10,23 @@
           <sidebarlist v-if="!$route.meta.hideNav" @sidebarToggle="close" />
         </perfect-scrollbar>
       </div>
-    </div> -->
-  <div
-    class="w-full transition-colors grid min-h-dvh grid-rows-[auto_1fr_auto]"
-  >
-    <admin-header :title="route.name" v-if="!route.meta.hideNav" />
-    <main class="relative bg-gray-200">
-      <div
-        v-if="backdrop.isVisible()"
-        @click="backdrop.hide"
-        class="fixed inset-0 z-10 w-full h-full transition-opacity bg-gray-900 opacity-50 modal-overlay"
-      >
-        <div
-          class="absolute right-0 z-50 flex flex-col items-center h-full mt-4 mr-4 text-sm text-white cursor-pointer top-10 modal-close"
-        >
-          <svg
-            class="text-white fill-current"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-          >
-            <path
-              d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
-            />
-          </svg>
-          <span class="text-sm">(Esc)</span>
+    </div>
+    <div
+      class="w-full transition-colors grid min-h-dvh grid-rows-[auto_1fr_auto]"
+    >
+      <admin-header :title="route.name" v-if="!route.meta.hideNav" />
+      <main class="relative bg-gray-200">
+        <div class="h-full px-2 py-8 mx-auto lg:container">
+          <slot />
         </div>
-      </div>
-      <div id="body-scroll" class="h-full px-2 py-8 mx-auto lg:container">
-        <slot />
-      </div>
-    </main>
-    <!-- <admin-footer v-if="!$route.meta.hideNav">
-        <span class="text-sm dark:text-gray-400">
-          TataKelolaMasjid Made by ❤️ Valentino Alam
-        </span>
-      </admin-footer> -->
+      </main>
+      <!-- <admin-footer v-if="!$route.meta.hideNav">
+          <span class="text-sm dark:text-gray-400">
+            TataKelolaMasjid Made by ❤️ Valentino Alam
+          </span>
+        </admin-footer> -->
+    </div>
   </div>
-  <!-- </div> -->
   <!-- End app -->
 </template>
 
@@ -59,11 +37,9 @@ import { useRoute } from 'vue-router';
 
 // import AdminFooter from '@/components/organisms/AdminFooter.vue';
 import AdminHeader from '@/components/organisms/AdminHeader.vue';
-// import Sidebar from '@/components/organisms/Sidebar.vue';
-import { useBackdrop } from '@/composables/useBackdrop';
+import Sidebar from '@/components/organisms/Sidebar.vue';
 import { useSidebar } from '@/composables/useSidebar';
 
-const backdrop = useBackdrop();
 const { isOpen } = useSidebar();
 
 // Access the current route

@@ -270,17 +270,6 @@ const rowClass = row => {
     : 'lg:odd:bg-gray-100/50 lg:dark:odd:bg-slate-800/50';
 };
 
-// Helper function to get cell tooltip content
-const getCellTooltip = (column, row) => {
-  // You can customize this logic to return dynamic content based on column and row
-  if (column.columnDef.header === 'Tanggal')
-    return new Intl.DateTimeFormat('id-ID', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(new Date(row.original.dtTransaction));
-};
-
 const table = useVueTable({
   get data() {
     return data.value;

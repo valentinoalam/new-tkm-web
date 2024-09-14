@@ -14,14 +14,14 @@
     >
       <div class="flex items-center justify-center mt-8">
         <!-- sidebar head -->
-        <div class="flex items-center bg-gray-900 sidebar-head">
+        <!-- <div class="flex items-center bg-gray-900 sidebar-head">
           <Logo />
           <div
             class="absolute hidden px-2 py-1 mt-3 text-xs text-gray-200 bg-gray-700 rounded-md dark:block"
           >
             Dark mode
           </div>
-        </div>
+        </div> -->
       </div>
       <nav class="mt-10">
         <ul>
@@ -77,7 +77,7 @@
 import { Icon } from '@iconify/vue';
 import { ref } from 'vue';
 
-import Logo from '@/components/molecules/layouts/Logo.vue';
+// import Logo from '@/components/molecules/layouts/Logo.vue';
 // import SidebarToggle from '@/components/molecules/layouts/SidebarToggle.vue';
 import MenuAccordion from '@/components/molecules/MenuAccordion.vue';
 import { useSidebar } from '@/composables/useSidebar';
@@ -86,7 +86,8 @@ import { routes } from '@/router';
 defineProps({
   sidebarToggle: Boolean,
 });
-const navRoutes = ref(routes);
+
+const navRoutes = ref(routes[0].children);
 const { isOpen } = useSidebar();
 // const handleToggle = () => {
 //   // Toggle the state when the 'toggle' event is received

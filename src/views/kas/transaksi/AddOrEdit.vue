@@ -1,60 +1,88 @@
 <template>
   <!-- FormKit Form -->
-  <FormKit type="form" :actions="false" @submit.prevent="submitForm">
-    <div class="flex gap-5">
-      <!-- Toggle for Transaction Type (Penerimaan / Pengeluaran) -->
+  <FormKit
+    type="form"
+    :actions="false"
+    @submit.prevent="submitForm"
+    :validation-schema="validationSchema"
+    class="p-4 space-y-4 bg-white rounded-lg shadow-md"
+  >
+    <!-- Toggle for Transaction Type (Penerimaan / Pengeluaran) -->
+    <div class="flex flex-wrap items-center gap-3">
       <toggle :modelValue="isIncome" @update:modelValue="toggleHandle" />
-      <!-- Conditional text based on the toggle state -->
-      <h1 class="text-xl font-bold toggle-text">
+      <h1 class="text-lg font-semibold">
         {{ form.transactionType }}
       </h1>
     </div>
 
-    <!-- Select for Category Fetched from API -->
+    <!-- Category Select -->
     <FormKit
       type="select"
       label="Category"
       :v-model="selectedCategoryId"
       :options="categoriesSelectItems"
       :validation="'required'"
+      input-class="w-full"
+      label-class="text-sm font-semibold text-gray-600"
+      validation-label-class="text-xs text-red-500"
     />
+
+    <!-- Description -->
     <FormKit
       type="text"
       label="Description"
       v-model="form.description"
       :validation="'required'"
+      input-class="w-full"
+      label-class="text-sm font-semibold text-gray-600"
+      validation-label-class="text-xs text-red-500"
     />
 
+    <!-- Amount -->
     <FormKit
       type="number"
       label="Amount"
       v-model="form.amountString"
       :validation="'required|number'"
+      input-class="w-full"
+      label-class="text-sm font-semibold text-gray-600"
+      validation-label-class="text-xs text-red-500"
     />
+
+    <!-- Date -->
     <FormKit
       type="date"
       label="Date"
       v-model="form.date"
       :validation="'required|date'"
+      input-class="w-full"
+      label-class="text-sm font-semibold text-gray-600"
+      validation-label-class="text-xs text-red-500"
     />
+
+    <!-- File Upload -->
     <FormKit
       type="file"
       name="image"
       label="Image"
       multiple
       :upload="uploadHandler"
+      input-class="w-full"
+      label-class="text-sm font-semibold text-gray-600"
     />
-    <div class="flex justify-end mt-4">
+
+    <!-- Buttons -->
+    <div class="flex justify-end space-x-3">
       <button
         type="button"
-        class="px-4 py-2 mr-2 text-white bg-gray-500 rounded hover:bg-gray-700"
+        class="px-4 py-2 text-sm font-semibold text-white bg-gray-500 rounded hover:bg-gray-700"
         @click="emitCloseModal"
       >
         Cancel
       </button>
       <button
         type="submit"
-        class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700"
+        class="px-4 py-2 text-sm font-semibold text-white bg-blue-500 rounded hover:bg-blue-700"
       >
         Save
       </button>
@@ -65,6 +93,7 @@
 <script lang="ts" setup>
 import { FormKit } from '@formkit/vue';
 import { onMounted, ref, watch } from 'vue';
+import * as yup from 'yup';
 import toggle from '@/components/atoms/toggle.vue';
 import { getAllCategories } from '@/service/appsheetService';
 
@@ -82,6 +111,14 @@ const form = ref({
   transactionType: 'Pengeluaran',
   categoryId: '',
   image: '',
+});
+
+const validationSchema = yup.object({
+  description: yup.string().required('Description is required'),
+  value: yup.number().required('Value is required'),
+  dateTransaction: yup.date().required('Date is required'),
+  categoryId: yup.string().required('Category is required'),
+  photoUpload: yup.mixed().required('Photo is required'),
 });
 
 const selectedCategoryId = ref('');

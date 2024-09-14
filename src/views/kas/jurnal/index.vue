@@ -1,51 +1,67 @@
 <template>
-  <div>
-    <div v-if="isLoading">
-      <looping-rhombuses-spinner
-        class="absolute top-[32dvh] left-[45vw]"
-        :animation-duration="2500"
-        :rhombus-size="15"
-        color="#CAFFBF"
-      />
-    </div>
-    <div v-else class="space-y-7">
-      <VueApexCharts
-        type="bar"
-        :options="chartOptions"
-        :series="chartSeries"
-        height="450"
-      />
-      <!-- Modal Form -->
+  <div v-if="isLoading" class="flex items-center justify-center w-full h-full">
+    <looping-rhombuses-spinner
+      :animation-duration="2500"
+      :rhombus-size="15"
+      color="#CAFFBF"
+    />
+  </div>
+  <div v-else>
+    <!-- Modal Form -->
+    <div
+      v-show="isModalOpen"
+      @click="closeModal"
+      class="fixed inset-0 z-50 flex items-center justify-center w-full transition-opacity bg-black bg-opacity-50"
+    >
       <div
-        v-if="isModalOpen"
-        class="fixed inset-0 flex items-center justify-center w-full bg-black bg-opacity-50"
+        v-if="modalContent === ModalContent[1]"
+        class="w-1/3 py-4 bg-white rounded-lg h-[92%] min-w-72"
       >
         <div
-          v-if="modalContent === ModalContent[1]"
-          class="w-1/3 p-8 bg-white rounded-lg"
+          class="absolute top-0 right-0 z-50 flex flex-col items-center h-full mt-4 mr-4 text-sm text-white cursor-pointer"
         >
-          <h2 class="mb-4 text-2xl">
-            {{
-              selectedTransaction ? 'Edit Transaction' : 'Add New Transaction'
-            }}
-          </h2>
+          <svg
+            class="text-white fill-current"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+          >
+            <path
+              d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+            />
+          </svg>
+          <span class="text-sm">(Esc)</span>
+        </div>
+        <h2 class="px-2 mb-4 text-2xl">
+          {{ selectedTransaction ? 'Edit Transaction' : 'Add New Transaction' }}
+        </h2>
+        <div class="h-[90%] px-4 pb-1 overflow-y-auto">
           <AddOrEditTransaction
             :selectedTransaction="selectedTransaction"
             @closeModal="closeModal"
             @updateTransaction="handleUpdateTransaction"
           />
         </div>
-        <EditCategory
-          v-else-if="modalContent === ModalContent[2]"
-          :id="selectedCategory"
-          :color="categoryColor"
-          :category-name="categoryName"
-          @update-category="handleUpdateCategory"
-        />
       </div>
+      <EditCategory
+        v-else-if="modalContent === ModalContent[2]"
+        :id="selectedCategory"
+        :color="categoryColor"
+        :category-name="categoryName"
+        @update-category="handleUpdateCategory"
+      />
+    </div>
+    <div class="space-y-7">
+      <VueApexCharts
+        type="bar"
+        :options="chartOptions"
+        :series="chartSeries"
+        height="450"
+      />
+      <ReportSummary />
       <!-- Transaction Table -->
       <Table
-        v-else
         :data="transactions"
         :columns="columns"
         :getRowClass="getRowClass"
@@ -76,9 +92,10 @@ import Swal from 'sweetalert2';
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
+import EditCategory from '../kategori/EditCategory.vue';
+import ReportSummary from '../laporan/ReportSummary.vue';
+import AddOrEditTransaction from '../transaksi/AddOrEdit.vue';
 import columns, { getRowClass } from './colDef';
-import EditCategory from './kategori/EditCategory.vue';
-import AddOrEditTransaction from './transaksi/AddOrEdit.vue';
 import Table from '@/components/Table.vue';
 import { MONTHS } from '@/constant';
 import {

@@ -1,13 +1,8 @@
 <template>
-  <div class="app">
-    <header class="header">
-      <span class="title">Photo Editor</span>
-      <EditorNavbar :data="data" @change="change" />
-    </header>
-    <main class="main">
-      <Editor v-if="data.loaded" ref="editor" :data="data" />
-      <Loader v-else ref="loader" :data="data" />
-    </main>
+  <div class="w-full h-full">
+    <EditorNavbar :data="data" @change="change" />
+    <Editor v-if="data.loaded" ref="editor" :data="data" />
+    <Loader v-else ref="loader" :data="data" />
   </div>
 </template>
 

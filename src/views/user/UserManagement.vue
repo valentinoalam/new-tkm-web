@@ -1,7 +1,13 @@
 <template>
   <div class="w-full p-4">
     <h5 class="mb-4 text-lg font-semibold">Users List</h5>
-    <Table :data="dtUser" :columns="columns" :buttonName="'New Entry'" />
+    <AddUser :isOpen="isModalOpen" @close="closeModal" />
+    <Table
+      :data="dtUser"
+      :columns="columns"
+      :buttonName="'New Entry'"
+      @create="openModal"
+    />
   </div>
 </template>
 
@@ -12,6 +18,7 @@ import Swal from 'sweetalert2';
 import { ref, onMounted, h } from 'vue';
 
 // import * as RoleAPI from '@/api/roleApi';
+import AddUser from './addUser.vue';
 import Table from '@/components/tables/table.vue';
 import * as UsersAPI from '@/service/userService';
 // const dispatch = useDispatch();
@@ -21,11 +28,16 @@ import * as UsersAPI from '@/service/userService';
 
 // const dtRole = ref([]);
 const dtUser = ref([]);
-
+const isModalOpen = ref(false);
 const isEditOpen = ref(false);
 const isViewOpen = ref(false);
 const selectedUser = ref(null);
-
+function openModal() {
+  isModalOpen.value = true;
+}
+function closeModal() {
+  isModalOpen.value = false;
+}
 onMounted(async () => {
   // RoleAPI.getAll().then(res => {
   //   dtRole.value = res;
@@ -44,6 +56,10 @@ const columns = [
     header: 'Nama',
     enableSorting: true, // Sorting enabled for this column
     enableColumnFilter: true, // Filtering enabled for this column
+    cell: info => info.getValue(),
+  }),
+  columnHelper.accessor('lastActive', {
+    header: 'Last Active',
     cell: info => info.getValue(),
   }),
   // {

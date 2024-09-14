@@ -29,6 +29,14 @@
               placeholder="Search"
               @input="handleSearch"
             />
+
+            <!-- <input
+              v-model="searchQuery"
+              @input="handleSearch"
+              class="input"
+              type="text"
+              placeholder="Search..."
+            /> -->
           </div>
           <div class="flex items-center justify-start gap-2">
             <!-- <DateSelector :dateStart="internalDateStart" :dateEnd="internalDateEnd" /> -->
@@ -320,7 +328,13 @@ const fetchPage = page => {
 };
 
 const data = computed(() => props.data);
-
+// const filteredData = computed(() =>
+//   transactions.value.filter(transaction =>
+//     transaction.description
+//       .toLowerCase()
+//       .includes(searchQuery.value.toLowerCase())
+//   )
+// );
 // State variables
 const sorting = ref([]);
 const grouping = ref([]);

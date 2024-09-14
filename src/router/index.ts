@@ -5,64 +5,48 @@ import ImageEditor from '@/views/ImageEditor.vue';
 
 export const routes: Array<RouteRecordRaw> = [
   {
-    path: '/image-editor',
-    name: 'Editor',
-    component: ImageEditor,
-    meta: { title: 'Image Editor', layout: 'empty' },
-  },
-  {
     path: '/',
-    name: 'Kas Kecil',
-    component: defineAsyncComponent(
-      () => import('@/views/kas/jurnal/index.vue')
-    ),
-    meta: { title: 'Beranda' },
+    // component: Dashboard, // Parent route is Dashboard
+    meta: { requiresAuth: true }, // Protect all child routes
+    children: [
+      {
+        path: 'image-editor',
+        name: 'Editor',
+        component: ImageEditor,
+        meta: { title: 'Image Editor' }, // Meta info specific to Image Editor
+      },
+      {
+        path: '/',
+        name: 'Kas Kecil',
+        component: defineAsyncComponent(
+          () => import('@/views/kas/jurnal/index.vue')
+        ),
+        meta: { title: 'Beranda' },
+      },
+      {
+        path: 'users',
+        name: 'User Management',
+        component: defineAsyncComponent(
+          () => import('@/views/user/UserManagement.vue')
+        ),
+        meta: { title: 'Users' },
+      },
+      // {
+      //   path: 'account',
+      //   name: 'Account',
+      //   component: defineAsyncComponent(
+      //     () => import('@/views/settings/AccountSettings.vue')
+      //   ),
+      //   meta: { title: 'account' },
+      // },
+    ],
   },
-  {
-    path: '/users',
-    name: 'User Management',
-    component: defineAsyncComponent(
-      () => import('@/views/user/UserManagement.vue')
-    ),
-    meta: { title: 'users' },
-  },
-  // {
-  //   path: '/account',
-  //   name: 'Account',
-  //   component: defineAsyncComponent(() => import('@/views/account/index.vue')),
-  //   meta: { title: 'users' },
-  // },
   {
     path: '/login',
-    name: 'Log in',
+    name: 'Login',
     component: defineAsyncComponent(() => import('@/views/auth/signin.vue')),
     meta: { title: 'Login', layout: 'empty' },
   },
-  // Create a parent component for better organization
-  // children: [
-  //   {
-  //     path: '',
-  //     name: 'Transaksi',
-  //     component: defineAsyncComponent(
-  //       () => import('@/views/kas/jurnal/index.vue')
-  //     ), // Lazy load TransactionList
-  //     meta: { requiresAuth: false, title: 'Jurnal' },
-  //   },
-  //   // {
-  //   //   path: 'cash/laporan',
-  //   //   name: 'FinancialReport',
-  //   //   component: defineAsyncComponent(
-  //   //     () => import('@/views/kas/jurnal/laporan/FinancialReport.vue')
-  //   //   ), // Lazy load FinancialReport
-  //   // },
-  //   {
-  //     path: 'cash/budget',
-  //     name: 'Budget',
-  //     component: defineAsyncComponent(
-  //       () => import('@/views/kas/anggaran/Budget.vue')
-  //     ), // Lazy load Budget
-  //   },
-  // ],
 ];
 
 const router = createRouter({
@@ -76,6 +60,17 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   console.log('Navigating to:', to.fullPath);
   document.title = `Masjidku ${to.meta.title} | Kelola Masjid`;
+  const isAuthenticated = !!localStorage.getItem('authToken'); // Replace with actual auth check
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      next({ name: 'Login' }); // Redirect to login if not authenticated
+    } else {
+      next(); // Proceed if authenticated
+    }
+  } else {
+    next(); // No auth required, proceed
+  }
   next();
 });
 

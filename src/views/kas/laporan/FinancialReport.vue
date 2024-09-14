@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <div>
     <h1>Financial Report</h1>
     <form @submit.prevent="fetchReport">
@@ -12,13 +12,13 @@
       </div>
       <button type="submit">Get Report</button>
     </form>
-    <ReportSummary v-if="report" :report="report" />
+    <ReportSummary />
   </div>
 </template>
 
 <script>
-import { fetchFinancialReport } from '@/service/transactionService';
 import ReportSummary from './ReportSummary.vue';
+import { fetchFinancialReport } from '@/service/transactionService';
 
 export default {
   data() {
@@ -41,4 +41,4 @@ export default {
     },
   },
 };
-</script> -->
+</script>

@@ -1,5 +1,5 @@
 <template>
-  <footer :class="containerMaxW">
+  <footer class="box-border pb-1 mt-2 text-center xl:max-w-6xl xl:mx-auto">
     <BaseLevel class="flex">
       <div class="flex-1 text-center md:text-left">
         <b

@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <nav class="nav" @click="handleClick">
+    <nav @click="handleClick">
       <label
         v-if="!data.loaded"
         class="nav__button"
@@ -60,14 +60,6 @@
       >
         <span class="fa fa-download"></span>
       </a>
-
-      <a
-        class="nav__button"
-        href="https://github.com/fengyuanchen/photo-editor"
-        title="View on GitHub"
-      >
-        <span class="fa fa-github"></span>
-      </a>
     </nav>
   </div>
 </template>
@@ -105,6 +97,7 @@ export default {
 <style scoped>
 .navbar {
   float: right;
+  background-color: rgb(126, 123, 120);
 }
 
 .nav__button {
