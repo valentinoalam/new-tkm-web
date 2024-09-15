@@ -24,17 +24,11 @@ export const getAllTransactions = async (
   return response?.data;
 };
 
-export const getBalanceReport = async (
-  params:
-    | {
-        month: number;
-        year: number;
-      }
-    | undefined
-) => {
-  const response = await apiClient.get(`${dataEndpoint}/balance`, {
-    params,
-  });
+export const getBalanceReport = async (params: {
+  year: number;
+  month: number;
+}) => {
+  const response = await apiClient.get(`${dataEndpoint}/balance`, { params });
   return response;
 };
 

@@ -13,15 +13,12 @@
 
 <script setup>
 import { createColumnHelper } from '@tanstack/vue-table';
-import { LucideEdit, LucideDelete } from 'lucide-vue-next';
+import { LucideView, LucideEdit, LucideDelete } from 'lucide-vue-next';
 import Swal from 'sweetalert2';
 import { ref, onMounted, h } from 'vue';
-
-// import * as RoleAPI from '@/api/roleApi';
 import AddUser from './addUser.vue';
 import Table from '@/components/tables/table.vue';
 import * as UsersAPI from '@/service/userService';
-// const dispatch = useDispatch();
 // const userInfo = useSelector(state => state.app.userInfo);
 // const selectionMode = useSelector(state => state.selectionMode);
 // const groupMap = useSelector(state => state.groupMapping);
@@ -52,25 +49,17 @@ const fetchUsers = async () => {
 };
 const columnHelper = createColumnHelper();
 const columns = [
+  {
+    accessor: 'no',
+    header: 'No',
+    cell: ({ row }) => `${row.index + 1} `,
+  },
   columnHelper.accessor('username', {
     header: 'Nama',
     enableSorting: true, // Sorting enabled for this column
     enableColumnFilter: true, // Filtering enabled for this column
     cell: info => info.getValue(),
   }),
-  columnHelper.accessor('lastActive', {
-    header: 'Last Active',
-    cell: info => info.getValue(),
-  }),
-  // {
-  //   accessor: 'no',
-  //   header: 'No',
-  //   cell: ({ row }) => `${row.index + 1} `,
-  // },
-  // {
-  //   accessorKey: 'role',
-  //   header: 'Role',
-  // },
   columnHelper.accessor('email', {
     header: 'Email',
     cell: info => info.getValue(),
@@ -79,8 +68,7 @@ const columns = [
     header: 'Last Active',
     cell: info => info.getValue(),
   }),
-  {
-    accessorKey: 'id',
+  columnHelper.accessor('id', {
     id: 'actions', // Unique identifier for this column
     header: 'Actions',
     // autoSize: true,
@@ -93,7 +81,7 @@ const columns = [
       return h(
         'div',
         {
-          class: 'inline-flex w-min rounded-lg shadow-sm',
+          class: 'flex flex-wrap w-max rounded-lg shadow-sm',
         },
         [
           h(
@@ -101,8 +89,18 @@ const columns = [
             {
               type: 'button',
               class:
-                'w-12 text-white justify-center bg-blue-500 hover:bg-blue-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
-              onClick: () => emit('edit', row.original),
+                'w-full text-white justify-center py-1 inline-flex bg-emerald-500 hover:bg-green-700 items-center rounded-t-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
+              onClick: () => openView(row.original),
+            },
+            h(LucideView)
+          ),
+          h(
+            'button',
+            {
+              type: 'button',
+              class:
+                'flex-1 text-white justify-center bg-blue-500 hover:bg-blue-700 py-1 inline-flex items-center rounded-bl-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
+              onClick: () => openEdit(row.original),
             },
             h(LucideEdit)
           ),
@@ -111,8 +109,8 @@ const columns = [
             {
               type: 'button',
               class:
-                'w-12 text-white justify-center bg-red-500 hover:bg-red-700 py-3 px-auto inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
-              onClick: () => emit('delete', row.original.id),
+                'flex-1 text-white justify-center bg-red-500 hover:bg-red-700 py-1 px-auto inline-flex items-center rounded-br-lg text-sm font-medium focus:z-10 shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800',
+              onClick: () => deleteById(row.original.id, row.original.username),
             },
             h(LucideDelete)
           ),
@@ -120,7 +118,7 @@ const columns = [
         ]
       );
     },
-  },
+  }),
 ];
 
 // const handleUserClick = userId => {

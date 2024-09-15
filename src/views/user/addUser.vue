@@ -36,21 +36,33 @@
             label="Email"
             type="email"
             placeholder="Enter email"
-            validation="required|email"
+            validation="optional|email"
             input-class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
             label-class="block text-xs font-semibold text-gray-600"
             validation-label-class="text-xs text-red-500"
           />
 
           <FormKit
-            name="password"
-            label="Password"
             type="password"
-            placeholder="Enter password"
+            name="password"
+            value="super-secret"
+            label="Password"
+            help="Create password"
             validation="required"
-            input-class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
-            label-class="block text-xs font-semibold text-gray-600"
-            validation-label-class="text-xs text-red-500"
+            validation-visibility="live"
+            prefix-icon="password"
+            suffix-icon="eyeClosed"
+            @suffix-icon-click="handleIconClick"
+            suffix-icon-class="hover:text-blue-500"
+          />
+          <FormKit
+            type="password"
+            name="password_confirm"
+            label="Confirm password"
+            help="Confirm your new password"
+            validation="required|confirm"
+            validation-visibility="live"
+            validation-label="Password confirmation"
           />
         </div>
 
@@ -109,6 +121,11 @@ export default {
     };
   },
   methods: {
+    handleIconClick(node, e) {
+      node.props.suffixIcon =
+        node.props.suffixIcon === 'eye' ? 'eyeClosed' : 'eye';
+      node.props.type = node.props.type === 'password' ? 'text' : 'password';
+    },
     closeModal() {
       this.$emit('close');
     },

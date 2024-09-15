@@ -59,7 +59,7 @@
         :series="chartSeries"
         height="450"
       />
-      <ReportSummary />
+      <FinancialReport :monthAvail="monthAvail" />
       <!-- Transaction Table -->
       <Table
         :data="transactions"
@@ -93,7 +93,7 @@ import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
 import EditCategory from '../kategori/EditCategory.vue';
-import ReportSummary from '../laporan/ReportSummary.vue';
+import FinancialReport from '../laporan/FinancialReport.vue';
 import AddOrEditTransaction from '../transaksi/AddOrEdit.vue';
 import columns, { getRowClass } from './colDef';
 import Table from '@/components/Table.vue';
@@ -179,7 +179,6 @@ const fetchDataChart = async () => {
     transactionsDataChart.value = response.result;
 
     monthAvail = response.months;
-    console.log(monthAvail);
     const chartData = await transactionsDataChart.value.filter(item =>
       item.data.some(value => value !== 0)
     );

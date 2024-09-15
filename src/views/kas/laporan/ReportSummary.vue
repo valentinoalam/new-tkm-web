@@ -57,7 +57,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -67,87 +67,95 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table';
-import { defineComponent, ref, onMounted, computed } from 'vue';
+import { defineProps, ref, onMounted, computed, watch } from 'vue';
 import { getBalanceReport } from '@/service/appsheetService';
 import { formatRupiah } from '@/utils/formatRupiah';
 
-export default defineComponent({
-  setup() {
-    const trialBalanceData = ref([]);
-    const totalDebit = ref(0);
-    const totalCredit = ref(0);
-    const fetchTrialBalance = async () => {
-      try {
-        const response = await getBalanceReport(); // Replace with your API endpoint
-        const {
-          result,
-          totalDebit: tdebit,
-          totalCredit: tcredit,
-        } = response.data;
-        trialBalanceData.value = result.sort(
-          (a, b) => Number(b.debit) - Number(a.debit)
-        );
-        totalDebit.value = tdebit;
-        totalCredit.value = tcredit;
-      } catch (error) {
-        console.error('Error fetching trial balance:', error);
-        return [];
-      }
+const trialBalanceData = ref([]);
+const totalDebit = ref(0);
+const totalCredit = ref(0);
+const fetchTrialBalance = async () => {
+  try {
+    const params = {
+      year: new Date().getFullYear(),
+      month: props.month,
     };
+    if (props.week) params.week = props.week;
+    const response = await getBalanceReport(params); // Replace with your API endpoint
+    const { result, totalDebit: tdebit, totalCredit: tcredit } = response.data;
+    trialBalanceData.value = result.sort(
+      (a, b) => Number(b.debit) - Number(a.debit)
+    );
+    totalDebit.value = tdebit;
+    totalCredit.value = tcredit;
+  } catch (error) {
+    console.error('Error fetching trial balance:', error);
+    return [];
+  }
+};
 
-    const columnHelper = createColumnHelper();
-    const table = useVueTable({
-      columns: [
-        columnHelper.accessor('categoryName', {
-          header: 'Account Name',
-          cell: info => info.getValue(),
-        }),
-        columnHelper.accessor('debit', {
-          header: 'Debit',
-          cell: info => info.getValue(),
-        }),
-        columnHelper.accessor('credit', {
-          header: 'Credit',
-          cell: info => info.getValue(),
-        }),
-      ],
-      get data() {
-        return trialBalanceData.value;
-      },
-      getCoreRowModel: getCoreRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getGroupedRowModel: getGroupedRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
-    });
-
-    onMounted(async () => {
-      await fetchTrialBalance();
-    });
-    // Calculate balance difference (Debit - Credit)
-    const balanceDifference = computed(() => {
-      return totalCredit.value - totalDebit.value;
-    });
-
-    // Determine if the balance is a plus or minus
-    const balanceStatus = computed(() => {
-      if (balanceDifference.value > 0) {
-        return '+';
-      } else if (balanceDifference.value < 0) {
-        return '-';
-      } else {
-        return 'Balanced';
-      }
-    });
-
-    return {
-      table,
-      formatRupiah,
-      totalDebit,
-      totalCredit,
-      balanceDifference,
-      balanceStatus,
-    };
+const props = defineProps({
+  month: {
+    type: Number,
+    default: null,
   },
+  week: {
+    type: Number,
+    default: null,
+  },
+});
+// Watch for changes in month or week and refetch data when they change
+watch(
+  () => [props.month, props.week], // Watch the `month` and `week` props
+  (newValues, oldValues) => {
+    // Check if either month or week has changed and refetch the data
+    if (newValues !== oldValues) {
+      fetchTrialBalance();
+    }
+  }
+);
+const columnHelper = createColumnHelper();
+const table = useVueTable({
+  columns: [
+    columnHelper.accessor('categoryName', {
+      header: 'Account Name',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('debit', {
+      header: 'Debit',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('credit', {
+      header: 'Credit',
+      cell: info => info.getValue(),
+    }),
+  ],
+  get data() {
+    return trialBalanceData.value;
+  },
+  getCoreRowModel: getCoreRowModel(),
+  getPaginationRowModel: getPaginationRowModel(),
+  getSortedRowModel: getSortedRowModel(),
+  getGroupedRowModel: getGroupedRowModel(),
+  getFilteredRowModel: getFilteredRowModel(),
+});
+
+onMounted(async () => {
+  await fetchTrialBalance();
+});
+// Calculate balance difference (Debit - Credit)
+const balanceDifference = computed(() => {
+  return totalCredit.value - totalDebit.value;
+});
+
+// Determine if the balance is a plus or minus
+const balanceStatus = computed(() => {
+  if (balanceDifference.value > 0) {
+    return '+';
+  } else if (balanceDifference.value < 0) {
+    return '-';
+  } else {
+    return 'Balanced';
+  }
 });
 </script>

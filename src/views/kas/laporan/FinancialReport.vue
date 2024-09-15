@@ -2,43 +2,63 @@
   <div>
     <h1>Financial Report</h1>
     <form @submit.prevent="fetchReport">
-      <div>
-        <label for="startDate">Start Date:</label>
-        <input type="date" v-model="startDate" required />
-      </div>
-      <div>
-        <label for="endDate">End Date:</label>
-        <input type="date" v-model="endDate" required />
-      </div>
+      <select v-model="month">
+        <option
+          v-for="option in monthOptions"
+          :key="option.value"
+          :value="option.value"
+        >
+          {{ option.label }}
+        </option>
+      </select>
+      <select v-model="week">
+        <!-- Assuming weekOptions will be provided similarly -->
+        <option
+          v-for="option in weekOptions"
+          :key="option.value"
+          :value="option.value"
+        >
+          {{ option.label }}
+        </option>
+      </select>
       <button type="submit">Get Report</button>
     </form>
-    <ReportSummary />
+    <ReportSummary :month="month" :week="week" />
   </div>
 </template>
 
 <script>
 import ReportSummary from './ReportSummary.vue';
-import { fetchFinancialReport } from '@/service/transactionService';
+import { MONTHS } from '@/constant';
 
 export default {
-  data() {
-    return {
-      startDate: '',
-      endDate: '',
-      report: null,
-    };
-  },
   components: {
     ReportSummary,
   },
-  methods: {
-    async fetchReport() {
-      try {
-        this.report = await fetchFinancialReport(this.startDate, this.endDate);
-      } catch (error) {
-        console.error('Error fetching report:', error);
-      }
+  props: {
+    monthAvail: {
+      type: Array,
+      required: true,
     },
+  },
+
+  data() {
+    return {
+      month: new Date().getMonth() + 1,
+      week: 0,
+      report: null,
+      monthOptions: this.monthAvail.map(i => ({
+        value: i,
+        label: MONTHS[i - 1],
+      })),
+      weekOptions: [
+        { label: ' - ', value: 0 },
+        { label: 1, value: 1 },
+        { label: 2, value: 2 },
+        { label: 3, value: 3 },
+        { label: 4, value: 4 },
+      ],
+    };
   },
 };
 </script>
