@@ -372,7 +372,7 @@ const chartOptions = computed(() => ({
     position: 'bottom',
     horizontalAlign: 'center',
     labels: {
-      useSeriesColors: true, // Use colors defined for each series
+      useSeriesColors: false, // Use colors defined for each series
     },
   },
 }));

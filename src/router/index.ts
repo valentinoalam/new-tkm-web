@@ -1,8 +1,14 @@
 import { defineAsyncComponent } from 'vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
-import ImageEditor from '@/views/ImageEditor.vue';
+// import ImageEditor from '@/views/ImageEditor.vue';
 
+//auth
+const login = defineAsyncComponent(() => import('@/views/auth/signin.vue'));
+const imgEditor = defineAsyncComponent(() => import('@/views/ImageEditor.vue'));
+const SJ_transaction_list = defineAsyncComponent(
+  () => import('@/views/simple-journal/transaksi/index.vue')
+);
 export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -11,9 +17,7 @@ export const routes: Array<RouteRecordRaw> = [
       {
         path: '/',
         name: 'Kas Kecil',
-        component: defineAsyncComponent(
-          () => import('@/views/kas/jurnal/index.vue')
-        ),
+        component: SJ_transaction_list,
         meta: { title: 'Beranda' },
       },
       {
@@ -37,13 +41,13 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: '/image-editor',
     name: 'Editor',
-    component: ImageEditor,
+    component: imgEditor,
     meta: { title: 'Image Editor' }, // Meta info specific to Image Editor
   },
   {
     path: '/login',
     name: 'Login',
-    component: defineAsyncComponent(() => import('@/views/auth/signin.vue')),
+    component: login,
     meta: { title: 'Login', layout: 'empty' },
   },
 ];

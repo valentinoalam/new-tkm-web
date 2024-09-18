@@ -69,7 +69,7 @@
     "vue": "^3.4.38",
     "vue-good-table": "^2.21.11",
     "vue-router": "^4.4.3",
-    "vue-select": "^3.20.3",
+    "vue-select": "^4.0.0-beta.6",
     "vue-sonner": "^1.1.5",
     "vue-time-date-range-picker": "^2.1.2",
     "vue-timeago": "^5.1.3",
