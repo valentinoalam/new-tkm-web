@@ -1,8 +1,8 @@
-import { fixupPluginRules } from '@eslint/compat';
+// import { fixupPluginRules } from '@eslint/compat';
 import pluginJs from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 // import eslintPluginImport from 'eslint-plugin-import';
-import importPlugin from 'eslint-plugin-import';
+// import importPlugin from 'eslint-plugin-import';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
@@ -67,7 +67,7 @@ export default [
       vue: eslintPluginVue,
       prettier: eslintPluginPrettier, // Add Prettier plugin
       'simple-import-sort': simpleImportSort,
-      import: fixupPluginRules(importPlugin),
+      // import: fixupPluginRules(importPlugin),
       'unused-imports': eslintPluginUnusedImports,
     },
     ignores: ['dist'],
