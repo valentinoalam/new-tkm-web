@@ -5,5 +5,5 @@ export function formatRupiah(amount: number | bigint) {
     currency: 'IDR',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(amount);
+  }).format(Math.abs(Number(amount)));
 }
