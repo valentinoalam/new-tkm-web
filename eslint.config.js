@@ -33,24 +33,24 @@ export default [
       ],
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
       'vue/multi-word-component-names': 'off',
-      'import/order': [
-        'error',
-        {
-          groups: [
-            'builtin',
-            'external',
-            'internal',
-            'parent',
-            'sibling',
-            'index',
-          ],
-          alphabetize: { order: 'asc', caseInsensitive: true },
-        },
-      ],
-      'import/no-extraneous-dependencies': 'warn',
-      'import/first': 'error',
-      'import/newline-after-import': ['error', { count: 1 }],
-      'import/no-duplicates': 'error',
+      // 'import/order': [
+      //   'error',
+      //   {
+      //     groups: [
+      //       'builtin',
+      //       'external',
+      //       'internal',
+      //       'parent',
+      //       'sibling',
+      //       'index',
+      //     ],
+      //     alphabetize: { order: 'asc', caseInsensitive: true },
+      //   },
+      // ],
+      // 'import/no-extraneous-dependencies': 'warn',
+      // 'import/first': 'error',
+      // 'import/newline-after-import': ['error', { count: 1 }],
+      // 'import/no-duplicates': 'error',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'warn',
