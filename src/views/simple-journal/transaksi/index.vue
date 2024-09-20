@@ -10,29 +10,29 @@
     <!-- Modal Form -->
     <div
       v-show="isModalOpen"
-      @click="closeModal"
       class="fixed inset-0 z-50 flex items-center justify-center w-full transition-opacity bg-black bg-opacity-50"
     >
       <div
+        class="absolute top-0 right-0 z-50 flex flex-col items-center h-full mt-4 mr-4 text-sm text-white cursor-pointer"
+      >
+        <svg
+          class="text-white fill-current"
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 18 18"
+        >
+          <path
+            d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+          />
+        </svg>
+        <span class="text-sm">(Esc)</span>
+      </div>
+      <div
         v-if="modalContent === ModalContent[1]"
+        ref="menu"
         class="w-1/3 py-4 bg-white rounded-lg h-[92%] min-w-72"
       >
-        <div
-          class="absolute top-0 right-0 z-50 flex flex-col items-center h-full mt-4 mr-4 text-sm text-white cursor-pointer"
-        >
-          <svg
-            class="text-white fill-current"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-          >
-            <path
-              d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
-            />
-          </svg>
-          <span class="text-sm">(Esc)</span>
-        </div>
         <h2 class="px-2 mb-4 text-2xl">
           {{ selectedTransaction ? 'Edit Transaction' : 'Add New Transaction' }}
         </h2>
@@ -89,7 +89,7 @@
 import { LoopingRhombusesSpinner } from 'epic-spinners';
 
 import Swal from 'sweetalert2';
-import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
+import { computed, onMounted, onBeforeUnmount, ref, useTemplateRef } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
 import EditCategory from '../kategori/EditCategory.vue';
@@ -139,16 +139,6 @@ const updateChartSize = () => {
 
 // Debounced version of the updateChartHeight function
 const debouncedUpdateChartSize = debounce(updateChartSize, 300); // 300ms delay
-
-const openModal = () => {
-  isModalOpen.value = true;
-};
-
-const closeModal = () => {
-  selectedTransaction.value = null;
-  isModalOpen.value = false;
-  modalContent.value = ModalContent[0];
-};
 
 async function handleDateRange(dtStart, dtEnd) {
   await fetchTransactions(dtStart, dtEnd);
@@ -380,10 +370,40 @@ const chartOptions = computed(() => ({
 let chartSeries = ref([]);
 let monthAvail = [];
 
+const openModal = () => {
+  isModalOpen.value = true;
+  // Defer adding the event listener to avoid it triggering immediately
+  setTimeout(() => {
+    window.addEventListener('click', handleClickOutside);
+    window.addEventListener('keydown', handleEscKey);
+  }, 0);
+};
+
+const closeModal = () => {
+  selectedTransaction.value = null;
+  isModalOpen.value = false;
+  modalContent.value = ModalContent[0];
+  window.removeEventListener('click', handleClickOutside);
+  window.removeEventListener('keydown', handleEscKey);
+};
+
+const menu = useTemplateRef('menu');
+function handleClickOutside(event) {
+  if (menu && !menu.value.contains(event.target)) {
+    closeModal();
+  }
+}
+
+function handleEscKey(event) {
+  if (event.key === 'Escape') {
+    closeModal(); // Close modal if the Esc key is pressed
+  }
+}
 onMounted(async () => {
   isLoading.value = true;
   chartWidth.value = window.innerWidth * 0.9;
   window.addEventListener('resize', debouncedUpdateChartSize);
+
   await fetchDataChart();
   await fetchTransactions();
   isLoading.value = false;
@@ -391,6 +411,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', debouncedUpdateChartSize);
+  window.removeEventListener('click', handleClickOutside);
 });
 </script>
 <style>

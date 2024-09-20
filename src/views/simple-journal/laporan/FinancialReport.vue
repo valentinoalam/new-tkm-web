@@ -11,16 +11,6 @@
           {{ option.label }}
         </option>
       </select>
-      <select v-model="week">
-        <!-- Assuming weekOptions will be provided similarly -->
-        <option
-          v-for="option in weekOptions"
-          :key="option.value"
-          :value="option.value"
-        >
-          {{ option.label }}
-        </option>
-      </select>
       <button type="submit">Get Report</button>
     </form>
     <ReportSummary :month="month" :week="week" />
@@ -45,7 +35,6 @@ export default {
   data() {
     return {
       month: new Date().getMonth() + 1,
-      week: 0,
       report: null,
       monthOptions: this.monthAvail.map(i => ({
         value: i,

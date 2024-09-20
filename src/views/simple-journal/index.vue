@@ -10,7 +10,6 @@
     <!-- Modal Form -->
     <div
       v-show="isModalOpen"
-      @click="closeModal"
       class="fixed inset-0 z-50 flex items-center justify-center w-full transition-opacity bg-black bg-opacity-50"
     >
       <div

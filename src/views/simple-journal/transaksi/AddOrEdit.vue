@@ -188,7 +188,7 @@ watch(
       form.value = {
         description: newTransaction.activity || '',
         transactionType: newTransaction.type || '',
-        amountString: newTransaction.value || '',
+        amountString: newTransaction.amount || '',
         date: newTransaction.dtTransaction || '',
         image: newTransaction.photo || '',
         categoryId: newTransaction.categoryId || '',
@@ -200,7 +200,6 @@ watch(
 
 onMounted(async () => {
   getCategories();
-  console.log(form.value.date);
 });
 // Method to submit the form
 const submitForm = () => {
