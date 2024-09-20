@@ -1,18 +1,15 @@
 <template>
   <div>
     <h1>Financial Report</h1>
-    <form @submit.prevent="fetchReport">
-      <select v-model="month">
-        <option
-          v-for="option in monthOptions"
-          :key="option.value"
-          :value="option.value"
-        >
-          {{ option.label }}
-        </option>
-      </select>
-      <button type="submit">Get Report</button>
-    </form>
+    <select v-model="month">
+      <option
+        v-for="option in monthOptions"
+        :key="option.value"
+        :value="option.value"
+      >
+        {{ option.label }}
+      </option>
+    </select>
     <ReportSummary :month="month" :week="week" />
   </div>
 </template>
