@@ -56,9 +56,10 @@ export const createTransaction = async (data: unknown) => {
   }
 };
 
-export const updateTransactionById = async (data: { id: string }) => {
-  const response = await apiClient.put(
-    `${dataEndpoint}/transactions/${data.id}`,
+export const updateTransactionById = async (id: string, data: object) => {
+  console.log(id);
+  const response = await apiClient.patch(
+    `${dataEndpoint}/transaksi/${id}`,
     data
   );
   return response?.data;

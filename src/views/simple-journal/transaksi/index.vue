@@ -215,8 +215,8 @@ const handleCreateTransaction = async data => {
   await createTransaction(data);
   await fetchTransactions();
 };
-const handleUpdateTransaction = async data => {
-  await updateTransactionById(data);
+const handleUpdateTransaction = async ({ id, updatedData }) => {
+  await updateTransactionById(id, updatedData);
   await fetchTransactions();
 };
 

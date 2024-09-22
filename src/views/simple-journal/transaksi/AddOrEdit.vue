@@ -72,6 +72,7 @@
 
     <!-- File Upload -->
     <FormKit
+      v-if="!props.selectedTransaction"
       type="file"
       name="image"
       label="Image"
@@ -186,8 +187,10 @@ async function getCategories() {
 
     expendCategories = filterCatOptions('Pengeluaran');
     incomeCategories = filterCatOptions('Penerimaan');
-    console.log(expendCategories);
-    console.log(incomeCategories);
+    categoryOptions.value =
+      transactionType.value === 'Penerimaan'
+        ? incomeCategories
+        : expendCategories;
   } catch (error) {
     console.error('Error fetching categories', error);
   }
@@ -221,26 +224,47 @@ onMounted(async () => {
     };
   }
 });
+type DataOut = {
+  [key: string]: string | number | boolean;
+};
 // Method to submit the form
 const submitForm = () => {
   const transactionData: TransactionFormData = form.value;
-  const dataOut = {
-    activity: transactionData.description,
-    categoryId: transactionData.category.value,
-    dtTransaction: transactionData.date,
-    value: transactionData.amount,
-    file: Array.isArray(transactionData.image)
-      ? transactionData.image[0].file
-      : null,
-  };
-  console.log(transactionData.image);
-  console.log(dataOut);
-  if (props.selectedTransaction)
+  console.log(form.value.date);
+  console.log(props.selectedTransaction.dtTransaction);
+  if (props.selectedTransaction) {
+    const dataOut: DataOut = {};
+    if (transactionData.description !== props.selectedTransaction.activity)
+      dataOut.activity = transactionData.description;
+    if (transactionData.category.value !== props.selectedTransaction.categoryId)
+      dataOut.categoryId = transactionData.category.value;
+    if (transactionData.amount !== props.selectedTransaction.value)
+      dataOut.value = transactionData.amount;
+    if (
+      transactionData.date !==
+      new Date(props.selectedTransaction.dtTransaction)
+        .toISOString()
+        .split('T')[0]
+    )
+      dataOut.dtTransaction = new Date(transactionData.date)
+        .toISOString()
+        .split('T')[0];
     emit('updateTransaction', {
       id: props.selectedTransaction.id,
       updatedData: dataOut,
     });
-  else emit('createTransaction', dataOut);
+  } else {
+    const dataOut = {
+      activity: transactionData.description,
+      categoryId: transactionData.category.value,
+      dtTransaction: new Date(transactionData.date).toISOString().split('T')[0],
+      value: transactionData.amount,
+      file: Array.isArray(transactionData.image)
+        ? transactionData.image[0].file
+        : null,
+    };
+    emit('createTransaction', dataOut);
+  }
   emitCloseModal();
 };
 
