@@ -41,6 +41,7 @@
             :selectedTransaction="selectedTransaction"
             @closeModal="closeModal"
             @updateTransaction="handleUpdateTransaction"
+            @createTransaction="handleCreateTransaction"
           />
         </div>
       </div>
@@ -102,6 +103,8 @@ import {
   getTransactionDataChart,
   getAllTransactions,
   deleteTransactionById,
+  createTransaction,
+  updateTransactionById,
   updateCategoryById,
 } from '@/service/appsheetService';
 import { formatRupiah } from '@/utils/formatRupiah';
@@ -206,6 +209,14 @@ const handleUpdateCategory = async data => {
 const handleSearch = async query => {
   search.value = query;
   currentPage.value = 1;
+  await fetchTransactions();
+};
+const handleCreateTransaction = async data => {
+  await createTransaction(data);
+  await fetchTransactions();
+};
+const handleUpdateTransaction = async data => {
+  await updateTransactionById(data);
   await fetchTransactions();
 };
 

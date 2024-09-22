@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 declare module 'process';
 declare module 'click-outside-vue3';
-
+declare module 'vue-select';
 declare module '*.vue' {
   import type { DefineComponent } from 'vue';
 

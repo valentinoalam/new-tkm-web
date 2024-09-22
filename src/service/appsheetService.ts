@@ -43,16 +43,24 @@ export const getTransactionById = async (id: string) => {
 };
 
 export const createTransaction = async (data: unknown) => {
-  const response = await apiClient.post(dataEndpoint, data, {
-    headers: {
-      'Content-Type': 'application/json', // Adjust the content type as needed
-    },
-  });
-  return response?.data;
+  try {
+    const response = await apiClient.post(`${dataEndpoint}/transaksi`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log('Success:', response.data);
+    return response?.data;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+  }
 };
 
 export const updateTransactionById = async (data: { id: string }) => {
-  const response = await apiClient.put(`${dataEndpoint}/${data.id}`, data);
+  const response = await apiClient.put(
+    `${dataEndpoint}/transactions/${data.id}`,
+    data
+  );
   return response?.data;
 };
 
@@ -71,6 +79,6 @@ export const updateCategoryById = async (
 };
 
 export const deleteTransactionById = async (id: string) => {
-  const response = await apiClient.delete(`${dataEndpoint}/${id}`);
+  const response = await apiClient.delete(`${dataEndpoint}/transaksi/${id}`);
   return response?.data;
 };

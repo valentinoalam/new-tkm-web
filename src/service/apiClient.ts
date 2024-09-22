@@ -5,11 +5,16 @@ import router from '@/router'; // Import router instance
 const { VITE_BACKEND_URL } = import.meta.env;
 const apiClient = axios.create({
   baseURL: VITE_BACKEND_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
+apiClient.interceptors.request.use(config => {
+  console.log(config);
+  // If the request is a file upload, remove the default Content-Type
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
+  return config;
+});
 // Add an interceptor to set the 'Authorization' header
 apiClient.interceptors.request.use(
   config => {

@@ -46,7 +46,7 @@
           </td>
         </tr>
         <tr>
-          <td><strong>Normal Balance</strong></td>
+          <td><strong>Saldo</strong></td>
           <td class="flex justify-end">
             <strong>{{ balanceStatus }} </strong>
             {{ formatRupiah(balanceDifference) }}
@@ -67,7 +67,7 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table';
-import { defineProps, ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { getBalanceReport } from '@/service/appsheetService';
 import { formatRupiah } from '@/utils/formatRupiah';
 

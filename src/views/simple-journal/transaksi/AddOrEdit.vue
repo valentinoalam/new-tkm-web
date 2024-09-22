@@ -1,37 +1,47 @@
 <template>
+  <!-- Toggle for Transaction Type (Penerimaan / Pengeluaran) -->
+  <!-- <div class="flex flex-wrap items-center gap-3">
+    <toggle :modelValue="isIncome" @update:modelValue="toggleHandle" />
+    <h1 class="text-lg font-semibold">
+      {{ transactionType }}
+    </h1>
+  </div> -->
   <!-- FormKit Form -->
   <FormKit
     type="form"
+    v-model="form"
     :actions="false"
-    @submit.prevent="submitForm"
+    @submit="submitForm"
     :validation-schema="validationSchema"
     class="p-4 space-y-4 bg-white rounded-lg shadow-md"
   >
-    <!-- Toggle for Transaction Type (Penerimaan / Pengeluaran) -->
-    <div class="flex flex-wrap items-center gap-3">
-      <toggle :modelValue="isIncome" @update:modelValue="toggleHandle" />
-      <h1 class="text-lg font-semibold">
-        {{ form.transactionType }}
-      </h1>
-    </div>
-
-    <!-- Category Select -->
-    <FormKit
-      type="select"
-      label="Category"
-      :v-model="selectedCategoryId"
-      :options="categoriesSelectItems"
-      :validation="'required'"
-      input-class="w-full"
-      label-class="text-sm font-semibold text-gray-600"
-      validation-label-class="text-xs text-red-500"
-    />
+    <Tabs class="w-full" v-model="transactionType">
+      <TabsList class="w-full">
+        <TabsTrigger class="w-full" value="Penerimaan">
+          Penerimaan
+        </TabsTrigger>
+        <TabsTrigger class="w-full" value="Pengeluaran">
+          Pengeluaran
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent :value="transactionType">
+        <!-- Category Select -->
+        <FormKit
+          :type="vueSelect"
+          label="Category"
+          name="category"
+          :value="selectedCategory"
+          :options="categoryOptions"
+          :validation="'required'"
+        />
+      </TabsContent>
+    </Tabs>
 
     <!-- Description -->
     <FormKit
       type="text"
       label="Description"
-      v-model="form.description"
+      name="description"
       :validation="'required'"
       input-class="w-full"
       label-class="text-sm font-semibold text-gray-600"
@@ -42,7 +52,7 @@
     <FormKit
       type="number"
       label="Amount"
-      v-model="form.amountString"
+      name="amount"
       :validation="'required|number'"
       input-class="w-full"
       label-class="text-sm font-semibold text-gray-600"
@@ -53,7 +63,7 @@
     <FormKit
       type="date"
       label="Date"
-      v-model="form.date"
+      name="date"
       :validation="'required|date'"
       input-class="w-full"
       label-class="text-sm font-semibold text-gray-600"
@@ -65,8 +75,6 @@
       type="file"
       name="image"
       label="Image"
-      multiple
-      :upload="uploadHandler"
       input-class="w-full"
       label-class="text-sm font-semibold text-gray-600"
     />
@@ -91,11 +99,29 @@
 </template>
 
 <script lang="ts" setup>
-import { FormKit } from '@formkit/vue';
+import { FormKit, createInput } from '@formkit/vue';
 import { onMounted, ref, watch } from 'vue';
 import * as yup from 'yup';
-import toggle from '@/components/atoms/toggle.vue';
+// import toggle from '@/components/atoms/toggle.vue';
 import { getAllCategories } from '@/service/appsheetService';
+import 'vue-select/dist/vue-select.css'; // Import gaya vue-select
+import vSelect from '@/components/forms/vue-select.vue';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+interface TransactionFormData {
+  description: string;
+  category: { label: string; value: string };
+  date: string; // Use Date type if needed
+  amount: number;
+  image: File | null;
+}
+
+interface Options {
+  label: string;
+  value: string;
+}
+
+type Category = { type: string; category: string; id: string };
 
 const props = defineProps({
   selectedTransaction: {
@@ -104,13 +130,27 @@ const props = defineProps({
   },
 });
 
+const transactionType = ref(
+  props.selectedTransaction ? props.selectedTransaction.type : 'Pengeluaran'
+);
+
+const categories = ref([]);
+const categoryOptions = ref();
+const selectedCategory = ref<{ label: string; value: string }>({
+  label: '',
+  value: '',
+});
+
+const vueSelect = createInput(vSelect, {
+  props: ['options', 'value'],
+});
+
 const form = ref({
   description: '',
-  amountString: '',
+  category: { label: '', value: '' },
   date: new Date().toISOString().split('T')[0],
-  transactionType: 'Pengeluaran',
-  categoryId: '',
-  image: '',
+  amount: 0,
+  image: null,
 });
 
 const validationSchema = yup.object({
@@ -121,10 +161,6 @@ const validationSchema = yup.object({
   photoUpload: yup.mixed().required('Photo is required'),
 });
 
-const selectedCategoryId = ref('');
-const categories = ref([]);
-const categoriesSelectItems = ref([{ label: '', value: '' }]);
-const isIncome = ref(false);
 // Emit setup
 const emit = defineEmits([
   'closeModal',
@@ -132,87 +168,79 @@ const emit = defineEmits([
   'createTransaction',
 ]);
 
-const toggleHandle = (selected: boolean) => {
-  isIncome.value = selected;
-  form.value.transactionType = isIncome.value ? 'Penerimaan' : 'Pengeluaran';
-  if (categories.value)
-    categoriesSelectItems.value = categories.value
-      .filter(({ type }) => type === form.value.transactionType)
-      .map(({ category, id }) => ({
-        label: category, // Category name
-        value: id, // Category ID
-      }));
-};
+const filterCatOptions = (type: string) =>
+  categories.value
+    .filter((item: Category) => item.type === type)
+    .map((category: Category) => ({
+      label: category.category,
+      value: category.id,
+    }));
+
+let expendCategories: { label: string; value: string }[],
+  incomeCategories: { label: string; value: string }[];
 
 async function getCategories() {
   try {
     const response = await getAllCategories(); // get categories by type
-
     categories.value = response.data;
-    categoriesSelectItems.value = categories.value
-      .filter(
-        (item: { type: string }) => item.type === form.value.transactionType
-      )
-      .map((category: { category: string; id: string }) => ({
-        label: category.category, // Nama kategori
-        value: category.id, // ID kategori
-      }));
+
+    expendCategories = filterCatOptions('Pengeluaran');
+    incomeCategories = filterCatOptions('Penerimaan');
+    console.log(expendCategories);
+    console.log(incomeCategories);
   } catch (error) {
     console.error('Error fetching categories', error);
   }
 }
-console.log(form.value.transactionType);
-// File upload handler
-const uploadHandler = async (file: File) => {
-  const formData = new FormData();
-  formData.append('file', file);
 
-  const response = await fetch('/upload', {
-    method: 'POST',
-    body: formData,
-  });
-
-  if (response.ok) {
-    const data = await response.json();
-    return data.url; // Assuming the API returns the URL of the uploaded image
-  }
-
-  throw new Error('File upload failed');
-};
-
-// Watcher to populate the form if editing an existing transaction
-watch(
-  () => props.selectedTransaction,
-  newTransaction => {
-    if (newTransaction) {
-      form.value = {
-        description: newTransaction.activity || '',
-        transactionType: newTransaction.type || '',
-        amountString: newTransaction.amount || '',
-        date: newTransaction.dtTransaction || '',
-        image: newTransaction.photo || '',
-        categoryId: newTransaction.categoryId || '',
-      };
-    }
-  },
-  { immediate: true }
-);
+watch(transactionType, (newValue: string) => {
+  categoryOptions.value =
+    newValue === 'Penerimaan' ? incomeCategories : expendCategories;
+});
 
 onMounted(async () => {
-  getCategories();
+  await getCategories();
+  if (props.selectedTransaction) {
+    const existTransaction = props.selectedTransaction;
+    transactionType.value = existTransaction.type;
+    const existOptions =
+      transactionType.value === 'Penerimaan'
+        ? incomeCategories
+        : expendCategories;
+    const category: Options = existOptions.find(
+      ({ value }: Options) => value === existTransaction.categoryId
+    ) || { value: '', label: '' };
+    form.value = {
+      description: existTransaction.activity || '',
+      amount: existTransaction.amount || 0, // Convert to string if needed
+      date: existTransaction.dtTransaction
+        ? new Date(existTransaction.dtTransaction).toISOString().split('T')[0]
+        : '', // Format date as string
+      category,
+      image: null,
+    };
+  }
 });
 // Method to submit the form
 const submitForm = () => {
-  const transactionData = {
-    activity: form.value.description,
-    value: parseFloat(form.value.amountString), // Convert string back to number
-    dtTransaction: form.value.date,
-    file: form.value.image,
-    categoryId: form.value.categoryId,
-    id: props.selectedTransaction?.id || Date.now(), // If editing, keep the existing ID; otherwise, generate a new one
+  const transactionData: TransactionFormData = form.value;
+  const dataOut = {
+    activity: transactionData.description,
+    categoryId: transactionData.category.value,
+    dtTransaction: transactionData.date,
+    value: transactionData.amount,
+    file: Array.isArray(transactionData.image)
+      ? transactionData.image[0].file
+      : null,
   };
-  if (props.selectedTransaction) emit('updateTransaction', transactionData);
-  else emit('createTransaction', transactionData);
+  console.log(transactionData.image);
+  console.log(dataOut);
+  if (props.selectedTransaction)
+    emit('updateTransaction', {
+      id: props.selectedTransaction.id,
+      updatedData: dataOut,
+    });
+  else emit('createTransaction', dataOut);
   emitCloseModal();
 };
 
@@ -221,3 +249,4 @@ const emitCloseModal = () => {
   emit('closeModal');
 };
 </script>
+<style></style>
