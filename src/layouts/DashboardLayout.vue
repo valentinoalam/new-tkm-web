@@ -49,16 +49,21 @@ const { isOpen } = useSidebar();
 
 // Access the current route
 const route = useRoute();
-// Watch for changes in the route
-watch(route, () => {
-  isOpen.value = false;
-});
+// // Watch for changes in the route
+// watch(route, () => {
+//   isOpen.value = false;
+// });
 
 onMounted(() => {
   const bodyScrollElement = document.querySelector('#body-scroll');
   if (bodyScrollElement) {
     Scrollbar.init(bodyScrollElement);
   }
+  // const storedValue = localStorage.getItem('sidebar-open');
+  // console.log(JSON.parse(storedValue));
+  // if (storedValue !== null) {
+  //   isOpen.value = JSON.parse(storedValue);
+  // }
 });
 </script>
 

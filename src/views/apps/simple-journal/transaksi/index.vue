@@ -227,8 +227,10 @@ const closeModal = () => {
 
 const menu = useTemplateRef('menu');
 function handleClickOutside(event) {
-  if (menu && !menu.value.contains(event.target)) {
-    closeModal();
+  if (menu && menu.value) {
+    if (!menu.value.contains(event.target)) {
+      closeModal();
+    }
   }
 }
 

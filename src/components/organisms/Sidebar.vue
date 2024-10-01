@@ -83,6 +83,7 @@ import { useSidebar } from '@/composables/useSidebar';
 import { routes } from '@/router';
 
 const navRoutes = ref(routes[0].children);
+console.log(navRoutes);
 const { isOpen } = useSidebar();
 </script>
 
