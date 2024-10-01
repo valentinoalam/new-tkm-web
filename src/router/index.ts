@@ -6,8 +6,17 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 //auth
 const login = defineAsyncComponent(() => import('@/views/auth/signin.vue'));
 const imgEditor = defineAsyncComponent(() => import('@/views/imgEditor.vue'));
+const SJ_dashboard = defineAsyncComponent(
+  () => import('@/views/apps/simple-journal/index.vue')
+);
 const SJ_transaction_list = defineAsyncComponent(
   () => import('@/views/apps/simple-journal/transaksi/index.vue')
+);
+const SJ_categories = defineAsyncComponent(
+  () => import('@/views/apps/simple-journal/kategori/index.vue')
+);
+const SJ_reports = defineAsyncComponent(
+  () => import('@/views/apps/simple-journal/laporan/FinancialReport.vue')
 );
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -15,10 +24,34 @@ export const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true }, // Protect all child routes
     children: [
       {
-        path: '/',
+        path: '',
         name: 'Kas Kecil',
-        component: SJ_transaction_list,
-        meta: { title: 'Beranda' },
+        children: [
+          {
+            path: '',
+            name: 'Dashboard',
+            component: SJ_dashboard,
+            meta: { title: 'Beranda' },
+          },
+          {
+            path: 'transaction',
+            name: 'Transaction',
+            component: SJ_transaction_list,
+            meta: { title: 'Beranda' },
+          },
+          {
+            path: 'category',
+            name: 'Category',
+            component: SJ_categories,
+            meta: { title: 'Beranda' },
+          },
+          {
+            path: 'report',
+            name: 'Report',
+            component: SJ_reports,
+            meta: { title: 'Beranda' },
+          },
+        ],
       },
       {
         path: 'users',

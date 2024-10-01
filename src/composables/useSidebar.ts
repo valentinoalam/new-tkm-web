@@ -1,17 +1,9 @@
 import { ref, watch } from 'vue';
 
-const isOpen = ref(false);
+const storedValue = localStorage.getItem('sidebar-open');
+const isOpen = ref(storedValue ? JSON.parse(storedValue) : false);
 
 export function useSidebar() {
-  try {
-    const storedValue = localStorage.getItem('sidebar-open');
-    if (storedValue) {
-      isOpen.value = JSON.parse(storedValue);
-    }
-  } catch (error) {
-    console.error('Error parsing sidebar-open:', error);
-  }
-
   // Function to toggle the sidebar state
   const toggleSidebar = () => {
     isOpen.value = !isOpen.value;
@@ -25,7 +17,7 @@ export function useSidebar() {
     isOpen.value = false;
   };
   // Watch the isOpen variable and update localStorage when it changes
-  watch(isOpen, (newVal: unknown) => {
+  watch(isOpen, (newVal: boolean) => {
     localStorage.setItem('sidebar-open', JSON.stringify(newVal));
   });
 

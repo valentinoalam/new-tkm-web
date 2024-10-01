@@ -22,18 +22,14 @@ export default {
   components: {
     ReportSummary,
   },
-  props: {
-    monthAvail: {
-      type: Array,
-      required: true,
-    },
-  },
 
   data() {
+    const monthAvail = JSON.parse(localStorage.getItem('monthAvail')) || []; // Parse the JSON or default to an empty array
     return {
+      monthAvail,
       month: new Date().getMonth() + 1,
       report: null,
-      monthOptions: this.monthAvail.map(i => ({
+      monthOptions: monthAvail.map(i => ({
         value: i,
         label: MONTHS[i - 1],
       })),

@@ -45,7 +45,6 @@ onMounted(async () => {
 const fetchUsers = async () => {
   const users = await UsersAPI.getAll();
   dtUser.value = users.data.user.records;
-  console.log(dtUser.value);
 };
 const columnHelper = createColumnHelper();
 const columns = [
@@ -77,7 +76,7 @@ const columns = [
     style: {
       width: 0, // Set width to 30% of table width
     },
-    cell: ({ row, emit }) => {
+    cell: ({ row }) => {
       return h(
         'div',
         {

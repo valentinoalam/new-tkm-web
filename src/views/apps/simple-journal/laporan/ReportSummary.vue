@@ -86,6 +86,10 @@ const fetchTrialBalance = async () => {
     trialBalanceData.value = result.sort(
       (a, b) => Number(b.debit) - Number(a.debit)
     );
+    localStorage.setItem(
+      'trial-balance',
+      JSON.stringify(trialBalanceData.value)
+    );
     totalDebit.value = tdebit;
     totalCredit.value = tcredit;
   } catch (error) {

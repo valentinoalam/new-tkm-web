@@ -8,7 +8,6 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(config => {
-  console.log(config);
   // If the request is a file upload, remove the default Content-Type
   if (config.data instanceof FormData) {
     delete config.headers['Content-Type'];
