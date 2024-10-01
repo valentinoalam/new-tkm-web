@@ -50,9 +50,11 @@ const { isOpen } = useSidebar();
 // Access the current route
 const route = useRoute();
 // // Watch for changes in the route
-// watch(route, () => {
-//   isOpen.value = false;
-// });
+watch(route, () => {
+  if (window.innerWidth < 720) {
+    isOpen.value = false; // Close sidebar when the screen width is smaller than large (1024px)
+  }
+});
 
 onMounted(() => {
   const bodyScrollElement = document.querySelector('#body-scroll');
