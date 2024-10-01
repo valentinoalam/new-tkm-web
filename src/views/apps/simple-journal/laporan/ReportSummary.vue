@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="my-8">
     <table
-      class="w-full min-w-full leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
+      class="w-full min-w-full leading-normal bg-white border-collapse divide-y divide-gray-200 shadow-sm table-auto rounded-2xl dark:divide-neutral-700"
     >
       <thead>
         <tr>
@@ -46,8 +46,17 @@
           </td>
         </tr>
         <tr>
-          <td><strong>Saldo</strong></td>
-          <td class="flex justify-end">
+          <td><strong>Saldo Akhir</strong></td>
+          <td
+            :class="
+              balanceStatus === '-'
+                ? 'text-red-500'
+                : balanceStatus === '+'
+                  ? 'text-green-500'
+                  : ''
+            "
+            class="flex justify-end"
+          >
             <strong>{{ balanceStatus }} </strong>
             {{ formatRupiah(balanceDifference) }}
           </td>
