@@ -1,7 +1,7 @@
 <template>
   <div class="gap-y-2">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
-      <div class="-my-2 overflow-hidden">
+      <div class="-my-2">
         <div class="flex justify-between">
           <div class="relative flex max-w-xs">
             <div
@@ -84,7 +84,8 @@
           </button>
         </div>
         <div
-          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-x-auto align-middle rounded-lg shadow-lg"
+          id="body-scroll"
+          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-x-auto align-middle rounded-lg shadow-lg no-scrollbar scroll scrollbar-hide h-dvh"
         >
           <table
             class="w-full min-w-full leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
@@ -245,8 +246,9 @@ import {
   useVueTable,
 } from '@tanstack/vue-table';
 import { debounce } from 'lodash';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Tippy } from 'vue-tippy';
+import Scrollbar from 'smooth-scrollbar';
 // import DateSelector from './dateSelector.vue';
 
 const props = defineProps({
@@ -405,7 +407,12 @@ function getSortingIndicator(column) {
   };
   return indicators[column.getIsSorted()];
 }
-
+onMounted(() => {
+  const bodyScrollElement = document.querySelector('#body-scroll');
+  if (bodyScrollElement) {
+    Scrollbar.init(bodyScrollElement);
+  }
+});
 // function fuzzyFilter(row, columnId, value, addMeta) {
 //   // Rank the item
 //   const itemRank = rankItem(row.getValue(columnId), value);
@@ -418,6 +425,14 @@ function getSortingIndicator(column) {
 </script>
 
 <style scoped>
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
 /* table {
   border: 1px solid lightgray;
 } */

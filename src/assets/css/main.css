@@ -9,10 +9,3 @@
 
 @import 'styles/_basic.css';
 @import 'styles/_white.css';
-
-::-webkit-scrollbar {
-  /* display: none;   */
-  scrollbar-width: 1px;
-  box-sizing: border-box;
-}
-

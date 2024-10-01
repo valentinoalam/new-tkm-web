@@ -105,7 +105,7 @@ import {
 import VueApexCharts from 'vue3-apexcharts';
 
 import EditCategory from '../kategori/EditCategory.vue';
-import FinancialReport from '../laporan/FinancialReport.vue';
+// import FinancialReport from '../laporan/FinancialReport.vue';
 import AddOrEditTransaction from './AddOrEdit.vue';
 import columns, { getRowClass } from './colDef';
 import Table from '@/components/Table.vue';
@@ -439,6 +439,7 @@ onMounted(async () => {
 
   await fetchDataChart();
   await fetchTransactions();
+
   isLoading.value = false;
 });
 
