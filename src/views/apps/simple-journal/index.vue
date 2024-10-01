@@ -10,7 +10,7 @@
       color="#CAFFBF"
     />
   </div>
-  <div v-else class="mb-9">
+  <div v-else class="space-y-8 mb-9">
     <VueApexCharts
       type="bar"
       :options="chartOptions"
