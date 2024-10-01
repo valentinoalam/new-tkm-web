@@ -1,6 +1,6 @@
 <template>
   <button
-    class="block float-right bg-blue-400 lg:hidden dark:text-gray-400 -mt-7"
+    class="block float-right bg-blue-400 dark:text-gray-400"
     @click="toggleSidebar"
   >
     <svg

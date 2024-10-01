@@ -10,23 +10,18 @@ const layout = computed(() => {
   console.log('Computed layout:', layoutName); // Debugging output
   return layoutName;
 });
+
 onMounted(() => {
   if (route) {
-    console.log(route.fullPath);
     isLayoutReady.value = true; // Set the flag to true once layout is ready
   }
 });
 </script>
 
 <template>
-  <div
-    v-if="isLayoutReady"
-    class="grid min-h-[100dvh] grid-rows-[auto-1fr-auto]"
-  >
-    <component :is="layout">
-      <router-view v-slot="{ Component }">
-        <component :is="Component" />
-      </router-view>
-    </component>
-  </div>
+  <component v-if="isLayoutReady" :is="layout">
+    <router-view v-slot="{ Component }">
+      <component :is="Component" />
+    </router-view>
+  </component>
 </template>

@@ -16,7 +16,7 @@ import { createColumnHelper } from '@tanstack/vue-table';
 import { LucideView, LucideEdit, LucideDelete } from 'lucide-vue-next';
 import Swal from 'sweetalert2';
 import { ref, onMounted, h } from 'vue';
-import AddUser from './addUser.vue';
+import AddUser from './add.vue';
 import Table from '@/components/tables/table.vue';
 import * as UsersAPI from '@/service/userService';
 // const userInfo = useSelector(state => state.app.userInfo);

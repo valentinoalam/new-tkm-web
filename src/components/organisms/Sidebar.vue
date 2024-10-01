@@ -10,18 +10,17 @@
 
     <div
       :class="isOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'"
-      class="fixed inset-y-0 left-0 z-30 w-64 h-screen p-4 overflow-y-auto text-white transition duration-300 transform bg-gray-50 no-scrollbar lg:translate-x-0 lg:static lg:inset-0"
+      class="fixed inset-y-0 left-0 z-30 w-64 h-screen p-4 text-white transition duration-300 transform w-sidebar bg-gray-50 no-scrollbar lg:translate-x-0 lg:static lg:inset-0"
     >
-      <div class="flex items-center justify-center mt-8">
-        <!-- sidebar head -->
-        <!-- <div class="flex items-center bg-gray-900 sidebar-head">
-          <Logo />
-          <div
-            class="absolute hidden px-2 py-1 mt-3 text-xs text-gray-200 bg-gray-700 rounded-md dark:block"
-          >
-            Dark mode
-          </div>
-        </div> -->
+      <!-- <SidebarToggle /> -->
+      <!-- sidebar head -->
+      <div class="flex items-center justify-center mt-8 sidebar-head">
+        <Logo />
+        <div
+          class="absolute hidden px-2 py-1 mt-3 text-xs text-gray-200 bg-gray-700 rounded-md dark:block"
+        >
+          Dark mode
+        </div>
       </div>
       <nav class="mt-10">
         <ul>
@@ -77,23 +76,14 @@
 import { Icon } from '@iconify/vue';
 import { ref } from 'vue';
 
-// import Logo from '@/components/molecules/layouts/Logo.vue';
-// import SidebarToggle from '@/components/molecules/layouts/SidebarToggle.vue';
+import Logo from '@/components/molecules/layouts/Logo.vue';
+import SidebarToggle from '@/components/molecules/layouts/SidebarToggle.vue';
 import MenuAccordion from '@/components/molecules/MenuAccordion.vue';
 import { useSidebar } from '@/composables/useSidebar';
 import { routes } from '@/router';
 
-defineProps({
-  sidebarToggle: Boolean,
-});
-
 const navRoutes = ref(routes[0].children);
 const { isOpen } = useSidebar();
-// const handleToggle = () => {
-//   // Toggle the state when the 'toggle' event is received
-//   console.log(isOpen.value);
-//   isOpen.value = !isOpen.value;
-// };// sidebarToggle
 </script>
 
 <style>

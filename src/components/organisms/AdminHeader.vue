@@ -1,30 +1,26 @@
 <template>
   <header
-    class="flex items-center justify-between h-12 px-6 py-4 bg-white border-b-4 border-green-600"
+    class="sticky top-0 z-50 flex items-center justify-between h-12 px-6 py-4 bg-white border-b-4 border-green-600"
   >
-    {{ title }}
-    <div class="flex items-center">
-      <button
-        class="text-gray-500 focus:outline-none lg:hidden"
-        @click="isOpen = true"
+    <button class="text-gray-500 focus:outline-none" @click="toggleSidebar">
+      <svg
+        class="w-6 h-6"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <svg
-          class="w-6 h-6"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M4 6H20M4 12H20M4 18H11"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </button>
-
-      <div class="relative mx-4 lg:mx-0">
+        <path
+          d="M4 6H20M4 12H20M4 18H11"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+    <div class="flex items-center justify-center flex-1">
+      {{ title }}
+      <!-- <div class="relative mx-4 lg:mx-0">
         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
           <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
             <path
@@ -41,7 +37,7 @@
           type="text"
           placeholder="Search"
         />
-      </div>
+      </div> -->
     </div>
     <div class="flex items-center">
       <div class="flex items-center">
@@ -199,8 +195,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-
-import { useSidebar } from '../../composables/useSidebar';
+import { useSidebar } from '@/composables/useSidebar';
 
 defineProps({
   title: {
@@ -210,5 +205,5 @@ defineProps({
 });
 const dropdownOpen = ref(false);
 const notificationOpen = ref(false);
-const { isOpen } = useSidebar();
+const { isOpen, toggleSidebar } = useSidebar();
 </script>

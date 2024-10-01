@@ -5,9 +5,9 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 //auth
 const login = defineAsyncComponent(() => import('@/views/auth/signin.vue'));
-const imgEditor = defineAsyncComponent(() => import('@/views/ImageEditor.vue'));
+const imgEditor = defineAsyncComponent(() => import('@/views/imgEditor.vue'));
 const SJ_transaction_list = defineAsyncComponent(
-  () => import('@/views/simple-journal/transaksi/index.vue')
+  () => import('@/views/apps/simple-journal/transaksi/index.vue')
 );
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -23,9 +23,7 @@ export const routes: Array<RouteRecordRaw> = [
       {
         path: 'users',
         name: 'User Management',
-        component: defineAsyncComponent(
-          () => import('@/views/user/UserManagement.vue')
-        ),
+        component: defineAsyncComponent(() => import('@/views/user/index.vue')),
         meta: { title: 'Users' },
       },
       // {

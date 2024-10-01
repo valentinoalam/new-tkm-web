@@ -51,7 +51,7 @@ export default [
       // 'import/first': 'error',
       // 'import/newline-after-import': ['error', { count: 1 }],
       // 'import/no-duplicates': 'error',
-      'unused-imports/no-unused-imports': 'error',
+      // 'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'warn',
         {

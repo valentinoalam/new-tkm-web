@@ -1,5 +1,9 @@
 <template>
-  <div v-if="isLoading" class="flex items-center justify-center w-full h-full">
+  <div
+    v-if="isLoading"
+    ref="parentElement"
+    class="flex items-center justify-center w-full h-full"
+  >
     <looping-rhombuses-spinner
       :animation-duration="2500"
       :rhombus-size="15"
@@ -60,7 +64,7 @@
         :series="chartSeries"
         height="450"
       />
-      <FinancialReport :monthAvail="monthAvail" />
+      <!-- <FinancialReport :monthAvail="monthAvail" /> -->
       <!-- Transaction Table -->
       <Table
         :data="transactions"
@@ -90,12 +94,19 @@
 import { LoopingRhombusesSpinner } from 'epic-spinners';
 
 import Swal from 'sweetalert2';
-import { computed, onMounted, onBeforeUnmount, ref, useTemplateRef } from 'vue';
+import {
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  ref,
+  useTemplateRef,
+  nextTick,
+} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
 import EditCategory from '../kategori/EditCategory.vue';
 import FinancialReport from '../laporan/FinancialReport.vue';
-import AddOrEditTransaction from '../transaksi/AddOrEdit.vue';
+import AddOrEditTransaction from './AddOrEdit.vue';
 import columns, { getRowClass } from './colDef';
 import Table from '@/components/Table.vue';
 import { MONTHS } from '@/constant';
@@ -125,6 +136,7 @@ const categoryColor = ref('');
 const search = ref('');
 const ModalContent = ['none', 'transaction', 'category'];
 const maxValue = ref();
+const parentElement = ref(null);
 const chartHeight = ref(window.innerHeight * 0.85);
 const chartWidth = ref(window.innerWidth * 0.9);
 
@@ -136,8 +148,12 @@ const debounce = (func, delay) => {
   };
 };
 const updateChartSize = () => {
-  chartHeight.value = window.innerHeight * 0.85; // Update height based on window size
-  chartWidth.value = window.innerWidth * 0.9;
+  // chartHeight.value = window.innerHeight * 0.85; // Update height based on window size
+  if (parentElement.value) {
+    chartWidth.value = parentElement.value.getBoundingClientRect().width * 0.9;
+  } else {
+    console.error('Parent element not found.');
+  }
 };
 
 // Debounced version of the updateChartHeight function
@@ -412,7 +428,13 @@ function handleEscKey(event) {
 }
 onMounted(async () => {
   isLoading.value = true;
-  chartWidth.value = window.innerWidth * 0.9;
+  await nextTick(); // Ensure the DOM is fully rendered before accessing the ref
+
+  if (parentElement.value) {
+    chartWidth.value = parentElement.value.getBoundingClientRect().width * 0.9;
+  } else {
+    console.error('Parent element not found.');
+  }
   window.addEventListener('resize', debouncedUpdateChartSize);
 
   await fetchDataChart();
@@ -425,7 +447,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('click', handleClickOutside);
 });
 </script>
-<style>
+<style scoped>
 #chart {
   max-width: 760px;
   margin: 35px auto;

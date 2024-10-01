@@ -31,6 +31,9 @@ export default {
       flexGrow: {
         5: '5',
       },
+      width: {
+        'fill-available': '-webkit-fill-available',
+      },
       maxHeight: {
         'screen-menu': 'calc(100vh - 3.5rem)',
         modal: 'calc(100vh - 160px)',

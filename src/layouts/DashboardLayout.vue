@@ -1,24 +1,30 @@
 <template>
   <!-- App -->
-  <div class="flex bg-gray-50 font-lexend dark:bg-gray-900">
-    <div v-if="!$route.meta.hideNav" class="lg:block">
-      <div
-        class="fixed z-20 overflow-auto bg-white border-r-2 lg:flex-auto w-sidebar dark:bg-gray-800 dark:border-gray-700 lg:z-0 lg:relative"
-      >
-        <perfect-scrollbar class="h-screen">
-          <Sidebar v-if="!$route.meta.hideNav" />
-          <sidebarlist v-if="!$route.meta.hideNav" @sidebarToggle="close" />
-        </perfect-scrollbar>
-      </div>
-    </div>
+  <div
+    class="box-border flex max-w-[99vw] bg-gray-50 font-lexend dark:bg-gray-900"
+  >
     <div
-      class="w-full transition-colors grid min-h-dvh grid-rows-[auto_1fr_auto]"
+      class="fixed z-20 flex-initial bg-white border-r-2 h-dvh dark:bg-gray-800 dark:border-gray-700 lg:z-0 lg:relative"
     >
+      <transition
+        enter-active-class="transition-transform duration-300 ease-out"
+        enter-from-class="-translate-x-full"
+        enter-to-class="translate-x-0"
+        leave-active-class="transition-transform duration-300 ease-in"
+        leave-from-class="translate-x-0"
+        leave-to-class="-translate-x-full"
+      >
+        <Sidebar v-if="isOpen" />
+      </transition>
+    </div>
+    <div class="flex flex-col flex-1 w-4/6 transition-all duration-300">
       <admin-header :title="route.name" v-if="!route.meta.hideNav" />
-      <main class="relative bg-gray-200">
-        <div class="h-full px-2 py-8 mx-auto lg:container">
+      <main
+        class="relative w-full h-full px-2 py-8 mx-auto bg-gray-200 min-h-dvh lg:container"
+      >
+        <perfect-scrollbar :options="{ suppressScrollX: true }">
           <slot />
-        </div>
+        </perfect-scrollbar>
       </main>
       <!-- <admin-footer v-if="!$route.meta.hideNav">
           <span class="text-sm dark:text-gray-400">
@@ -51,14 +57,24 @@ watch(route, () => {
 
 onMounted(() => {
   const bodyScrollElement = document.querySelector('#body-scroll');
-
   if (bodyScrollElement) {
     Scrollbar.init(bodyScrollElement);
   }
 });
 </script>
 
-<style>
+<style scoped>
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+/* ::-webkit-scrollbar {
+    width: 0px;
+  } */
 /*
   Enter and leave animations can use different
   durations and timing functions.
