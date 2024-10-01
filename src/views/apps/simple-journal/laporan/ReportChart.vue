@@ -137,6 +137,13 @@ const expenseChartOptions = computed(() => ({
       color: '#263238',
     },
   },
+  tooltip: {
+    y: {
+      formatter: function (value) {
+        return formatRupiah(value); // Format value as currency
+      },
+    },
+  },
   responsive: [
     {
       breakpoint: 480,
