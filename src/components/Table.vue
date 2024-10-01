@@ -84,8 +84,8 @@
           </button>
         </div>
         <div
-          id="body-scroll"
-          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-x-auto align-middle rounded-lg shadow-lg no-scrollbar scroll scrollbar-hide h-dvh"
+          id="body-scrolle"
+          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-auto align-middle rounded-lg shadow-lg scrollbar h-dvh"
         >
           <table
             class="w-full min-w-full leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
@@ -407,8 +407,8 @@ function getSortingIndicator(column) {
   };
   return indicators[column.getIsSorted()];
 }
-onMounted(() => {
-  const bodyScrollElement = document.querySelector('#body-scroll');
+onMounted(async () => {
+  const bodyScrollElement = document.querySelector('#body-scrolle');
   if (bodyScrollElement) {
     Scrollbar.init(bodyScrollElement);
   }
@@ -433,6 +433,11 @@ onMounted(() => {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(156, 163, 175) rgb(249, 250, 251);
+}
+
 /* table {
   border: 1px solid lightgray;
 } */

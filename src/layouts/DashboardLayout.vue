@@ -19,7 +19,7 @@
       <admin-header :title="route.name" v-if="!route.meta.hideNav" />
       <main
         id="body-scroll"
-        class="relative w-full h-full px-2 py-8 mx-auto bg-gray-200 min-h-dvh lg:container"
+        class="relative w-full px-2 py-8 mx-auto overflow-y-auto bg-gray-200 h-[60dvh] min-h-dvh lg:container"
       >
         <perfect-scrollbar :options="{ suppressScrollX: true }">
           <slot />
