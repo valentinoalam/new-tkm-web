@@ -200,5 +200,5 @@ defineProps({
 });
 const dropdownOpen = ref(false);
 const notificationOpen = ref(false);
-const { isOpen, toggleSidebar } = useSidebar();
+const { toggleSidebar } = useSidebar();
 </script>
