@@ -1,81 +1,69 @@
 <template>
-  <div
-    ref="parentElement"
-    v-if="isLoading"
-    class="flex items-center justify-center w-full h-full"
-  >
-    <looping-rhombuses-spinner
-      :animation-duration="2500"
-      :rhombus-size="15"
-      color="#CAFFBF"
-    />
-  </div>
-  <div v-else>
-    <!-- Modal Form -->
+  <div>
+    <!-- Loading Spinner -->
     <div
-      v-show="isModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center w-full transition-opacity bg-black bg-opacity-50"
+      ref="parentElement"
+      v-if="isLoading"
+      class="flex items-center justify-center w-full h-full"
     >
-      <div
-        class="absolute top-0 right-0 z-50 flex flex-col items-center h-full mt-4 mr-4 text-sm text-white cursor-pointer"
-      >
-        <svg
-          class="text-white fill-current"
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 18 18"
-        >
-          <path
-            d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
-          />
-        </svg>
-        <span class="text-sm">(Esc)</span>
-      </div>
-      <div
-        v-if="modalContent === ModalContent[1]"
-        ref="menu"
-        class="w-1/3 py-4 bg-white rounded-lg h-[92%] min-w-72"
-      >
-        <h2 class="px-2 mb-4 text-2xl">
-          {{ selectedTransaction ? 'Edit Transaction' : 'Add New Transaction' }}
-        </h2>
-        <div class="h-[90%] px-4 pb-1 overflow-y-auto">
-          <AddOrEditTransaction
-            :selectedTransaction="selectedTransaction"
-            @closeModal="closeModal"
-            @updateTransaction="handleUpdateTransaction"
-            @createTransaction="handleCreateTransaction"
-          />
-        </div>
-      </div>
-      <EditCategory
-        v-else-if="modalContent === ModalContent[2]"
-        :id="selectedCategory"
-        :color="categoryColor"
-        :category-name="categoryName"
-        @update-category="handleUpdateCategory"
+      <looping-rhombuses-spinner
+        :animation-duration="2500"
+        :rhombus-size="15"
+        color="#CAFFBF"
       />
     </div>
-    <!-- Transaction Table -->
-    <Table
-      :data="transactions"
-      :columns="columns"
-      :getRowClass="getRowClass"
-      :buttonName="'New Entry'"
-      :totalRecords="totalRecords"
-      :currentPage="currentPage"
-      :totalPages="totalPages"
-      :pageSize="pageSize"
-      @fetchPage="handlePageChange"
-      @changePageSize="handlePageSizeChange"
-      @fetchData="handleDateRange"
-      @create="onCreate"
-      @edit="onEdit"
-      @delete="onDelete"
-      @search="handleSearch"
-      @editCategory="onEditCategory"
-    />
+
+    <div v-else>
+      <!-- Transaction Table -->
+      <Table
+        :data="transactions"
+        :columns="columns"
+        :getRowClass="getRowClass"
+        :buttonName="'New Entry'"
+        :totalRecords="totalRecords"
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        :pageSize="pageSize"
+        @fetchPage="handlePageChange"
+        @changePageSize="handlePageSizeChange"
+        @fetchData="handleDateRange"
+        @create="onCreate"
+        @edit="onEdit"
+        @delete="onDelete"
+        @search="handleSearch"
+        @editCategory="onEditCategory"
+      />
+
+      <!-- Dynamic Modal Content -->
+      <div
+        v-if="isVisible()"
+        ref="menu"
+        class="absolute top-0 bottom-0 left-0 right-0 z-50 w-full py-4 overflow-y-auto bg-white rounded-lg h-max lg:w-1/2"
+      >
+        <!-- Transaction Modal -->
+        <div v-if="currentModalContent === ModalContent[1]">
+          <h2 class="px-2 mb-4 text-2xl">
+            {{ selectedTransaction ? 'Edit Transaction' : 'Add Transaction' }}
+          </h2>
+          <div class="px-4 pb-1">
+            <AddOrEditTransaction
+              :selectedTransaction="selectedTransaction"
+              @closeModal="closeModal"
+              @updateTransaction="handleUpdateTransaction"
+              @createTransaction="handleCreateTransaction"
+            />
+          </div>
+        </div>
+        <!-- Edit Category Modal -->
+        <EditCategory
+          v-else-if="currentModalContent === ModalContent[2]"
+          :id="selectedCategory"
+          :color="categoryColor"
+          :category-name="categoryName"
+          @update-category="handleUpdateCategory"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -83,9 +71,8 @@
 // import/no-extraneous-dependencies
 // import chroma from 'chroma-js';
 import { LoopingRhombusesSpinner } from 'epic-spinners';
-
 import Swal from 'sweetalert2';
-import { onMounted, onBeforeUnmount, ref, useTemplateRef } from 'vue';
+import { onMounted, ref, inject, useTemplateRef } from 'vue';
 import EditCategory from '../kategori/EditCategory.vue';
 // import FinancialReport from '../laporan/FinancialReport.vue';
 import AddOrEditTransaction from './AddOrEdit.vue';
@@ -98,11 +85,13 @@ import {
   updateTransactionById,
   updateCategoryById,
 } from '@/service/appsheetService';
+import { useBackdrop } from '@/composables/useBackdrop';
 
+const { isVisible, menu, show, hide } = useBackdrop();
+menu.value = useTemplateRef('menu');
 const isLoading = ref(false);
 const transactions = ref({}); // Transactions data from API
-const isModalOpen = ref(false); // Controls modal visibility
-const modalContent = ref(''); // Controls modal visibility
+const currentModalContent = ref(''); // Controls modal visibility
 const selectedTransaction = ref(null); // Selected transaction for editing
 const selectedCategory = ref(null);
 const pageSize = ref(10);
@@ -171,18 +160,18 @@ const handleUpdateTransaction = async ({ id, updatedData }) => {
 };
 
 function onCreate() {
-  modalContent.value = ModalContent[1];
+  currentModalContent.value = ModalContent[1];
   openModal();
 }
 
 function onEdit(id) {
-  modalContent.value = ModalContent[1];
+  currentModalContent.value = ModalContent[1];
   selectedTransaction.value = id;
   openModal();
 }
 
 function onEditCategory(id, color, name) {
-  modalContent.value = ModalContent[2];
+  currentModalContent.value = ModalContent[2];
   selectedCategory.value = id;
   categoryColor.value = color;
   categoryName.value = name;
@@ -209,45 +198,19 @@ function onDelete(id) {
 }
 
 const openModal = () => {
-  isModalOpen.value = true;
-  // Defer adding the event listener to avoid it triggering immediately
-  setTimeout(() => {
-    window.addEventListener('click', handleClickOutside);
-    window.addEventListener('keydown', handleEscKey);
-  }, 0);
+  show();
 };
 
 const closeModal = () => {
   selectedTransaction.value = null;
-  isModalOpen.value = false;
-  modalContent.value = ModalContent[0];
-  window.removeEventListener('click', handleClickOutside);
-  window.removeEventListener('keydown', handleEscKey);
+  hide();
+  currentModalContent.value = ModalContent[0];
 };
 
-const menu = useTemplateRef('menu');
-function handleClickOutside(event) {
-  if (menu && menu.value) {
-    if (!menu.value.contains(event.target)) {
-      closeModal();
-    }
-  }
-}
-
-function handleEscKey(event) {
-  if (event.key === 'Escape') {
-    closeModal(); // Close modal if the Esc key is pressed
-  }
-}
 onMounted(async () => {
   isLoading.value = true;
-  window.addEventListener('click', handleClickOutside);
   await fetchTransactions();
   isLoading.value = false;
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('click', handleClickOutside);
 });
 </script>
 <style scoped></style>

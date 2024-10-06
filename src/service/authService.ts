@@ -1,7 +1,6 @@
 import { AxiosError } from 'axios';
 
 import apiClient from './apiClient';
-
 interface User {
   id: string;
   email: string;
@@ -90,12 +89,6 @@ const authService = {
         throw new Error('Registration failed');
       }
     }
-  },
-
-  async logout() {
-    // Remove the token from local storage and redirect
-    localStorage.removeItem('authToken');
-    window.location.href = '/login'; // Redirect to login or home
   },
 
   async getCurrentUser(): Promise<User> {

@@ -115,9 +115,11 @@ const chartOptions = computed(() => ({
       horizontal: false,
       borderRadius: 12,
       borderRadiusApplication: 'end',
-      borderRadiusWhenStacked: 'end',
+      borderRadiusWhenStacked: 'all',
+      distributed: false,
       columnWidth: '70%',
       barHeight: '70%',
+      isDumbell: true,
     },
   },
   dataLabels: {
@@ -133,6 +135,18 @@ const chartOptions = computed(() => ({
     },
     offsetX: 0, // Adjust X offset as needed
     offsetY: 0, // Adjust Y offset as needed
+    total: {
+      enabled: true,
+      // formatter: undefined,
+      offsetX: 0,
+      offsetY: 0,
+      style: {
+        color: '#373d3f',
+        fontSize: '12px',
+        // fontFamily: undefined,
+        fontWeight: 600,
+      },
+    },
   },
   stroke: {
     show: true,

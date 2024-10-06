@@ -1,15 +1,23 @@
 <template>
-  <div>
-    <h1>Financial Report</h1>
-    <select v-model="month">
-      <option
-        v-for="option in monthOptions"
-        :key="option.value"
-        :value="option.value"
+  <div class="flex flex-col mb-6 -mt-6">
+    <div class="flex justify-center flex-row mt-1.5 space-x-2 align-middle">
+      <label for="month" class="flex text-sm font-medium text-gray-900">
+        Financial Report
+      </label>
+      <select
+        id="month"
+        v-model="month"
+        class="px-2 text-gray-700 border-gray-300 rounded-lg w-max sm:text-sm"
       >
-        {{ option.label }}
-      </option>
-    </select>
+        <option
+          v-for="option in monthOptions"
+          :key="option.value"
+          :value="option.value"
+        >
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
     <ReportSummary :month="month" :week="week" />
   </div>
 </template>
@@ -41,6 +49,14 @@ export default {
         { label: 4, value: 4 },
       ],
     };
+  },
+  computed: {
+    monthName() {
+      // If the month value is valid, return the corresponding month name
+      return this.month >= 1 && this.month <= 12
+        ? this.MONTHS[this.month - 1]
+        : '';
+    },
   },
 };
 </script>

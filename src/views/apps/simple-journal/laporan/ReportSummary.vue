@@ -1,24 +1,26 @@
 <template>
-  <div class="my-8">
+  <div
+    class="inline-block mx-auto mt-2 mb-5 overflow-hidden align-middle rounded-lg shadow-lg"
+  >
     <table
-      class="w-full min-w-full leading-normal bg-white border-collapse divide-y divide-gray-200 shadow-sm table-auto rounded-2xl dark:divide-neutral-700"
+      class="overflow-x-auto leading-normal bg-white border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
     >
       <thead>
         <tr>
           <th
-            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer"
+            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200"
           >
-            Account Name
+            Account
           </th>
           <th
-            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer"
+            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200"
           >
-            Debit
+            Debits
           </th>
           <th
-            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer"
+            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200"
           >
-            Credit
+            Credits
           </th>
         </tr>
       </thead>
@@ -37,16 +39,16 @@
       </tbody>
       <tfoot>
         <tr>
-          <td><strong>Total</strong></td>
-          <td class="text-right">
+          <td class="pl-1"><strong>Total</strong></td>
+          <td class="pr-2 text-right">
             <strong>{{ formatRupiah(totalDebit) }}</strong>
           </td>
-          <td class="text-right">
+          <td class="pr-2 text-right">
             <strong>{{ formatRupiah(totalCredit) }}</strong>
           </td>
         </tr>
         <tr>
-          <td><strong>Saldo Akhir</strong></td>
+          <td class="pl-3"><strong>Saldo Akhir</strong></td>
           <td
             :class="
               balanceStatus === '-'

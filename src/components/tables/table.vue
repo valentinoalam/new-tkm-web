@@ -1,7 +1,7 @@
 <template>
-  <div class="-m-1.5 gap-y-2">
+  <div class="gap-y-2">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
-      <div class="-mx-4 -my-2 overflow-visible sm:-mx-6 lg:-mx-8">
+      <div class="-my-2">
         <div class="flex justify-between">
           <div class="relative flex max-w-xs">
             <div
@@ -60,10 +60,10 @@
           </button>
         </div>
         <div
-          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-hidden align-middle rounded-lg shadow-lg"
+          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-hidden align-middle rounded-lg shadow-lg scrollbar"
         >
           <table
-            class="w-full min-w-full leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
+            class="w-full min-w-full overflow-x-auto leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
           >
             <thead>
               <tr
@@ -240,13 +240,19 @@ const handleClick = () => {
   emit('create');
 };
 
+const data = computed(() => props.data);
 // const data = computed(() =>
 //   props.data.filter(user =>
 //     user.username.toLowerCase().includes(filter.value.toLowerCase())
 //   )
 // );
-const data = computed(() => props.data);
-console.log(props.data);
+// const filteredData = computed(() =>
+//   transactions.value.filter(transaction =>
+//     transaction.description
+//       .toLowerCase()
+//       .includes(searchQuery.value.toLowerCase())
+//   )
+// );
 // State variables
 const sorting = ref([]);
 const grouping = ref([]);
@@ -345,6 +351,18 @@ function fuzzyFilter(row, columnId, value, addMeta) {
 </script>
 
 <style scoped>
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(156, 163, 175) rgb(249, 250, 251);
+}
 /* table {
     border: 1px solid lightgray;
   } */

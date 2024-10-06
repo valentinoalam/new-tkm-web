@@ -1,14 +1,30 @@
 <template>
-  <div>
-    <table>
+  <div
+    class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-hidden align-middle rounded-lg shadow-lg"
+  >
+    <table
+      class="w-full overflow-x-auto leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
+    >
       <thead>
         <tr>
-          <th>Account</th>
-          <th>Debits</th>
-          <th>Credits</th>
+          <th
+            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200"
+          >
+            Account
+          </th>
+          <th
+            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200"
+          >
+            Debits
+          </th>
+          <th
+            class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200"
+          >
+            Credits
+          </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="divide-y divide-gray-200">
         <tr v-for="row in table.getRowModel().rows" :key="row.id">
           <td>{{ row.original.categoryName }}</td>
           <!-- Display category name -->

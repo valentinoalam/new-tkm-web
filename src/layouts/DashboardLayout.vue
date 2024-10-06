@@ -19,10 +19,38 @@
       <admin-header :title="route.name" v-if="!route.meta.hideNav" />
       <main
         id="body-scroll"
-        class="relative w-full px-2 py-8 mx-auto overflow-y-auto bg-gray-200 h-[60dvh] min-h-dvh lg:container"
+        class="relative w-full mx-auto overflow-y-auto bg-gray-200 h-[60dvh] min-h-dvh"
       >
         <perfect-scrollbar :options="{ suppressScrollX: true }">
-          <slot />
+          <!-- The <slot /> will render child components here -->
+          <div class="px-2 py-8 lg:container">
+            <slot />
+          </div>
+          <!-- Modal Structure -->
+          <div>
+            <div
+              v-show="isVisible()"
+              class="fixed inset-0 flex items-center justify-center w-full transition-opacity bg-black bg-opacity-50 z-1"
+            >
+              <div
+                class="absolute top-0 right-0 z-10 flex flex-col items-center h-full mt-4 mr-4 text-sm text-white cursor-pointer"
+                @click="closeModal"
+              >
+                <svg
+                  class="text-white fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                >
+                  <path
+                    d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+                  />
+                </svg>
+                <span class="text-sm">(Esc)</span>
+              </div>
+            </div>
+          </div>
         </perfect-scrollbar>
       </main>
       <!-- <admin-footer v-if="!$route.meta.hideNav">
@@ -44,8 +72,10 @@ import { useRoute } from 'vue-router';
 import AdminHeader from '@/components/organisms/AdminHeader.vue';
 import Sidebar from '@/components/organisms/Sidebar.vue';
 import { useSidebar } from '@/composables/useSidebar';
+import { useBackdrop } from '@/composables/useBackdrop';
 
 const { isOpen } = useSidebar();
+const { isVisible } = useBackdrop();
 
 // Access the current route
 const route = useRoute();
@@ -70,17 +100,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-  width: 0px;
-}
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-/* ::-webkit-scrollbar {
-    width: 0px;
-  } */
 /*
   Enter and leave animations can use different
   durations and timing functions.

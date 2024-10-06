@@ -2,32 +2,41 @@ import { defineStore } from 'pinia';
 
 export const useAuth = defineStore('credential', {
   state: () => ({
-    token: null, // Store the authentication token
-    user: null, // Store the user information (e.g., name, email)
+    accessToken: localStorage.getItem('tkm_at') || null, // Store the authentication token
+    refreshToken: localStorage.getItem('tkm_rt') || null,
+    userInfo: localStorage.getItem('userInfo')
+      ? JSON.parse(localStorage.getItem('userInfo'))
+      : null, // Store the user information (e.g., name, email)
   }),
 
   actions: {
     // Action to set credentials after login
-    setCredentials(token, user) {
-      this.token = token;
-      this.user = user;
+    setCredentials(tokens, user) {
+      this.accessToken = tokens.access_token;
+      this.refreshToken = tokens.refresh_token;
+      this.userInfo = user;
+      // Store the token in local storage
+      localStorage.setItem('tkm_at', tokens.access_token);
+      localStorage.setItem('userInfo', JSON.stringify(user));
     },
 
     // Action to clear credentials on logout
     clearCredentials() {
-      this.token = null;
-      this.user = null;
+      this.accessToken = null;
+      this.refreshToken = null;
+      this.userInfo = null;
     },
 
     // Action to check if user is authenticated
     isAuthenticated() {
-      return !!this.token;
+      return !!this.accessToken;
     },
   },
 
   // Optional: Add getters if needed
   getters: {
-    getToken: state => state.token,
-    getUser: state => state.user,
+    getAccessToken: state => state.accessToken,
+    getRefreshToken: state => state.refreshToken,
+    getUserInfo: state => state.userInfo,
   },
 });

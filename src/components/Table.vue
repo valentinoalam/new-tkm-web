@@ -85,10 +85,10 @@
         </div>
         <div
           id="body-scrolle"
-          class="inline-block min-w-full mt-2 mb-5 space-y-2 overflow-auto align-middle rounded-lg shadow-lg scrollbar h-dvh"
+          class="inline-block mt-2 mb-5 space-y-2 overflow-auto align-middle rounded-lg shadow-lg h-[65dvh]"
         >
           <table
-            class="w-full min-w-full leading-normal border-collapse divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
+            class="w-full leading-normal divide-y divide-gray-200 shadow-sm table-auto dark:divide-neutral-700"
           >
             <thead>
               <tr
@@ -99,7 +99,7 @@
                   v-for="header in headerGroup.headers"
                   :key="header.id"
                   scope="col"
-                  class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer w-"
+                  class="px-4 py-2 text-xs tracking-wider uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer"
                   :class="{
                     'cursor-pointer select-none': header.column.getCanSort(),
                   }"
@@ -154,20 +154,18 @@
           Show Page {{ currentPage }} of {{ totalPages }} -
           {{ totalRecords }} results
         </div>
-        <div class="flex items-center justify-between w-full sm:flex">
+        <div class="flex items-center justify-between w-full">
           <div class="flex-1"></div>
-          <div
-            class="flex flex-col border rounded-lg shadow-sm grow-0 sm:inline-flex sm:flex-row"
-          >
+          <div class="inline-flex border rounded-lg shadow-sm grow-0">
             <button
-              class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none -ms-px first:rounded-s-md first:ms-0 first:rounded-se-none last:rounded-es-none last:rounded-e-md focus:z-10 focus:bg-gray-50 dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
               @click="fetchPage(1)"
               :disabled="currentPage === 1"
             >
               First page
             </button>
             <button
-              class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-s-md first:ms-0 first:rounded-se-none last:rounded-es-none last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
               @click="fetchPage(currentPage - 1)"
               :disabled="currentPage === 1"
             >
@@ -188,7 +186,7 @@
               Prev
             </button>
             <button
-              class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 gap-x-2 first:rounded-s-md first:ms-0 first:rounded-se-none last:rounded-es-none last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
               @click="fetchPage(currentPage + 1)"
               :disabled="currentPage === totalPages"
             >
@@ -209,7 +207,7 @@
               </svg>
             </button>
             <button
-              class="inline-flex items-center justify-center px-4 py-2 -mt-px text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 -ms-px first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm gap-x-2 -ms-px first:rounded-s-md first:ms-0 first:rounded-se-none last:rounded-es-none last:rounded-e-md focus:z-10 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
               @click="fetchPage(totalPages)"
               :disabled="currentPage === totalPages"
             >
@@ -217,7 +215,9 @@
             </button>
           </div>
           <div class="flex justify-end flex-1 gap-2">
-            <label for="pageSize">Rows per page:</label>
+            <label class="text-xs sm:text-base" for="pageSize"
+              >Rows per page:</label
+            >
             <select
               id="pageSize"
               v-model="pageSize"
@@ -236,11 +236,9 @@
 </template>
 
 <script setup>
-// import { rankItem } from '@tanstack/match-sorter-utils';
 import {
   FlexRender,
   getCoreRowModel,
-  // getFilteredRowModel,
   getGroupedRowModel,
   getSortedRowModel,
   useVueTable,
@@ -330,13 +328,7 @@ const fetchPage = page => {
 };
 
 const data = computed(() => props.data);
-// const filteredData = computed(() =>
-//   transactions.value.filter(transaction =>
-//     transaction.description
-//       .toLowerCase()
-//       .includes(searchQuery.value.toLowerCase())
-//   )
-// );
+
 // State variables
 const sorting = ref([]);
 const grouping = ref([]);
@@ -413,37 +405,18 @@ onMounted(async () => {
     Scrollbar.init(bodyScrollElement);
   }
 });
-// function fuzzyFilter(row, columnId, value, addMeta) {
-//   // Rank the item
-//   const itemRank = rankItem(row.getValue(columnId), value);
-
-//   // Store the ranking info
-//   addMeta(itemRank);
-//   // Return if the item should be filtered in/out
-//   return itemRank.passed;
-// }
 </script>
 
 <style scoped>
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-  width: 0px;
-}
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-.scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgb(156, 163, 175) rgb(249, 250, 251);
-}
-
-/* table {
-  border: 1px solid lightgray;
-} */
-
 tbody {
   border-bottom: 1px solid lightgray;
+}
+
+.sticky-col {
+  position: sticky;
+  left: 0; /* Sticky column on the left */
+  background-color: #f9f9f9;
+  z-index: 2; /* Ensure it's above other content */
 }
 
 /* 

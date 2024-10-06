@@ -120,8 +120,6 @@ const handleSubmit = async () => {
   try {
     const response = await authService.login(values.username, values.password); // Custom API call hook
     const { tokens, user } = response.data;
-    // Store the token in local storage
-    localStorage.setItem('tkm_at', tokens?.access_token);
     // Save user to store
     store.setCredentials(tokens, user);
     const from = route.query.from || '/';

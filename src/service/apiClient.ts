@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-import router from '@/router'; // Import router instance
+import router from '@/router';
+import { useAuth } from '@/stores/auth';
+
+const authStore = useAuth();
+const accessToken = authStore.getAccessToken;
 
 const { VITE_BACKEND_URL } = import.meta.env;
 const apiClient = axios.create({
@@ -17,9 +21,8 @@ apiClient.interceptors.request.use(config => {
 // Add an interceptor to set the 'Authorization' header
 apiClient.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('tkm_at');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
     return config;
