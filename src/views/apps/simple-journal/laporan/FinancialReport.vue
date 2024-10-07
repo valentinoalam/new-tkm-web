@@ -19,16 +19,19 @@
       </select>
     </div>
     <ReportSummary :month="month" :week="week" />
+    <ReportChart :month="month" />
   </div>
 </template>
 
 <script>
 import ReportSummary from './ReportSummary.vue';
 import { MONTHS } from '@/constant';
+import ReportChart from './ReportChart.vue';
 
 export default {
   components: {
     ReportSummary,
+    ReportChart,
   },
 
   data() {

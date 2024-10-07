@@ -1,6 +1,8 @@
 <template>
   <!-- App -->
-  <div class="box-border flex max-w-vw bg-gray-50 font-lexend dark:bg-gray-900">
+  <div
+    class="box-border flex h-screen overflow-hidden max-w-vw bg-gray-50 font-lexend dark:bg-gray-900"
+  >
     <div
       class="fixed z-20 flex-initial bg-white border-r-2 h-dvh dark:bg-gray-800 dark:border-gray-700 lg:z-0 lg:relative"
     >

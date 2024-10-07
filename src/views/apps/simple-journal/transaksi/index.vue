@@ -4,7 +4,7 @@
     <div
       ref="parentElement"
       v-if="isLoading"
-      class="flex items-center justify-center w-full h-full"
+      class="flex items-center justify-center w-full h-dvh"
     >
       <looping-rhombuses-spinner
         :animation-duration="2500"

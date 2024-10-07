@@ -18,6 +18,10 @@ const SJ_categories = defineAsyncComponent(
 const SJ_reports = defineAsyncComponent(
   () => import('@/views/apps/simple-journal/laporan/FinancialReport.vue')
 );
+const home = defineAsyncComponent(() => import('@/views/home.vue'));
+const landing = defineAsyncComponent(() => import('@/views/landing.vue'));
+const about = defineAsyncComponent(() => import('@/views/about-me.vue'));
+
 export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -80,6 +84,24 @@ export const routes: Array<RouteRecordRaw> = [
     name: 'Login',
     component: login,
     meta: { title: 'Login', layout: 'empty' },
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: about,
+    meta: { title: 'About', layout: 'guest' },
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: home,
+    meta: { title: 'Login', layout: 'guest' },
+  },
+  {
+    path: '/landing',
+    name: 'Landing',
+    component: landing,
+    meta: { title: 'Landing', layout: 'guest' },
   },
 ];
 

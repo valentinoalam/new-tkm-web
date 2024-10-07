@@ -17,14 +17,12 @@
       :series="chartSeries"
       height="475"
     />
-    <ReportChart />
   </div>
 </template>
 
 <script setup>
 // import/no-extraneous-dependencies
 // import chroma from 'chroma-js';
-import ReportChart from './laporan/ReportChart.vue';
 import { LoopingRhombusesSpinner } from 'epic-spinners';
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { computed, nextTick, watch } from 'vue';
