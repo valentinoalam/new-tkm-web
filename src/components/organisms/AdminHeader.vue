@@ -142,7 +142,7 @@
 
       <div class="relative">
         <Avatar
-          :username="user.username"
+          :username="user?.username"
           @click="dropdownOpen = !dropdownOpen"
         />
         <div
@@ -163,7 +163,7 @@
             v-show="dropdownOpen"
             class="absolute right-0 z-20 w-48 py-2 mt-2 bg-white rounded-md shadow-xl"
           >
-            <div class="text-center">{{ user.username }}</div>
+            <div class="text-center">{{ user?.username }}</div>
             <router-link
               to="/"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white"
@@ -193,7 +193,7 @@ const authStore = useAuth();
 const user = authStore.getUserInfo;
 const router = useRouter();
 const route = useRoute();
-console.log(user);
+
 defineProps({
   title: {
     type: String,

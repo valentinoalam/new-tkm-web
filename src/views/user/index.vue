@@ -19,6 +19,7 @@ import { ref, onMounted, h } from 'vue';
 import AddUser from './add.vue';
 import Table from '@/components/tables/table.vue';
 import * as UsersAPI from '@/service/userService';
+import { useBackdrop } from '@/composables/useBackdrop';
 // const userInfo = useSelector(state => state.app.userInfo);
 // const selectionMode = useSelector(state => state.selectionMode);
 // const groupMap = useSelector(state => state.groupMapping);
@@ -65,7 +66,7 @@ const columns = [
   }),
   columnHelper.accessor('lastActive', {
     header: 'Last Active',
-    cell: info => info.getValue(),
+    cell: info => new Date(info.getValue()).toLocaleDateString(),
   }),
   columnHelper.accessor('id', {
     id: 'actions', // Unique identifier for this column

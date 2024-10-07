@@ -22,7 +22,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { computed, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 // import { MONTHS } from '@/constant';
 import { getBalanceReport } from '@/service/appsheetService';
@@ -39,168 +39,152 @@ const props = defineProps({
 
 const totalDebit = ref(0);
 const totalCredit = ref(0);
+const expenseData = ref([]);
+const incomeData = ref([]);
 
+// Helper to safely fetch localStorage data
+const getLocalStorageData = key => {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+};
+
+// Fetch data function
 const fetchDataChart = async () => {
   try {
-    const params = {
-      year: new Date().getFullYear(),
-      month: props.month,
-    };
-    const response = await getBalanceReport(params); // Replace with your API endpoint
+    const params = { year: new Date().getFullYear(), month: props.month };
+    const response = await getBalanceReport(params);
     const { result, totalDebit: tdebit, totalCredit: tcredit } = response.data;
+
     const data = result.sort((a, b) => Number(b.debit) - Number(a.debit));
     localStorage.setItem(`trial-balance/${props.month}`, JSON.stringify(data));
-    const expenseData = data
+
+    const expenseDataLocal = data
       .filter(i => i.debit !== 0)
       .map(i => ({ category: i.categoryName, value: i.debit }));
-    const incomeData = data
+
+    const incomeDataLocal = data
       .filter(i => i.credit !== 0)
       .map(i => ({ category: i.categoryName, value: i.credit }));
-    localStorage.setItem(`expense-${props.month}`, JSON.stringify(expenseData));
-    localStorage.setItem(`income-${props.month}`, JSON.stringify(incomeData));
+
+    localStorage.setItem(
+      `expense-${props.month}`,
+      JSON.stringify(expenseDataLocal)
+    );
+    localStorage.setItem(
+      `income-${props.month}`,
+      JSON.stringify(incomeDataLocal)
+    );
+
     totalDebit.value = tdebit;
     totalCredit.value = tcredit;
-    return result.sort((a, b) => Number(b.debit) - Number(a.debit));
+
+    expenseData.value = expenseDataLocal;
+    incomeData.value = incomeDataLocal;
   } catch (error) {
     console.error('Error fetching trial balance:', error);
-    return [];
   }
 };
-// onMounted(() => {
-//   if(localStorage.getItem(`expense-${props.month}`)) {
 
-//   }
-// });
-const expenseData =
-  JSON.parse(localStorage.getItem(`expense-${props.month}`)) ||
-  fetchDataChart();
-const incomeData = JSON.parse(localStorage.getItem(`income-${props.month}`));
-// Watch for changes in month or week and refetch data when they change
+// Load data from localStorage or fetch if not available
+const loadData = async () => {
+  const storedExpenseData = getLocalStorageData(`expense-${props.month}`);
+  const storedIncomeData = getLocalStorageData(`income-${props.month}`);
+
+  if (storedExpenseData && storedIncomeData) {
+    expenseData.value = storedExpenseData;
+    incomeData.value = storedIncomeData;
+  } else {
+    await fetchDataChart();
+  }
+};
+
 watch(
-  () => [props.month, props.week], // Watch the `month` and `week` props
-  (newValues, oldValues) => {
-    // Check if either month or week has changed and refetch the data
-    if (newValues !== oldValues) {
-      fetchDataChart();
-    }
+  () => props.month,
+  async () => {
+    await loadData();
   }
 );
-const expenseCat = expenseData.map(item => item.category);
-const expenseSeries = computed(() =>
-  expenseData.map(item => parseFloat(item.value))
-);
-const incomeSeries = computed(() =>
-  incomeData.map(item => parseFloat(item.value))
-);
-const expenseColors = expenseCat.map(label => {
-  const catData = JSON.parse(localStorage.getItem(`categories`));
-  const matchedCategory = catData.find(
-    item => item.category === label && item.type === 'Pengeluaran'
-  );
-  return matchedCategory ? matchedCategory.color : '#000000'; // Default to black if no match is found
+// Fetch data when component is created
+onMounted(() => {
+  loadData();
 });
 
-const incomeCat = incomeData.map(item => item.category);
-const incomeColors = incomeCat.map(label => {
-  const catData = JSON.parse(localStorage.getItem(`categories`));
-  const matchedCategory = catData.find(
-    item => item.category === label && item.type === 'Penerimaan'
+// Helper function to get category color from localStorage
+const getCategoryColor = (label, type) => {
+  const catData = getLocalStorageData('categories');
+  const matchedCategory = catData?.find(
+    item => item.category === label && item.type === type
   );
-  return matchedCategory ? matchedCategory.color : '#000000'; // Default to black if no match is found
-});
-const expenseChartOptions = computed(() => ({
-  labels: expenseCat,
-  chart: {
-    type: 'donut',
-    width: 300,
-    height: 300,
-  },
-  colors: expenseColors,
+  return matchedCategory ? matchedCategory.color : '#000000'; // Default to black
+};
+
+// Computed properties
+const expenseCat = computed(() => expenseData.value.map(item => item.category));
+const expenseSeries = computed(() =>
+  expenseData.value.map(item => parseFloat(item.value))
+);
+const expenseColors = computed(() =>
+  expenseCat.value.map(label => getCategoryColor(label, 'Pengeluaran'))
+);
+
+const incomeCat = computed(() => incomeData.value.map(item => item.category));
+const incomeSeries = computed(() =>
+  incomeData.value.map(item => parseFloat(item.value))
+);
+const incomeColors = computed(() =>
+  incomeCat.value.map(label => getCategoryColor(label, 'Penerimaan'))
+);
+
+// Reusable chart options generator
+const generateChartOptions = (
+  title,
+  categories,
+  seriesColors,
+  legendPosition = 'left'
+) => ({
+  labels: categories,
+  chart: { type: 'donut', width: 300, height: 300 },
+  colors: seriesColors,
   legend: {
-    position: 'left',
+    position: legendPosition,
     width: 300,
     horizontalAlign: 'center',
-    offsetX: 0,
-    offsetY: 0,
   },
   title: {
-    text: 'Pengeluaran',
+    text: title,
     align: 'center',
-    margin: 10,
-    offsetX: 0,
-    offsetY: 0,
-    floating: false,
-    style: {
-      fontSize: '14px',
-      fontWeight: 'bold',
-      // fontFamily:  undefined,
-      color: '#263238',
-    },
+    style: { fontSize: '14px', fontWeight: 'bold', color: '#263238' },
   },
   tooltip: {
-    y: {
-      formatter: function (value) {
-        return formatRupiah(value); // Format value as currency
-      },
-    },
+    y: { formatter: value => formatRupiah(value) },
   },
   responsive: [
     {
       breakpoint: 480,
       options: {
-        chart: {
-          width: 200,
-        },
-        legend: {
-          position: 'bottom',
-        },
+        chart: { width: 200 },
+        legend: { position: 'bottom' },
       },
     },
   ],
-}));
-const incomeChartOptions = computed(() => ({
-  labels: incomeCat,
-  chart: {
-    type: 'donut',
-    width: 300,
-    height: 300,
-  },
-  colors: incomeColors,
-  legend: {
-    position: 'right',
-    width: 300,
-    horizontalAlign: 'center',
-    offsetX: 0,
-    offsetY: 0,
-  },
-  title: {
-    text: 'Penerimaan',
-    align: 'center',
-    margin: 10,
-    offsetX: 0,
-    offsetY: 0,
-    floating: false,
-    style: {
-      fontSize: '14px',
-      fontWeight: 'bold',
-      // fontFamily:  undefined,
-      color: '#263238',
-    },
-  },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 200,
-        },
-        legend: {
-          position: 'bottom',
-        },
-      },
-    },
-  ],
-}));
+});
+
+const expenseChartOptions = computed(() =>
+  generateChartOptions(
+    'Pengeluaran',
+    expenseCat.value,
+    expenseColors.value,
+    'left'
+  )
+);
+const incomeChartOptions = computed(() =>
+  generateChartOptions(
+    'Penerimaan',
+    incomeCat.value,
+    incomeColors.value,
+    'right'
+  )
+);
 </script>
 <style scoped>
 #chart {

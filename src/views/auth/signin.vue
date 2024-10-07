@@ -116,14 +116,14 @@ const togglePasswordVisibility = () => {
 };
 
 const handleSubmit = async () => {
-  const store = useAuth();
+  const authStore = useAuth();
   try {
-    const response = await authService.login(values.username, values.password); // Custom API call hook
-    const { tokens, user } = response.data;
-    // Save user to store
-    store.setCredentials(tokens, user);
-    const from = route.query.from || '/';
-    router.replace(from.toString());
+    await authService
+      .login(values.username, values.password)
+      .then(({ data: { tokens, user } }) =>
+        authStore.setCredentials(tokens, user)
+      )
+      .then(() => router.replace((route.query.from || '/').toString()));
   } catch (err) {
     console.error('Login failed:', err);
     errMsg.value = 'Login Failed. Please try again.';

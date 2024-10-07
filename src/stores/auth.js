@@ -6,7 +6,7 @@ export const useAuth = defineStore('credential', {
     refreshToken: localStorage.getItem('tkm_rt') || null,
     userInfo: localStorage.getItem('userInfo')
       ? JSON.parse(localStorage.getItem('userInfo'))
-      : null, // Store the user information (e.g., name, email)
+      : {}, // Store the user information (e.g., name, email)
   }),
 
   actions: {
@@ -25,6 +25,7 @@ export const useAuth = defineStore('credential', {
       this.accessToken = null;
       this.refreshToken = null;
       this.userInfo = null;
+      localStorage.clear();
     },
 
     // Action to check if user is authenticated

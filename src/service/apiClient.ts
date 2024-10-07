@@ -5,7 +5,6 @@ import { useAuth } from '@/stores/auth';
 
 const authStore = useAuth();
 const accessToken = authStore.getAccessToken;
-
 const { VITE_BACKEND_URL } = import.meta.env;
 const apiClient = axios.create({
   baseURL: VITE_BACKEND_URL,
@@ -41,7 +40,7 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
     if (error.response.status === 401) {
       // Handle unauthorized access, redirect to login, etc.
-      localStorage.clear(); //localStorage.removeItem('authToken');
+      // authStore.clearCredentials();
       window.location.reload();
       router.push('/login');
     }
@@ -51,9 +50,9 @@ apiClient.interceptors.response.use(
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
-      const rt = getCookie('rt'); //const refreshToken = localStorage.getItem('refreshToken');
+      const rt = localStorage.getItem('tkm_rt'); //const rt = getCookie('rt');
       if (!rt) {
-        localStorage.clear(); // Logout or redirect to login
+        authStore.clearCredentials(); // Logout or redirect to login
         router.push('/login');
         return Promise.reject(error);
       }
@@ -62,7 +61,7 @@ apiClient.interceptors.response.use(
         const response = await refreshAccessToken(rt);
         if (response?.status === 200) {
           const at = response?.data.tokens['access_token']; //const newAccessToken = response.data.accessToken;
-          localStorage.setItem('wbms_at', at);
+          localStorage.setItem('tkm_at', at);
           document.cookie =
             'rt=' + response?.data.tokens['refresh_token'] + '; SameSite=Lax';
 
@@ -72,7 +71,7 @@ apiClient.interceptors.response.use(
           return apiClient(originalRequest);
         }
       } catch (_error) {
-        localStorage.clear();
+        authStore.clearCredentials();
         console.error('Refresh token error:', _error);
         router.push('/login');
         return Promise.reject(_error);
