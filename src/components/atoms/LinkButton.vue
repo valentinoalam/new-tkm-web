@@ -14,8 +14,8 @@ const props = defineProps({
     v-if="btnType === 'primary'"
     :href="link"
     v-smooth-scroll
-    :class="class"
-    class="font-theme-heading font-medium bg-theme-primary px-6 py-2 text-white rounded shadow-md hover:bg-white border-2 border-transparent hover:border-theme-primary hover:text-theme-primary cursor-pointer transition duration-200 mr-5"
+    :class="props.class"
+    class="px-6 py-2 mr-5 font-medium text-white transition duration-200 border-2 border-transparent rounded shadow-md cursor-pointer font-theme-heading bg-theme-primary hover:bg-white hover:border-theme-primary hover:text-theme-primary"
   >
     <slot></slot>
   </a>
@@ -23,8 +23,8 @@ const props = defineProps({
     v-if="btnType === 'muted'"
     :href="link"
     v-smooth-scroll
-    :class="class"
-    class="font-theme-heading font-medium bg-gray-100 text-gray-500 px-6 py-2 rounded shadow-md hover:bg-white border-2 border-transparent hover:border-theme-grayish-blue hover:text-theme-grayish-blue cursor-pointer transition duration-200"
+    :class="props.class"
+    class="px-6 py-2 font-medium text-gray-500 transition duration-200 bg-gray-100 border-2 border-transparent rounded shadow-md cursor-pointer font-theme-heading hover:bg-white hover:border-theme-grayish-blue hover:text-theme-grayish-blue"
   >
     <slot></slot>
   </a>

@@ -7,29 +7,29 @@ let isOpen = ref(1);
 
 <template>
   <!-- Questions Section Start -->
-  <div id="faq" class="container mx-auto px-5 md:w-4/5">
+  <div id="faq" class="container px-5 mx-auto md:w-4/5">
     <section class="py-16 pt-18">
-      <div class="w-4/5 md:w-3/5 mx-auto">
+      <div class="w-4/5 mx-auto md:w-3/5">
         <h2
-          class="text-3xl md:text-4xl font-theme-heading font-medium text-center"
+          class="text-3xl font-medium text-center md:text-4xl font-theme-heading"
         >
           Frequently Asked Questions
         </h2>
         <p
-          class="text-theme-grayish-blue text-center mt-7 font-theme-content text-lg"
+          class="text-lg text-center text-theme-grayish-blue mt-7 font-theme-content"
         >
           Here are some of out FAQs. If you have any other quesitons you'd like
           answered please feel free to email us.
         </p>
       </div>
 
-      <div class="mt-10 w-full lg:w-3/5 mx-auto">
+      <div class="w-full mx-auto mt-10 lg:w-3/5">
         <ul class="shadow-lg">
-          <template v-for="(faq, index) in faqs" :key="faq.id">
+          <template v-for="faq in faqs" :key="faq.id">
             <li
               @click="isOpen = faq.id"
               :class="isOpen === faq.id ? 'text-theme-secondary' : ''"
-              class="font-theme-content font-medium text-xl cursor-pointer hover:text-theme-secondary py-5 flex justify-between items-center transition duration-200 bg-slate-100 px-6"
+              class="flex items-center justify-between px-6 py-5 text-xl font-medium transition duration-200 cursor-pointer font-theme-content hover:text-theme-secondary bg-slate-100"
             >
               <a href="#">{{ faq.title }}</a>
               <svg
@@ -53,7 +53,7 @@ let isOpen = ref(1);
             </li>
             <p
               v-show="isOpen === faq.id"
-              class="bg-slate-50 px-6 font-theme-content text-md lg:text-lg py-5 text-gray-500 text-justify"
+              class="px-6 py-5 text-justify text-gray-500 bg-slate-50 font-theme-content text-md lg:text-lg"
             >
               {{ faq.description }}
             </p>
