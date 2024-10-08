@@ -2,8 +2,8 @@
   <div class="gap-y-2">
     <div class="flow-root mb-8 p-1.5 min-w-full align-middle">
       <div class="-my-2">
-        <div class="flex justify-between">
-          <div class="relative flex max-w-xs">
+        <div class="flex flex-wrap justify-between gap-y-2">
+          <div class="relative flex order-2 max-w-xs sm:order-first">
             <div
               class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
             >
@@ -38,24 +38,26 @@
               placeholder="Search..."
             /> -->
           </div>
-          <div class="flex items-center justify-start gap-2">
+          <div
+            class="flex items-center justify-start order-first gap-2 sm:order-2 basis-full sm:basis-auto"
+          >
             <!-- <DateSelector :dateStart="internalDateStart" :dateEnd="internalDateEnd" /> -->
             <input
               v-model="internalDateStart"
               type="date"
               placeholder="Start Date"
-              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm basis-1/4 focus:outline-none focus:shadow-outline"
             />
             <input
               v-model="internalDateEnd"
               type="date"
               placeholder="End Date"
-              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm focus:outline-none focus:shadow-outline"
+              class="w-40 py-1 pl-4 pr-2 my-auto font-medium leading-none text-gray-600 rounded-lg shadow-sm basis-1/4 focus:outline-none focus:shadow-outline"
             />
             <button
               @click="handleDateRange"
               type="button"
-              class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-blue-800 bg-blue-300 border border-gray-200 rounded-lg shadow-sm text-nowrap w-max gap-x-2 hover:bg-blue-50"
+              class="inline-flex items-center px-4 py-1 my-auto text-sm font-medium text-blue-800 bg-blue-300 border border-gray-200 rounded-lg shadow-sm basis-2/4 text-nowrap w-max gap-x-2 hover:bg-blue-50"
             >
               Filter Transactions
             </button>
@@ -63,7 +65,7 @@
           <button
             type="button"
             @click="handleClick"
-            class="inline-flex items-center px-4 text-sm font-medium text-blue-800 bg-blue-300 border border-transparent rounded-lg gap-x-2 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:bg-blue-900"
+            class="inline-flex items-center order-3 px-4 text-sm font-medium text-blue-800 bg-blue-300 border border-transparent rounded-lg gap-x-2 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:bg-blue-900"
           >
             <svg
               class="shrink-0 size-4"

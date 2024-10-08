@@ -1,13 +1,14 @@
 import { defineAsyncComponent } from 'vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
-// import ImageEditor from '@/views/ImageEditor.vue';
-
 //auth
 const login = defineAsyncComponent(() => import('@/views/auth/signin.vue'));
 const imgEditor = defineAsyncComponent(() => import('@/views/imgEditor.vue'));
-const SJ_dashboard = defineAsyncComponent(
+const SJ_base = defineAsyncComponent(
   () => import('@/views/apps/simple-journal/index.vue')
+);
+const SJ_dashboard = defineAsyncComponent(
+  () => import('@/views/apps/simple-journal/dashboard/index.vue')
 );
 const SJ_transaction_list = defineAsyncComponent(
   () => import('@/views/apps/simple-journal/transaksi/index.vue')
@@ -24,36 +25,38 @@ const about = defineAsyncComponent(() => import('@/views/about-me.vue'));
 
 export const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    meta: { requiresAuth: true }, // Protect all child routes
+    path: '/admin',
+    meta: { requiresAuth: true, breadcrumb: 'Admin' }, // Protect all child routes
     children: [
       {
-        path: '',
+        path: '/kas-kecil',
         name: 'Kas Kecil',
+        component: SJ_base,
+        meta: { title: 'Kas Kecil', breadcrumb: 'KasKecil' },
         children: [
           {
             path: '',
             name: 'Dashboard',
             component: SJ_dashboard,
-            meta: { title: 'Beranda' },
+            meta: { title: 'Beranda', breadcrumb: '' },
           },
           {
             path: 'transaction',
             name: 'Transaction',
             component: SJ_transaction_list,
-            meta: { title: 'Beranda' },
+            meta: { title: 'Transaction', breadcrumb: 'Transaction' },
           },
           {
             path: 'category',
             name: 'Category',
             component: SJ_categories,
-            meta: { title: 'Beranda' },
+            meta: { title: 'Category', breadcrumb: 'Category' },
           },
           {
             path: 'report',
             name: 'Report',
             component: SJ_reports,
-            meta: { title: 'Beranda' },
+            meta: { title: 'Report', breadcrumb: 'Report' },
           },
         ],
       },
@@ -61,16 +64,8 @@ export const routes: Array<RouteRecordRaw> = [
         path: 'users',
         name: 'User Management',
         component: defineAsyncComponent(() => import('@/views/user/index.vue')),
-        meta: { title: 'Users' },
+        meta: { title: 'Users', breadcrumb: 'user' },
       },
-      // {
-      //   path: 'account',
-      //   name: 'Account',
-      //   component: defineAsyncComponent(
-      //     () => import('@/views/settings/AccountSettings.vue')
-      //   ),
-      //   meta: { title: 'account' },
-      // },
     ],
   },
   {

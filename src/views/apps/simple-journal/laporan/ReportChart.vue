@@ -1,16 +1,16 @@
 <template>
   <div
     :class="isOpen ? '' : 'lg:flex-nowrap'"
-    class="flex flex-wrap justify-center w-full space-x-4"
+    class="flex flex-wrap justify-center w-full space-x-4 h-80"
   >
-    <div :class="isOpen ? '' : 'lg:w-1/2'" class="w-full">
+    <div :class="isOpen ? '' : 'lg:w-1/2'" class="w-full h-full">
       <VueApexCharts
         type="donut"
         :options="expenseChartOptions"
         :series="expenseSeries"
       />
     </div>
-    <div :class="isOpen ? '' : 'lg:w-1/2'" class="w-full">
+    <div :class="isOpen ? '' : 'lg:w-1/2'" class="w-full h-full">
       <VueApexCharts
         type="donut"
         :options="incomeChartOptions"
@@ -143,11 +143,12 @@ const generateChartOptions = (
   legendPosition = 'left'
 ) => ({
   labels: categories,
-  chart: { type: 'donut', width: 300, height: 300 },
+  chart: { type: 'donut', redrawOnParentResize: true },
   colors: seriesColors,
   legend: {
     position: legendPosition,
     width: 300,
+    height: 300,
     horizontalAlign: 'center',
   },
   title: {
@@ -186,10 +187,4 @@ const incomeChartOptions = computed(() =>
   )
 );
 </script>
-<style scoped>
-#chart {
-  max-width: 760px;
-  margin: 35px auto;
-  opacity: 0.9;
-}
-</style>
+<style scoped></style>
