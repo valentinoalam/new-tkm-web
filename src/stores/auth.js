@@ -16,7 +16,8 @@ export const useAuth = defineStore('credential', {
       this.refreshToken = tokens.refresh_token;
       this.userInfo = user;
       // Store the token in local storage
-      localStorage.setItem('tkm_at', tokens.access_token);
+      localStorage.setItem('tkm_at', this.accessToken);
+      localStorage.setItem('tkm_rt', this.refreshToken);
       localStorage.setItem('userInfo', JSON.stringify(user));
     },
 
@@ -28,6 +29,20 @@ export const useAuth = defineStore('credential', {
       localStorage.clear();
     },
 
+    checkCredentials() {
+      // In case the state is null on page reload
+      if (!this.accessToken) {
+        this.accessToken = localStorage.getItem('tkm_at');
+      }
+      if (!this.refreshToken) {
+        this.refreshToken = localStorage.getItem('tkm_rt');
+      }
+      if (!this.userInfo || Object.keys(this.userInfo).length === 0) {
+        this.userInfo = localStorage.getItem('userInfo')
+          ? JSON.parse(localStorage.getItem('userInfo'))
+          : {};
+      }
+    },
     // Action to check if user is authenticated
     isAuthenticated() {
       return !!this.accessToken;

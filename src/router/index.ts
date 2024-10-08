@@ -61,7 +61,7 @@ export const routes: Array<RouteRecordRaw> = [
         ],
       },
       {
-        path: 'users',
+        path: '/users',
         name: 'User Management',
         component: defineAsyncComponent(() => import('@/views/user/index.vue')),
         meta: { title: 'Users', breadcrumb: 'user' },

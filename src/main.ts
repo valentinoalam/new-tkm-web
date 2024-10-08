@@ -19,6 +19,7 @@ import App from './App.vue';
 import router from './router';
 import DashboardLayout from '@/layouts/DashboardLayout.vue';
 import EmptyLayout from '@/layouts/EmptyLayout.vue';
+import { useAuth } from '@/stores/auth';
 
 const formKitInputPlugin = createFormKitInputsPlugin();
 const app = createApp(App);
@@ -53,4 +54,6 @@ app.use(PerfectScrollbarPlugin);
 app.use(VueApexCharts);
 // app.use(vClickOutside);
 app.use(pinia);
+const authStore = useAuth();
+authStore.checkCredentials();
 app.mount('#app');
