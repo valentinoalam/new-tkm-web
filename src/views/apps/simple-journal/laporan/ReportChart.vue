@@ -1,16 +1,16 @@
 <template>
   <div
     :class="isOpen ? '' : 'lg:flex-nowrap'"
-    class="flex flex-wrap justify-center w-full space-x-4 h-80"
+    class="flex flex-wrap justify-center w-full space-x-4"
   >
-    <div :class="isOpen ? '' : 'lg:w-1/2'" class="w-full h-full">
+    <div :class="isOpen ? '' : 'lg:w-1/2'" class="w-full">
       <VueApexCharts
         type="donut"
         :options="expenseChartOptions"
         :series="expenseSeries"
       />
     </div>
-    <div :class="isOpen ? '' : 'lg:w-1/2'" class="w-full h-full">
+    <div :class="isOpen ? '' : 'lg:w-1/2'" class="w-full">
       <VueApexCharts
         type="donut"
         :options="incomeChartOptions"
