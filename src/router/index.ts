@@ -25,36 +25,42 @@ const about = defineAsyncComponent(() => import('@/views/about-me.vue'));
 
 export const routes: Array<RouteRecordRaw> = [
   {
+    path: '/',
+    redirect: { name: 'admin.KasKecil' },
+    name: 'root',
+  },
+  {
     path: '/admin',
+    name: 'admin',
     meta: { requiresAuth: true, breadcrumb: 'Admin' }, // Protect all child routes
     children: [
       {
         path: '/kas-kecil',
-        name: 'Kas Kecil',
+        name: 'admin.KasKecil',
         component: SJ_base,
         meta: { title: 'Kas Kecil', breadcrumb: 'KasKecil' },
         children: [
           {
             path: '',
-            name: 'Dashboard',
+            name: 'admin.Dashboard',
             component: SJ_dashboard,
             meta: { title: 'Beranda', breadcrumb: '' },
           },
           {
             path: 'transaction',
-            name: 'Transaction',
+            name: 'admin.Transaction',
             component: SJ_transaction_list,
             meta: { title: 'Transaction', breadcrumb: 'Transaction' },
           },
           {
             path: 'category',
-            name: 'Category',
+            name: 'admin.Category',
             component: SJ_categories,
             meta: { title: 'Category', breadcrumb: 'Category' },
           },
           {
             path: 'report',
-            name: 'Report',
+            name: 'admin.Report',
             component: SJ_reports,
             meta: { title: 'Report', breadcrumb: 'Report' },
           },
@@ -62,9 +68,9 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         path: '/users',
-        name: 'User Management',
+        name: 'admin.UserManagement',
         component: defineAsyncComponent(() => import('@/views/user/index.vue')),
-        meta: { title: 'Users', breadcrumb: 'user' },
+        meta: { title: 'Users Management', breadcrumb: 'user' },
       },
     ],
   },

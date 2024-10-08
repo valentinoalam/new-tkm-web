@@ -34,7 +34,7 @@
                 <template v-if="route.icon" v-slot:icon>
                   <Icon icon="gg:components" />
                 </template>
-                <template v-slot:title> {{ route.name }} </template>
+                <template v-slot:title> {{ route.meta.title }} </template>
                 <template v-slot:content>
                   <div
                     v-for="childroute in route.children"
@@ -45,7 +45,7 @@
                       exact-active-class="font-extrabold bg-opacity-25 border-blue-500"
                       class="block w-full p-2 text-sm text-left border-transparent rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
                     >
-                      {{ childroute.name }}
+                      {{ childroute.meta.title }}
                     </router-link>
                   </div>
                 </template>
@@ -62,7 +62,7 @@
                   ><Icon icon="bxs:route.icon" class="w-5 h-5"
                 /></i>
 
-                <span class="mx-4">{{ route.name }}</span>
+                <span class="mx-4">{{ route.meta.title }}</span>
               </router-link>
             </div>
           </li>
@@ -82,8 +82,7 @@ import MenuAccordion from '@/components/molecules/MenuAccordion.vue';
 import { useSidebar } from '@/composables/useSidebar';
 import { routes } from '@/router';
 
-const navRoutes = ref(routes[0].children);
-console.log(navRoutes);
+const navRoutes = ref(routes[1].children);
 const { isOpen } = useSidebar();
 </script>
 
